@@ -10,19 +10,19 @@ export default function ForecastItem({ day, unit, theme }) {
 
     return (
         <div className="flex flex-col items-center min-w-[90px]">
-            <h6 className={`font-semibold ${theme.text}`}>
+            <h6 className={`font-semibold text-xl ${theme.text}`}>
                 {weekday}
             </h6>
 
             <WeatherIcon code={day.day.condition.code} isDay={true} />
 
-            <p className={`text-1xl mt-1 capitalize opacity-80 ${theme.text}`}>
+            <p className={`text-lg mt-1 capitalize opacity-80 ${theme.text}`}>
                 {day.day.condition.text}
             </p>
 
             <span className={`text-lg font-semibold mt-1 ${theme.text}`}>
                 {convertTemp(day.day.maxtemp_c)}°{unit}
-                <span className="opacity-70 text-sm"> / </span>
+                <span className="opacity-70"> / </span>
                 {convertTemp(day.day.mintemp_c)}°{unit}
             </span>
         </div>

@@ -1,71 +1,91 @@
 import React, { useEffect, useState } from "react";
-import SunIcon from "../assets/sun.svg";   // update path if needed
-import MoonIcon from "../assets/moon.svg"; // update path if needed
+import "../styles/fancyToggle.css"; // ← your large CSS goes here
 
 export default function ThemeToggle() {
-    const [dark, setDark] = useState(false);
+    const [dark, setDark] = useState(
+        localStorage.getItem("theme") === "dark"
+    );
 
-    // Load saved theme
     useEffect(() => {
-        const saved = localStorage.getItem("theme");
-        if (saved === "dark") {
-            setDark(true);
-            document.documentElement.classList.add("dark");
-        }
-    }, []);
-
-    const toggle = () => {
-        const newDark = !dark;
-        setDark(newDark);
-
-        if (newDark) {
+        if (dark) {
             document.documentElement.classList.add("dark");
             localStorage.setItem("theme", "dark");
         } else {
             document.documentElement.classList.remove("dark");
             localStorage.setItem("theme", "light");
         }
-    };
+    }, [dark]);
 
     return (
-        <button
-            onClick={toggle}
-            className="
-                relative w-16 h-8 flex items-center
-                rounded-full px-1
-                transition-all duration-300
-                bg-gray-300 dark:bg-gray-700
-                shadow-inner
-            "
-        >
-            {/* Sun Icon */}
-            <img
-                src={SunIcon}
-                alt="Light mode"
-                className={`
-                    absolute left-2 w-5 h-5 transition-opacity
-                    ${dark ? "opacity-0" : "opacity-100"}
-                `}
+        <label className="switch">
+            {/* This MUST be inside the label for CSS to work */}
+            <input
+                id="input"
+                type="checkbox"
+                checked={dark}
+                onChange={() => setDark(!dark)}
             />
 
-            {/* Moon Icon */}
-            <img
-                src={MoonIcon}
-                alt="Dark mode"
-                className={`
-                    absolute right-2 w-5 h-5 transition-opacity
-                    ${dark ? "opacity-100" : "opacity-0"}
-                `}
-            />
+            {/* This MUST come immediately after input */}
+            <div className="slider round">
+                <div className="sun-moon">
+                    {/* directly insert your circles */}
+                    <svg id="moon-dot-1" className="moon-dot" viewBox="0 0 100 100">
+                        <circle cx="50" cy="50" r="50"></circle>
+                    </svg>
+                    <svg id="moon-dot-2" className="moon-dot" viewBox="0 0 100 100">
+                        <circle cx="50" cy="50" r="50"></circle>
+                    </svg>
+                    <svg id="moon-dot-3" className="moon-dot" viewBox="0 0 100 100">
+                        <circle cx="50" cy="50" r="50"></circle>
+                    </svg>
 
-            {/* Slider knob */}
-            <div
-                className={`
-                    absolute bg-white rounded-full shadow-md
-                    w-6 h-6 transition-transform duration-300
-                    ${dark ? "translate-x-8" : "translate-x-0"}
-                `}
-            />
-        </button>
+                    <svg id="light-ray-1" className="light-ray" viewBox="0 0 100 100">
+                        <circle cx="50" cy="50" r="50"></circle>
+                    </svg>
+                    <svg id="light-ray-2" className="light-ray" viewBox="0 0 100 100">
+                        <circle cx="50" cy="50" r="50"></circle>
+                    </svg>
+                    <svg id="light-ray-3" className="light-ray" viewBox="0 0 100 100">
+                        <circle cx="50" cy="50" r="50"></circle>
+                    </svg>
+
+                    <svg id="cloud-1" className="cloud-dark" viewBox="0 0 100 100">
+                        <circle cx="50" cy="50" r="50"></circle>
+                    </svg>
+                    <svg id="cloud-2" className="cloud-dark" viewBox="0 0 100 100">
+                        <circle cx="50" cy="50" r="50"></circle>
+                    </svg>
+                    <svg id="cloud-3" className="cloud-dark" viewBox="0 0 100 100">
+                        <circle cx="50" cy="50" r="50"></circle>
+                    </svg>
+
+                    <svg id="cloud-4" className="cloud-light" viewBox="0 0 100 100">
+                        <circle cx="50" cy="50" r="50"></circle>
+                    </svg>
+                    <svg id="cloud-5" className="cloud-light" viewBox="0 0 100 100">
+                        <circle cx="50" cy="50" r="50"></circle>
+                    </svg>
+                    <svg id="cloud-6" className="cloud-light" viewBox="0 0 100 100">
+                        <circle cx="50" cy="50" r="50"></circle>
+                    </svg>
+                </div>
+
+                <div className="stars">
+                    <svg id="star-1" className="star" viewBox="0 0 20 20">
+                        <path d="M 0 10 C 10 10,10 10 ,0 10 C 10 10 , 10 10 , 10 20 C 10 10 , 10 10 , 20 10 C 10 10 , 10 10 , 10 0 C 10 10,10 10 ,0 10 Z"></path>
+                    </svg>
+                    <svg id="star-2" className="star" viewBox="0 0 20 20">
+                        <path d="M 0 10 C 10 10,10 10 ,0 10 C 10 10 , 10 10 , 10 20 C 10 10 , 10 10 , 20 10 C 10 10 , 10 10 , 10 0 C 10 10,10 10 ,0 10 Z"></path>
+                    </svg>
+                    <svg id="star-3" className="star" viewBox="0 0 20 20">
+                        <path d="M 0 10 C 10 10,10 10 ,0 10 C 10 10 , 10 10 , 10 20 C 10 10 , 10 10 , 20 10 C 10 10 , 10 10 , 10 0 C 10 10,10 10 ,0 10 Z"></path>
+                    </svg>
+                    <svg id="star-4" className="star" viewBox="0 0 20 20">
+                        <path d="M 0 10 C 10 10,10 10 ,0 10 C 10 10 , 10 10 , 10 20 C 10 10 , 10 10 , 20 10 C 10 10 , 10 10 , 10 0 C 10 10,10 10 ,0 10 Z"></path>
+                    </svg>
+                </div>
+            </div>
+        </label>
     );
 }
