@@ -28,3 +28,62 @@ body {
     background-color: rgba(255, 255, 255, 0.35);
     border-radius: 9999px;
 }
+
+
+/* ============================== */
+/* 1. SUPER CLEAR ICON SHINE      */
+/* ============================== */
+
+/* Advanced shine: opacity + soft scale + glow pulse */
+.icon-glow-shine {
+    animation: glowShine 2.2s ease-in-out infinite;
+}
+
+@keyframes glowShine {
+    0% {
+        opacity: 0.45;
+        transform: scale(1);
+        filter: drop-shadow(0 0 0px rgba(255, 255, 255, 0));
+    }
+    50% {
+        opacity: 1;
+        transform: scale(1.04);
+        filter: drop-shadow(0 0 12px rgba(255, 255, 255, 0.6));
+    }
+    100% {
+        opacity: 0.45;
+        transform: scale(1);
+        filter: drop-shadow(0 0 0px rgba(255, 255, 255, 0));
+    }
+}
+
+
+/* ============================== */
+/* 2. TEXT SHINE (your exact spec)*/
+/* ============================== */
+
+.loading-shine {
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 3px;
+
+    background: linear-gradient(
+            to right,
+            #ffffff 0%,
+            var(--c1) 50%,
+            #ffffff 100%
+    );
+
+    background-size: 200% auto;
+    background-clip: text;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+
+    animation: shineText 2s linear infinite reverse;
+}
+
+@keyframes shineText {
+    to {
+        background-position: 200% center;
+    }
+}

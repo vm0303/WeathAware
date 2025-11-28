@@ -19,7 +19,7 @@ export const weatherThemes = {
 
     clear: {
         light: {
-            bg: "bg-gradient-to-b from-sky-400 via-sky-300 to-sky-200",
+            bg: "bg-gradient-to-b from-[#38bdf8] via-[#7dd3fc] to-[#bae6fd]",
             text: "text-black",
             card: "bg-white/50 backdrop-blur-sm border border-white/20",
         },
@@ -34,7 +34,7 @@ export const weatherThemes = {
         light: {
             bg: "bg-gradient-to-br from-[#fdf6e3] via-[#b6d3f5] to-[#8bb7e8]",
             text: "text-slate-800",
-            card: "bg-white/60 backdrop-blur-sm border border-white/20",
+            card: "bg-white/40 backdrop-blur-sm border border-white/20",
         },
         dark: {
             bg: "bg-gradient-to-tl from-[#1a1f2e] via-[#2b3346] to-[#3f4b62]",
@@ -659,12 +659,12 @@ export const weatherThemes = {
         // ---------------- FALLBACK ----------------
         default: {
             light: {
-                bg: "bg-gradient-to-br from-sky-200 via-sky-300 to-blue-400",
+                bg: "bg-gradient-to-br from-[#bae6fd] via-[#7dd3fc] to-[#60a5fa]",
                 text: "text-slate-800",
                 card: "bg-white/40 backdrop-blur-sm border border-white/20",
             },
             dark: {
-                bg: "bg-gradient-to-br from-slate-900 via-slate-800 to-slate-700",
+                bg: "bg-gradient-to-br from-[#0f172a] via-[#1e293b] to-[#334155]",
                 text: "text-slate-100",
                 card: "bg-slate-900/40 backdrop-blur-sm border border-white/5",
             },

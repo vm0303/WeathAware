@@ -78,6 +78,7 @@ export default function Search({ onSelectCity }) {
                 <img
                     src={location_Globe}
                     alt="Use my location"
+                    title="Click here to find the current weather and 3 day forcast in your location."
                     className="w-7 h-7 object-contain dark:invert dark:brightness-200
     "
                 />
