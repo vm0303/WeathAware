@@ -1,5 +1,7 @@
-import React, { useEffect } from "react";
+import React, {useEffect} from "react";
 import Home from "./pages/Home";
+import {ToastContainer, Slide} from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 export default function App() {
     // Ensure dark mode persists
@@ -12,7 +14,20 @@ export default function App() {
 
     return (
         <div className="min-h-screen font-[Poppins,sans-serif] transition-colors">
-            <Home />
+            <Home/>
+            <ToastContainer
+                position="top-right"
+                autoClose={5000}
+                hideProgressBar={false}
+                newestOnTop={false}
+                closeOnClick={false}
+                rtl={false}
+                pauseOnFocusLoss
+                draggable
+                pauseOnHover
+                theme="colored"
+                transition={Slide}
+            />
         </div>
     );
 }

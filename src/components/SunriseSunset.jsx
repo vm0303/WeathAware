@@ -3,10 +3,10 @@ import React from "react";
 import sunriseIcon from "../assets/meteocons/sunrise.svg";
 import sunsetIcon from "../assets/meteocons/sunset.svg";
 
-export default function SunriseSunsetCard({ astro, theme }) {
+export default function SunriseSunsetCard({astro, theme}) {
     if (!astro) return null;
 
-    const { sunrise, sunset } = astro;
+    const {sunrise, sunset} = astro;
 
     return (
         <div
@@ -28,7 +28,7 @@ export default function SunriseSunsetCard({ astro, theme }) {
                         <img
                             src={sunriseIcon}
                             alt="Sunrise"
-                            className="w-10 h-10 md:w-24 md:h-24 lg:w-28 lg:h-28 mx-auto object-contain"
+                            className="w-10 h-10 md:w-24 md:h-24 lg:w-28 lg:h-28 mx-auto object-contain weather-icon"
                         />
                         <p className={`text-lg opacity-80 ${theme.text}`}>Sunrise</p>
                         <p className={`text-xl font-bold mt-1 ${theme.text}`}>
@@ -41,7 +41,7 @@ export default function SunriseSunsetCard({ astro, theme }) {
                         <img
                             src={sunsetIcon}
                             alt="Sunset"
-                            className="w-10 h-10 md:w-24 md:h-24 lg:w-28 lg:h-28 mx-auto object-contain"
+                            className="w-10 h-10 md:w-24 md:h-24 lg:w-28 lg:h-28 mx-auto object-contain weather-icon"
                         />
                         <p className={`text-lg opacity-80 ${theme.text}`}>Sunset</p>
                         <p className={`text-xl font-bold mt-1 ${theme.text}`}>

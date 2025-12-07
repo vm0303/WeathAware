@@ -1,17 +1,28 @@
-import React, { useState, useEffect, useRef } from "react";
-import { searchCities } from "../utils/weatherAPI";
-import { useClickOutside } from "../hooks/clickOutside";
+import React, {useState, useEffect, useRef} from "react";
+import {searchCities} from "../utils/weatherAPI";
+import {useClickOutside} from "../hooks/clickOutside";
 import Suggestion from "./Suggestions";
-import  searchGlass from "../assets/searchGlass.svg";
+import searchGlass from "../assets/searchGlass.svg";
 import location_Globe from "../assets/locationGlobe.svg";
 
-export default function Search({ onSelectCity }) {
+export default function Search({onSelectCity}) {
     const [term, setTerm] = useState("");
     const [results, setResults] = useState([]);
     const [show, setShow] = useState(false);
+    const [isClosing, setIsClosing] = useState(false);
+
 
     const containerRef = useRef();
-    useClickOutside(containerRef, () => setShow(false));
+    useClickOutside(containerRef, () => {
+        if (show) {
+            setIsClosing(true);
+            setTimeout(() => {
+                setShow(false);
+                setIsClosing(false);
+            }, 350);
+        }
+    });
+
 
     // handle input
     useEffect(() => {
@@ -27,6 +38,8 @@ export default function Search({ onSelectCity }) {
         return () => clearTimeout(timeout);
     }, [term]);
 
+
+
     const handleGeo = () => {
         if (!navigator.geolocation) return alert("Geolocation not supported.");
 
@@ -37,27 +50,27 @@ export default function Search({ onSelectCity }) {
     };
 
     return (
-        <div className="relative bg-white/70 dark:bg-slate-800/50 shadow rounded-full h-14 flex items-center px-4 mb-8">
-
+        <div className="
+    relative
+    bg-white/90 dark:bg-slate-800/60
+    dark:border dark:border-white/10
+    shadow-lg
+    rounded-full
+    h-14 flex items-center px-4 mb-8
+">
             <button
-                onClick={() => {
-                    if (term.trim().length > 0) {
-                        onSelectCity(term);   // ⬅️ trigger search manually
-                    }
-                }}
+                onClick={() => onSelectCity(term)}
                 className="flex items-center justify-center"
             >
-
-            <img
-                src={searchGlass}
-                alt="Search"
-                className="
-            w-7 h-7 object-contain
-        opacity-70 dark:opacity-90
-        dark:invert dark:brightness-200
-        "
-            />
+                <img
+                    src={searchGlass}
+                    alt="Search"
+                    className="w-7 h-7 object-contain
+            opacity-70 dark:opacity-90
+            dark:invert dark:brightness-200"
+                />
             </button>
+
 
             <input
                 type="text"
@@ -88,7 +101,12 @@ export default function Search({ onSelectCity }) {
             {show && results.length > 0 && (
                 <div
                     ref={containerRef}
-                    className="absolute left-0 top-16 w-full bg-white dark:bg-slate-800 rounded-lg shadow-lg overflow-hidden z-20"
+                    className={`
+    absolute left-0 top-16 w-full bg-white dark:bg-slate-900
+    rounded-lg shadow-lg overflow-hidden z-20
+    suggestions-box
+    ${show ? (isClosing ? "hide" : "show") : ""}
+`}
                 >
                     {results.map((city, i) => (
                         <Suggestion
@@ -96,12 +114,22 @@ export default function Search({ onSelectCity }) {
                             item={city}
                             onSelect={() => {
                                 onSelectCity(`${city.lat},${city.lon}`);
-                                setShow(false);
+
+                                // start fade-out animation
+                                setIsClosing(true);
+
+                                // wait for animation to finish
+                                setTimeout(() => {
+                                    setShow(false);
+                                    setIsClosing(false);
+                                }, 350); // match CSS timing
                             }}
+
                         />
                     ))}
                 </div>
             )}
+
         </div>
     );
 }
