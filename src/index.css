@@ -16,6 +16,7 @@ body {
 .bg-gradient-day {
     @apply bg-gradient-to-r from-blue-400 via-blue-500 to-indigo-600;
 }
+
 .bg-gradient-night {
     @apply bg-gradient-to-r from-gray-800 via-gray-900 to-black;
 }
@@ -24,6 +25,7 @@ body {
 ::-webkit-scrollbar {
     height: 8px;
 }
+
 ::-webkit-scrollbar-thumb {
     background-color: rgba(255, 255, 255, 0.35);
     border-radius: 9999px;
@@ -59,7 +61,7 @@ body {
 
 
 /* ============================== */
-/* 2. TEXT SHINE (your exact spec)*/
+/* 2. TEXT SHINE*/
 /* ============================== */
 
 .loading-shine {
@@ -87,3 +89,96 @@ body {
         background-position: 200% center;
     }
 }
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(15px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.animate-fadeIn {
+    animation: fadeIn 1.2s ease-out forwards;
+}
+
+.weather-icon {
+    filter: drop-shadow(0 0 2px rgba(0, 0, 0, 0.35));
+}
+
+.dark .weather-icon {
+    filter: drop-shadow(0 0 2px rgba(255, 255, 255, 0.35));
+}
+
+
+.fade-wrapper {
+    position: relative;
+    height: 1.4em; /* Prevent layout shift */
+    display: inline-block;
+}
+
+.fade-text {
+    opacity: 0;
+    transition: opacity 0.45s ease-in-out;
+    position: absolute;
+    top: 0;
+    left: 0;
+}
+
+.fade-text.visible {
+    opacity: 1;
+}
+
+.suggestions-box {
+    opacity: 0;
+    transform: translateY(-6px);
+    pointer-events: none;
+}
+
+/* Fade IN */
+.suggestions-box.show {
+    animation: suggestionsFadeIn 0.35s ease-out forwards;
+}
+
+/* Fade OUT */
+.suggestions-box.hide {
+    animation: suggestionsFadeOut 0.35s ease-out forwards;
+}
+
+/* Keyframes */
+@keyframes suggestionsFadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(-6px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+        pointer-events: auto;
+    }
+}
+
+@keyframes suggestionsFadeOut {
+    from {
+        opacity: 1;
+        transform: translateY(0);
+        pointer-events: auto;
+    }
+    to {
+        opacity: 0;
+        transform: translateY(-6px);
+        pointer-events: none;
+    }
+}
+
+
+
+
+
+
+
+
+

@@ -8,20 +8,24 @@
 }
 
 @media (max-width: 900px) {
-    :root { --scale: 1; }
+    :root {
+        --scale: 1;
+    }
 }
 
 /* Small phones */
 @media (max-width: 500px) {
-    :root { --scale: 0.8; }
+    :root {
+        --scale: 0.8;
+    }
 }
 
 /* Tiny screens */
 @media (max-width: 360px) {
-    :root { --scale: 0.7; }
+    :root {
+        --scale: 0.7;
+    }
 }
-
-
 
 
 body {
@@ -95,6 +99,7 @@ body {
     transition: 0.4s;
     fill: gray;
 }
+
 #input:checked + .slider .sun-moon .moon-dot {
     opacity: 1;
 }
@@ -102,6 +107,7 @@ body {
 .slider.round {
     border-radius: calc(var(--scale) * 34px);
 }
+
 .slider.round .sun-moon {
     border-radius: 50%;
 }
@@ -141,18 +147,21 @@ body {
     fill: white;
     opacity: 10%;
 }
+
 #light-ray-1 {
     left: calc(var(--scale) * -8px);
     top: calc(var(--scale) * -8px);
     width: calc(var(--scale) * 43px);
     height: calc(var(--scale) * 43px);
 }
+
 #light-ray-2 {
     left: -50%;
     top: -50%;
     width: calc(var(--scale) * 55px);
     height: calc(var(--scale) * 55px);
 }
+
 #light-ray-3 {
     left: calc(var(--scale) * -18px);
     top: calc(var(--scale) * -18px);
@@ -166,13 +175,22 @@ body {
     animation-name: cloud-move;
     animation-duration: 6s;
     animation-iteration-count: infinite;
+    opacity: 1;
+    transition: opacity 0.4s ease; /* ← smooth fade */
 }
+
 .cloud-light {
     fill: #eee;
 }
+
 .cloud-dark {
     fill: #ccc;
     animation-delay: 1s;
+}
+
+#input:checked + .slider .cloud-light,
+#input:checked + .slider .cloud-dark {
+    opacity: 0; /* ← fade clouds out in dark mode */
 }
 
 #cloud-1 {
@@ -180,26 +198,31 @@ body {
     top: calc(var(--scale) * 15px);
     width: calc(var(--scale) * 40px);
 }
+
 #cloud-2 {
     left: calc(var(--scale) * 44px);
     top: calc(var(--scale) * 10px);
     width: calc(var(--scale) * 20px);
 }
+
 #cloud-3 {
     left: calc(var(--scale) * 18px);
     top: calc(var(--scale) * 24px);
     width: calc(var(--scale) * 30px);
 }
+
 #cloud-4 {
     left: calc(var(--scale) * 36px);
     top: calc(var(--scale) * 18px);
     width: calc(var(--scale) * 40px);
 }
+
 #cloud-5 {
     left: calc(var(--scale) * 48px);
     top: calc(var(--scale) * 14px);
     width: calc(var(--scale) * 20px);
 }
+
 #cloud-6 {
     left: calc(var(--scale) * 22px);
     top: calc(var(--scale) * 26px);
@@ -247,17 +270,20 @@ body {
     left: calc(var(--scale) * 3px);
     animation-delay: 0.3s;
 }
+
 #star-2 {
     width: calc(var(--scale) * 6px);
     top: calc(var(--scale) * 16px);
     left: calc(var(--scale) * 3px);
 }
+
 #star-3 {
     width: calc(var(--scale) * 12px);
     top: calc(var(--scale) * 20px);
     left: calc(var(--scale) * 10px);
     animation-delay: 0.6s;
 }
+
 #star-4 {
     width: calc(var(--scale) * 18px);
     top: calc(var(--scale) * 0px);
@@ -279,15 +305,15 @@ body {
         transform: scale(1);
     }
 }
+
 html,
 body,
 .min-h-screen {
-    transition:
-            background-color 0.5s ease,
-            background-image 0.5s ease,
-            color 0.5s ease,
-            border-color 0.5s ease,
-            fill 0.5s ease,
-            stroke 0.5s ease,
-            background 0.5s ease;
+    transition: background-color 0.5s ease,
+    background-image 0.5s ease,
+    color 0.5s ease,
+    border-color 0.5s ease,
+    fill 0.5s ease,
+    stroke 0.5s ease,
+    background 0.5s ease;
 }
