@@ -1,6 +1,7 @@
 // src/components/CurrentWeather.jsx
-import React, { useEffect, useState } from "react";
+import React, {useEffect, useState} from "react";
 import WeatherIcon from "./WeatherIcon";
+import AnimatedValue from "./AnimatedValue";
 
 
 export default function CurrentWeather({
@@ -14,7 +15,7 @@ export default function CurrentWeather({
 
     const [lastCity, setLastCity] = useState(null);
     const [relativeUpdated, setRelativeUpdated] = useState("");
-
+    const [tempAnim, setTempAnim] = useState(false);
 
 
     const loc = weather?.location ?? {};
@@ -86,9 +87,15 @@ export default function CurrentWeather({
     }, [weather, lastCity, onUnitChange]);
 
 
+    // Trigger animation on unit change
+    useEffect(() => {
+        setTempAnim(true);
+        const t = setTimeout(() => setTempAnim(false), 450);
+        return () => clearTimeout(t);
+    }, [unit]);
+
 
     if (!weather) return null;
-
 
 
     const convertTemp = (c) =>
@@ -168,7 +175,7 @@ export default function CurrentWeather({
         const date = new Date(localTime.replace(" ", "T"));
         const abbrev = getTimezoneAbbrev(tz, localTime);
 
-        const month = date.toLocaleString("en-US", { month: "long" });
+        const month = date.toLocaleString("en-US", {month: "long"});
         const day = getOrdinalSuffix(date.getDate());
         const year = date.getFullYear();
 
@@ -187,7 +194,7 @@ export default function CurrentWeather({
             {/* Previous theme for fade */}
             <div
                 className={`absolute inset-0 ${prevTheme?.card || theme.card} transition-opacity duration-700`}
-                style={{ opacity: 0 }}
+                style={{opacity: 0}}
             />
 
             {/* Current theme */}
@@ -245,7 +252,8 @@ export default function CurrentWeather({
         z-50
       "
                                     >
-                                        WeatherAPI data refreshes every <span className='font-semibold'>30–60 minutes</span>,
+                                        WeatherAPI data refreshes every <span
+                                        className='font-semibold'>30–60 minutes</span>,
                                         depending on the area. So the timestamp may show <span className='italic'>“X
                                         minutes ago”</span> or <span className='italic'>“X hours ago”</span> instead
                                         of live data.
@@ -275,33 +283,47 @@ export default function CurrentWeather({
                 <div className="flex flex-wrap mt-6 items-start justify-between gap-12">
 
                     {/* LEFT */}
-                    <div>
-                        <h3 className={`text-3xl font-semibold ${theme.text}`}>
+                    <div className={`${theme.text}`}>
+                        <h3 className="text-3xl font-semibold">
                             {loc.name}
                         </h3>
 
-                        <p className={`text-md opacity-80 ${theme.text}`}>
+                        <p className="text-md opacity-80">
                             {loc.region && `${loc.region}, `}{loc.country}
                         </p>
 
                         {localTime && timezone && (
-                            <p className={`text-xs mt-1 opacity-75 ${theme.text}`}>
-                                Local time:{" "}
+                            <p className="text-xs mt-1 opacity-75">
+                                Local date and time:{" "}
                                 <span className="font-medium">
             {formatLocalTimeDisplay(localTime, timezone)}
         </span>
                             </p>
                         )}
 
-                        <div className="flex items-center mt-4">
-                            <WeatherIcon code={w.condition.code} isDay={w.is_day === 1} />
-                            <span className={`text-7xl font-light ml-3 leading-none ${theme.text}`}>
-                                {temp}
-                                <span className="text-4xl">{`°${unit}`}</span>
-                            </span>
+                        <div className="flex items-center mt-4 h-[100px]">
+                            {/* Fixed icon box */}
+                            <div className="w-[100px] flex justify-center items-center">
+                                <WeatherIcon code={w.condition.code} isDay={w.is_day === 1}/>
+                            </div>
+
+                            {/* Fixed-width temperature block */}
+                            <div className="ml-3 min-w-[8ch] text-left flex items-center">
+                                <AnimatedValue
+                                    unit={unit}
+                                    className="leading-none block"
+                                    value={
+                                        <span className="text-7xl font-light leading-none">
+                    {temp}
+                                            <span className="text-4xl align-top ml-1">°{unit}</span>
+                </span>
+                                    }
+                                />
+                            </div>
                         </div>
 
-                        <h4 className={`text-2xl mt-2 capitalize ${theme.text}`}>
+
+                        <h4 className="text-2xl mt-2 capitalize">
                             {w.condition.text}
                         </h4>
                     </div>
@@ -310,39 +332,58 @@ export default function CurrentWeather({
                     <div className={`grid grid-cols-[auto,1fr] gap-y-3 gap-x-6 w-full md:w-auto text-md ${theme.text}`}>
 
                         <span className="opacity-70">Feels like:</span>
-                        <span className="font-semibold text-right whitespace-nowrap">{feels}°{unit}</span>
+                        <AnimatedValue
+                            unit={unit}
+                            className="font-semibold text-right whitespace-nowrap"
+                            value={`${feels}°${unit}`}
+                        />
 
                         <span className="opacity-70">Humidity:</span>
-                        <span className="font-semibold text-right whitespace-nowrap">{w.humidity}%</span>
+                        <span className="font-semibold text-right whitespace-nowrap">
+        {w.humidity}%
+    </span>
 
                         <span className="opacity-70">Wind:</span>
-                        <span className="font-semibold text-right whitespace-nowrap">{windLabel}</span>
+                        <AnimatedValue
+                            unit={unit}
+                            className="font-semibold text-right whitespace-nowrap"
+                            value={windLabel}
+                        />
 
                         <span className="opacity-70">Visibility:</span>
-                        <span className="font-semibold text-right whitespace-nowrap">{visibility}</span>
+                        <AnimatedValue
+                            unit={unit}
+                            className="font-semibold text-right whitespace-nowrap"
+                            value={visibility}
+                        />
 
                         <span className="opacity-70">Pressure:</span>
-                        <span className="font-semibold text-right whitespace-nowrap">{pressure}</span>
+                        <span className="font-semibold text-right whitespace-nowrap">
+        {pressure}
+    </span>
 
                         <span className="opacity-70">Cloud cover:</span>
-                        <span className="font-semibold text-right whitespace-nowrap">{cloudCover}</span>
+                        <span className="font-semibold text-right whitespace-nowrap">
+        {cloudCover}
+    </span>
 
                         <span className="opacity-70">UV Index:</span>
                         <span className="font-semibold text-right whitespace-nowrap">
-                            {uv != null ? uv : "-"}
+        {uv != null ? uv : "-"}
                             {uvLabel && <span className="text-xs ml-1 opacity-80">({uvLabel})</span>}
-                        </span>
+    </span>
 
                         {aqiLabel && (
                             <>
                                 <span className="opacity-70">Air Quality:</span>
                                 <span className="font-semibold text-right whitespace-nowrap">
-                                    AQI {aqiIndex}
+                AQI {aqiIndex}
                                     <span className="text-xs ml-1 opacity-80">({aqiLabel})</span>
-                                </span>
+            </span>
                             </>
                         )}
                     </div>
+
 
                 </div>
             </div>

@@ -36,7 +36,8 @@ export default function SearchBar({
 
             {/* Suggestions dropdown */}
             {query.length >= 2 && suggestions.length > 0 && (
-                <div className="absolute z-40 mt-2 w-full bg-white dark:bg-gray-900 rounded-2xl shadow-xl overflow-hidden">
+                <div
+                    className="absolute z-40 mt-2 w-full bg-white dark:bg-gray-900 rounded-2xl shadow-xl overflow-hidden">
                     {loadingSuggestions && (
                         <div className="px-4 py-2 text-sm text-gray-500 dark:text-gray-400">
                             Searching…

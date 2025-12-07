@@ -1,18 +1,18 @@
 import React from "react";
-import { motion } from "framer-motion";
+import {motion} from "framer-motion";
 import WeatherIcon from "./WeatherIcon";
 import Forecast from "./Forecast";
 
-export default function WeatherCard({ weatherData }) {
-    const { current, location, forecast } = weatherData;
+export default function WeatherCard({weatherData}) {
+    const {current, location, forecast} = weatherData;
     const isDay = current.is_day === 1;
 
     return (
         <motion.div
             key={location.name + current.last_updated_epoch}
-            initial={{ opacity: 0, y: 30 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5, ease: "easeOut" }}
+            initial={{opacity: 0, y: 30}}
+            animate={{opacity: 1, y: 0}}
+            transition={{duration: 0.5, ease: "easeOut"}}
             className="
         w-full
         bg-white/20 dark:bg-black/25
@@ -30,7 +30,7 @@ export default function WeatherCard({ weatherData }) {
 
             {/* Icon */}
             <div className="flex justify-center my-6">
-                <WeatherIcon code={current.condition.code} isDay={isDay} />
+                <WeatherIcon code={current.condition.code} isDay={isDay}/>
             </div>
 
             {/* Temp / condition */}
@@ -64,12 +64,12 @@ export default function WeatherCard({ weatherData }) {
             </div>
 
             {/* Divider */}
-            <div className="h-px w-full bg-white/30 dark:bg-white/10 my-8" />
+            <div className="h-px w-full bg-white/30 dark:bg-white/10 my-8"/>
 
             {/* Forecast row */}
             <div className="flex gap-4 overflow-x-auto pb-2">
                 {forecast.forecastday.map((day) => (
-                    <Forecast key={day.date} day={day} />
+                    <Forecast key={day.date} day={day}/>
                 ))}
             </div>
         </motion.div>

@@ -1,6 +1,6 @@
 import React from "react";
 
-export default function Suggestion({ item, onSelect }) {
+export default function Suggestion({item, onSelect}) {
     return (
         <button
             onClick={onSelect}

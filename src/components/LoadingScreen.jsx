@@ -1,6 +1,7 @@
-import React, { useMemo } from "react";
-import { weatherSpinnerMap, defaultIcons } from "../utils/weatherSpinnerMap";
+import React, {useMemo} from "react";
+import {weatherSpinnerMap, defaultIcons} from "../utils/weatherSpinnerMap";
 import {shineColors} from "../utils/shineColors";
+
 // Import ALL Meteocon SVGs
 function importAll(r) {
     let icons = {};
@@ -14,7 +15,7 @@ const METEOCONS = importAll(
     require.context("../assets/meteocons", false, /\.svg$/)
 );
 
-export default function LoadingScreen({ weather }) {
+export default function LoadingScreen({weather}) {
     // Condition text
     const condition = weather?.current?.condition?.text?.toLowerCase() || "";
 
@@ -59,8 +60,9 @@ export default function LoadingScreen({ weather }) {
         <div className="fixed inset-0 flex flex-col items-center justify-center bg-black/60 backdrop-blur-md z-50">
 
             {/* ICON WITH SHINE */}
-            <div className="relative w-48 h-48 md:w-40 md:h-40 sm:w-32 sm:h-32 xs:w-24 xs:h-24 flex items-center justify-center">
-                <img src={iconSrc} alt="loading" className="w-full h-full icon-glow-shine" />
+            <div
+                className="relative w-48 h-48 md:w-40 md:h-40 sm:w-32 sm:h-32 xs:w-24 xs:h-24 flex items-center justify-center">
+                <img src={iconSrc} alt="loading" className="w-full h-full icon-glow-shine"/>
             </div>
 
             {/* SHINY LOADING TEXT */}
