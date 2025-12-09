@@ -1,135 +1,311 @@
+// src/components/Search.jsx
 import React, {useState, useEffect, useRef} from "react";
 import {searchCities} from "../utils/weatherAPI";
 import {useClickOutside} from "../hooks/clickOutside";
 import Suggestion from "./Suggestions";
 import searchGlass from "../assets/searchGlass.svg";
 import location_Globe from "../assets/locationGlobe.svg";
+import { toast } from "react-toastify";
 
-export default function Search({onSelectCity}) {
+export default function Search({
+                                   onSelectCity,
+                                   recentSearches = [],
+                                   onClearRecentSearches = () => {},
+                               }) {
     const [term, setTerm] = useState("");
     const [results, setResults] = useState([]);
-    const [show, setShow] = useState(false);
+
+    const [showBox, setShowBox] = useState(false);
     const [isClosing, setIsClosing] = useState(false);
 
+    const [isFocused, setIsFocused] = useState(false);
+    const [mode, setMode] = useState("recents"); // "recents" | "suggestions"
 
-    const containerRef = useRef();
-    useClickOutside(containerRef, () => {
-        if (show) {
-            setIsClosing(true);
-            setTimeout(() => {
-                setShow(false);
-                setIsClosing(false);
-            }, 350);
+    const containerRef = useRef(null);
+    const inputRef = useRef(null);
+
+    // Track most recent fetch to avoid stale results
+    const fetchIdRef = useRef(0);
+    const debounceRef = useRef(null);
+
+    const openBox = () => {
+        setIsClosing(false);
+        setShowBox(true);
+    };
+
+    const fadeOutAndCloseBox = () => {
+        if (!showBox) return;
+        setIsClosing(true);
+        setTimeout(() => {
+            setShowBox(false);
+            setIsClosing(false);
+        }, 350);
+    };
+
+    const fadeSwapMode = (nextMode, nextResults = null) => {
+        if (!showBox) {
+            if (nextResults) setResults(nextResults);
+            setMode(nextMode);
+            openBox();
+            return;
         }
+
+        setIsClosing(true);
+        setTimeout(() => {
+            if (nextResults) setResults(nextResults);
+            setMode(nextMode);
+            setIsClosing(false);
+            setShowBox(true);
+        }, 350);
+    };
+
+    // click outside closes everything
+    useClickOutside(containerRef, () => {
+        fadeOutAndCloseBox();
+        setIsFocused(false);
     });
 
-
-    // handle input
+    // =========================================================
+    // 1) Handle typing with DEBOUNCE + CANCEL stale fetch
+    // =========================================================
     useEffect(() => {
-        if (!term) return;
+        if (debounceRef.current) {
+            clearTimeout(debounceRef.current);
+        }
 
-        const fetch = async () => {
-            const cities = await searchCities(term);
-            setResults(cities.slice(0, 6));
-            setShow(true);
-        };
+        // ---------- CASE: term length < 2 ----------
+        if (term.length < 2) {
+            // length === 1 → fade out suggestions smoothly
+            if (term.length === 1) {
+                if (mode === "suggestions" && showBox) {
+                    fadeOutAndCloseBox();
+                }
+                return; // no recents at 1 char
+            }
 
-        const timeout = setTimeout(fetch, 300);
-        return () => clearTimeout(timeout);
-    }, [term]);
+            // length === 0
+            setResults([]);
+
+            if (term === "" && isFocused) {
+                if (!showBox) {
+                    setMode("recents");
+                    openBox();
+                    return;
+                }
+
+                if (mode === "suggestions") {
+                    fadeSwapMode("recents");
+                    return;
+                }
+
+                return;
+            }
+
+            fadeOutAndCloseBox();
+            return;
+        }
+
+        // ---------- CASE: term length >= 2 ----------
+        // ---------- CASE: term length >= 2 ----------
+        if (term.length >= 2) {
+
+            // If not focused → never open suggestions
+            if (!isFocused) {
+                fadeOutAndCloseBox();
+                return;
+            }
+
+            debounceRef.current = setTimeout(async () => {
+                const currentFetchId = ++fetchIdRef.current;
+
+                try {
+                    const cities = await searchCities(term);
+
+                    if (currentFetchId !== fetchIdRef.current) return;
+
+                    if (!cities || cities.length === 0) {
+                        setResults([]);
+                        fadeOutAndCloseBox();
+                        return;
+                    }
+
+                    const newResults = cities.slice(0, 6);
+                    fadeSwapMode("suggestions", newResults);
+                } catch {
+                    if (currentFetchId !== fetchIdRef.current) return;
+                    setResults([]);
+                    fadeOutAndCloseBox();
+                }
+            }, 300);
+
+            return;
+        }
 
 
+        return () => clearTimeout(debounceRef.current);
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [term, isFocused]);
 
+    // =========================================================
+    // 2) Geo
+    // =========================================================
     const handleGeo = () => {
         if (!navigator.geolocation) return alert("Geolocation not supported.");
 
         navigator.geolocation.getCurrentPosition((pos) => {
             const q = `${pos.coords.latitude},${pos.coords.longitude}`;
             onSelectCity(q);
+            fadeOutAndCloseBox();
         });
     };
 
+    // =========================================================
+    // 3) Search icon click
+    // =========================================================
+    const handleSearchClick = () => {
+
+        onSelectCity(term);
+    };
+
+    // =========================================================
+    // 4) Focus & blur
+    // =========================================================
+    const handleFocus = () => {
+        setIsFocused(true);
+        if (!term) {
+            setMode("recents");
+            openBox();
+        }
+    };
+
+    const handleBlur = () => {
+        setIsFocused(false);
+    };
+
+    // =========================================================
+    // 5) Select from suggestions or recents
+    // =========================================================
+    const handleSelectCoordinates = (city) => {
+        onSelectCity(`${city.lat},${city.lon}`);
+        fadeOutAndCloseBox();
+    };
+
     return (
-        <div className="
-    relative
-    bg-white/90 dark:bg-slate-800/60
-    dark:border dark:border-white/10
-    shadow-lg
-    rounded-full
-    h-14 flex items-center px-4 mb-8
-">
+        <div
+            ref={containerRef}
+            className="
+                relative
+                bg-white/90 dark:bg-slate-800/60
+                dark:border dark:border-white/10
+                shadow-lg
+                rounded-full
+                h-14 flex items-center px-4 mb-8
+            "
+        >
             <button
-                onClick={() => onSelectCity(term)}
+                onClick={handleSearchClick}
                 className="flex items-center justify-center"
             >
                 <img
                     src={searchGlass}
                     alt="Search"
-                    className="w-7 h-7 object-contain
-            opacity-70 dark:opacity-90
-            dark:invert dark:brightness-200"
+                    className="w-7 h-7 object-contain opacity-70 dark:opacity-90 dark:invert dark:brightness-200"
                 />
             </button>
 
-
             <input
+                ref={inputRef}
                 type="text"
                 className="flex-1 bg-transparent border-none focus:outline-none ml-3 text-lg text-slate-800 dark:text-slate-200 placeholder-slate-700 dark:placeholder-slate-200"
                 placeholder="Search for a location"
                 value={term}
                 onChange={(e) => setTerm(e.target.value)}
+                onFocus={handleFocus}
+                onBlur={handleBlur}
             />
 
             <button
                 onClick={handleGeo}
                 className="ml-3 flex items-center justify-center
-               w-8 h-8 rounded-full
-               opacity-100 hover:opacity-100
-               transition duration-200"
-
+                    w-8 h-8 rounded-full opacity-100 hover:opacity-100 transition duration-200"
             >
                 <img
                     src={location_Globe}
                     alt="Use my location"
                     title="Click here to find the current weather and 3 day forcast in your location."
-                    className="w-7 h-7 object-contain dark:invert dark:brightness-200
-    "
+                    className="w-7 h-7 object-contain dark:invert dark:brightness-200"
                 />
             </button>
 
-
-            {show && results.length > 0 && (
+            {showBox && (
                 <div
-                    ref={containerRef}
                     className={`
-    absolute left-0 top-16 w-full bg-white dark:bg-slate-900
-    rounded-lg shadow-lg overflow-hidden z-20
-    suggestions-box
-    ${show ? (isClosing ? "hide" : "show") : ""}
-`}
+                        absolute left-0 top-16 w-full bg-white dark:bg-slate-900
+                        rounded-lg shadow-lg overflow-hidden z-20
+                        suggestions-box
+                        ${isClosing ? "hide" : "show"}
+                    `}
                 >
-                    {results.map((city, i) => (
-                        <Suggestion
-                            key={i}
-                            item={city}
-                            onSelect={() => {
-                                onSelectCity(`${city.lat},${city.lon}`);
+                    {mode === "recents" && (
+                        <>
+                            <div className="flex items-center justify-between px-4 py-2 border-b border-slate-200 dark:border-slate-700">
+                                <span className="text-xs font-semibold uppercase tracking-wide text-slate-500 dark:text-slate-400">
+                                    Recent searches
+                                </span>
+                                <button
+                                    type="button"
+                                    onPointerDown={(e) => {
+                                        e.stopPropagation();
+                                        if (recentSearches.length === 0) return; // Safety
+                                        onClearRecentSearches();
+                                        toast.info("Recent searches cleared!", {
+                                            autoClose: 5000 // 3 seconds
+                                        });
+                                    }}
+                                    className="px-3 py-1 rounded-full text-sm font-semibold
+        bg-slate-300 dark:bg-slate-700
+        text-slate-800 dark:text-slate-200
+        hover:bg-slate-400 dark:hover:bg-slate-600
+        transition
+        disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:bg-slate-300 dark:disabled:hover:bg-slate-700"
+                                    disabled={recentSearches.length === 0}
+                                >
+                                    Clear recent
+                                </button>
 
-                                // start fade-out animation
-                                setIsClosing(true);
 
-                                // wait for animation to finish
-                                setTimeout(() => {
-                                    setShow(false);
-                                    setIsClosing(false);
-                                }, 350); // match CSS timing
-                            }}
 
-                        />
-                    ))}
+                            </div>
+
+                            {recentSearches.length === 0 ? (
+                                <div className="px-4 py-3 text-sm text-slate-500 dark:text-slate-400">
+                                    No recent searches yet.
+                                </div>
+                            ) : (
+                                recentSearches.map((city, i) => (
+                                    <Suggestion
+                                        key={`${city.lat}-${city.lon}-${i}`}
+                                        item={city}
+                                        onSelect={() => handleSelectCoordinates(city)}
+                                    />
+                                ))
+                            )}
+                        </>
+                    )}
+
+                    {mode === "suggestions" && results.length > 0 && (
+                        <>
+                            {results.map((city, i) => (
+                                <Suggestion
+                                    key={`${city.lat}-${city.lon}-${i}`}
+                                    item={city}
+                                    onSelect={() => handleSelectCoordinates(city)}
+                                />
+                            ))}
+                        </>
+                    )}
                 </div>
             )}
-
         </div>
     );
 }
