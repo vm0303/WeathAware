@@ -140,12 +140,12 @@ body {
 
 /* Fade IN */
 .suggestions-box.show {
-    animation: suggestionsFadeIn 0.35s ease-out forwards;
+    animation: suggestionsFadeIn 0.27s ease-out forwards;
 }
 
 /* Fade OUT */
 .suggestions-box.hide {
-    animation: suggestionsFadeOut 0.35s ease-out forwards;
+    animation: suggestionsFadeOut 0.27s ease-out forwards;
 }
 
 /* Keyframes */

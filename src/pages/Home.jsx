@@ -58,7 +58,8 @@ export default function Home() {
 
             setWeather(quickCheck);
             toast.success(`Weather successfully loaded for ${quickCheck.location.name}, ${quickCheck.location.region}!`);
-
+            //Only add to recents on successful fetch
+            addRecentSearch(quickCheck.location);
             // ⭐ AUTO THEME BASED ON LOCAL TIME, SUNRISE, SUNSET
             try {
                 const localTimeStr = quickCheck.location.localtime;
@@ -117,11 +118,15 @@ export default function Home() {
             const msg = err.message || "";
 
             if (msg.includes("No matching location found")) {
-                toast.error("Invalid city name. Please try again.");
+                toast.error("Invalid city name. Please try again.", {
+                    autoClose: 5000 // 3 seconds
+                });
             } else {
                 toast.error(
                     "Something went wrong while fetching the data. Please try again later."
-                );
+                    , {
+                        autoClose: 5000 // 3 seconds
+                    });
             }
         } finally {
             setLoading(false);
@@ -162,6 +167,53 @@ export default function Home() {
         return () => clearTimeout(t);
     }, [weather]);
 
+    const [recentSearches, setRecentSearches] = useState(() => {
+        try {
+            const saved = localStorage.getItem("recentSearches");
+            return saved ? JSON.parse(saved) : [];
+        } catch {
+            return [];
+        }
+    });
+
+    const addRecentSearch = (location) => {
+        if (!location) return;
+
+        const entry = {
+            name: location.name,
+            region: location.region,
+            country: location.country,
+            lat: location.lat,
+            lon: location.lon,
+        };
+
+        setRecentSearches((prev) => {
+            // de-dupe using lat+lon
+            const filtered = prev.filter(
+                (r) => !(r.lat === entry.lat && r.lon === entry.lon)
+            );
+            const updated = [entry, ...filtered].slice(0, 5); // keep last 5
+
+            try {
+                localStorage.setItem("recentSearches", JSON.stringify(updated));
+            } catch {
+                // ignore storage errors
+            }
+
+            return updated;
+        });
+    };
+
+    const clearRecentSearches = () => {
+        setRecentSearches([]);
+        try {
+            localStorage.removeItem("recentSearches");
+        } catch {
+            // ignore
+        }
+    };
+
+
 
     return (
         <motion.div className="relative min-h-screen transition-none">
@@ -201,7 +253,11 @@ export default function Home() {
                             ${!weather ? "pt-[30vh] animate-fadeIn" : "pt-6"}
                         `}
                     >
-                        <Search onSelectCity={handleSelectCity}/>
+                        <Search
+                            onSelectCity={handleSelectCity}
+                            recentSearches={recentSearches}
+                            onClearRecentSearches={clearRecentSearches}
+                        />
                     </div>
 
 
