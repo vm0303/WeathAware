@@ -1,7 +1,7 @@
 // src/components/CurrentWeather.jsx
 import React, {useEffect, useState} from "react";
 import WeatherIcon from "./WeatherIcon";
-import AnimatedValue from "./AnimatedValue";
+
 
 
 export default function CurrentWeather({
@@ -308,18 +308,26 @@ export default function CurrentWeather({
                             </div>
 
                             {/* Fixed-width temperature block */}
-                            <div className="ml-3 min-w-[8ch] text-left flex items-center">
-                                <AnimatedValue
-                                    unit={unit}
-                                    className="leading-none block"
-                                    value={
-                                        <span className="text-7xl font-light leading-none">
-                    {temp}
-                                            <span className="text-4xl align-top ml-1">°{unit}</span>
-                </span>
-                                    }
-                                />
+                            <div className="text-container leading-none block">
+  <span
+      className={`text ${unit === "F" ? "visible" : ""}`}
+  >
+    <span className="text-7xl font-light leading-none">
+      {Math.round(w.temp_f)}
+        <span className="text-4xl align-top ml-1">°F</span>
+    </span>
+  </span>
+
+                                <span
+                                    className={`text ${unit === "C" ? "visible" : ""}`}
+                                >
+    <span className="text-7xl font-light leading-none">
+      {Math.round(w.temp_c)}
+        <span className="text-4xl align-top ml-1">°C</span>
+    </span>
+  </span>
                             </div>
+
                         </div>
 
 
@@ -332,11 +340,15 @@ export default function CurrentWeather({
                     <div className={`grid grid-cols-[auto,1fr] gap-y-3 gap-x-6 w-full md:w-auto text-md ${theme.text}`}>
 
                         <span className="opacity-70">Feels like:</span>
-                        <AnimatedValue
-                            unit={unit}
-                            className="font-semibold text-right whitespace-nowrap"
-                            value={`${feels}°${unit}`}
-                        />
+                        <div className="text-container font-semibold text-right whitespace-nowrap">
+  <span className={`text ${unit === "F" ? "visible" : ""}`}>
+    {Math.round(w.feelslike_f)}°F
+  </span>
+
+                            <span className={`text ${unit === "C" ? "visible" : ""}`}>
+    {Math.round(w.feelslike_c)}°C
+  </span>
+                        </div>
 
                         <span className="opacity-70">Humidity:</span>
                         <span className="font-semibold text-right whitespace-nowrap">
@@ -344,18 +356,29 @@ export default function CurrentWeather({
     </span>
 
                         <span className="opacity-70">Wind:</span>
-                        <AnimatedValue
-                            unit={unit}
-                            className="font-semibold text-right whitespace-nowrap"
-                            value={windLabel}
-                        />
+                        <div className="text-container font-semibold text-right whitespace-nowrap">
+  <span className={`text ${unit === "F" ? "visible" : ""}`}>
+    {`${Math.round(w.wind_mph )} mph • ${w.wind_degree}° ${w.wind_dir || ""}`}
+  </span>
+
+                            <span className={`text ${unit === "C" ? "visible" : ""}`}>
+    {`${Math.round(w.wind_kph)} kph • ${w.wind_degree}° ${w.wind_dir || ""}`}
+  </span>
+                        </div>
+
 
                         <span className="opacity-70">Visibility:</span>
-                        <AnimatedValue
-                            unit={unit}
-                            className="font-semibold text-right whitespace-nowrap"
-                            value={visibility}
-                        />
+                        <div className="text-container font-semibold text-right whitespace-nowrap">
+  <span className={`text ${unit === "F" ? "visible" : ""}`}>
+    {`${w.vis_miles ?? "-"} miles`}
+  </span>
+
+                            <span className={`text ${unit === "C" ? "visible" : ""}`}>
+    {`${w.vis_km ?? "-"} km`}
+  </span>
+                        </div>
+
+
 
                         <span className="opacity-70">Pressure:</span>
                         <span className="font-semibold text-right whitespace-nowrap">

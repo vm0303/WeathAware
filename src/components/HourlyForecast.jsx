@@ -1,7 +1,7 @@
 // src/components/HourlyForecast.jsx
 import React, {useMemo, useEffect, useState} from "react";
 import WeatherIcon from "./WeatherIcon";
-import AnimatedValue from "./AnimatedValue";
+
 
 export default function HourlyForecast({hours, unit, theme, localTime}) {
     const safeHours = Array.isArray(hours) ? hours : [];
@@ -77,11 +77,17 @@ export default function HourlyForecast({hours, unit, theme, localTime}) {
                                 />
 
                                 {/* Temp */}
-                                <AnimatedValue
-                                    unit={unit}
-                                    className={`font-semibold mt-1 ${theme.text}`}
-                                    value={`${convertTemp(h.temp_c)}°${unit}`}
-                                />
+                                <div className={`text-container font-semibold mt-1 ${theme.text}`}>
+                                    {/* Fahrenheit */}
+                                    <span className={`text ${unit === "F" ? "visible" : ""}`}>
+    {Math.round(h.temp_f)}°F
+  </span>
+
+                                    {/* Celsius */}
+                                    <span className={`text ${unit === "C" ? "visible" : ""}`}>
+    {Math.round(h.temp_c)}°C
+  </span>
+                                </div>
 
 
                                 {/* Condition */}
