@@ -1,7 +1,7 @@
 // src/components/ForecastItem.jsx
 import React, { useRef, useState, useEffect } from "react";
 import WeatherIcon from "./WeatherIcon";
-import AnimatedValue from "./AnimatedValue";
+
 
 export default function ForecastItem({ day, unit, theme, label }) {
     const convertTemp = c =>
@@ -57,17 +57,23 @@ export default function ForecastItem({ day, unit, theme, label }) {
             </div>
 
             {/* Temps */}
-            <AnimatedValue
-                unit={unit}
-                className={`text-lg font-semibold mt-3 ${theme.text}`}
-                value={
-                    <>
-                        {convertTemp(day.day.maxtemp_c)}°{unit}
-                        <span className="opacity-70"> / </span>
-                        {convertTemp(day.day.mintemp_c)}°{unit}
-                    </>
-                }
-            />
+
+            <div className={`text-container text-lg font-semibold mt-3 ${theme.text}`}>
+                {/* Fahrenheit */}
+                <span className={`text ${unit === "F" ? "visible" : ""}`}>
+    {Math.round(day.day.maxtemp_f)}°F
+    <span className="opacity-70"> / </span>
+                    {Math.round(day.day.mintemp_f)}°F
+  </span>
+
+                {/* Celsius */}
+                <span className={`text ${unit === "C" ? "visible" : ""}`}>
+    {Math.round(day.day.maxtemp_c)}°C
+    <span className="opacity-70"> / </span>
+                    {Math.round(day.day.mintemp_c)}°C
+  </span>
+            </div>
+
         </div>
     );
 }
