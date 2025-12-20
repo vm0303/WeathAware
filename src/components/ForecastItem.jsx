@@ -4,8 +4,7 @@ import WeatherIcon from "./WeatherIcon";
 
 
 export default function ForecastItem({ day, unit, theme, label }) {
-    const convertTemp = c =>
-        unit === "C" ? Math.round(c) : Math.round((c * 9) / 5 + 32);
+
 
     // FIX: Parse as local calendar date
     const [y, m, d] = day.date.split("-");
