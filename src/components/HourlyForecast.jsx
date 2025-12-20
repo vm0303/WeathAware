@@ -20,20 +20,10 @@ export default function HourlyForecast({hours, unit, theme, localTime}) {
         return [...before, ...after];
     }, [safeHours, safeLocalTime]);
 
-    const [anim, setAnim] = useState(false);
-
-    useEffect(() => {
-        setAnim(true);
-        const t = setTimeout(() => setAnim(false), 450);
-        return () => clearTimeout(t);
-    }, [unit]);
-
-
     if (sortedHours.length === 0) return null;
 
     // ---------- Helpers ----------
-    const convertTemp = (c) =>
-        unit === "C" ? Math.round(c) : Math.round((c * 9) / 5 + 32);
+
 
     const format12Hour = (timeStr) => {
         const date = new Date(timeStr.replace(" ", "T"));
