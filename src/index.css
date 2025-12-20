@@ -113,25 +113,6 @@ body {
     filter: drop-shadow(0 0 2px rgba(255, 255, 255, 0.35));
 }
 
-
-.fade-wrapper {
-    position: relative;
-    height: 1.4em; /* Prevent layout shift */
-    display: inline-block;
-}
-
-.fade-text {
-    opacity: 0;
-    transition: opacity 0.45s ease-in-out;
-    position: absolute;
-    top: 0;
-    left: 0;
-}
-
-.fade-text.visible {
-    opacity: 1;
-}
-
 .suggestions-box {
     opacity: 0;
     transform: translateY(-6px);
@@ -173,22 +154,78 @@ body {
         pointer-events: none;
     }
 }
-.text-container {
-    position: relative;
-    height: 1.5em;
+
+/* Base */
+.fade-stack {
+    display: inline-grid;
+    line-height: 1;
+    vertical-align: middle;
 }
 
-.text {
+.fade-stack > .fade-text {
+    grid-area: 1 / 1;
     opacity: 0;
     transition: opacity 0.5s ease-in-out;
-    position: absolute;
-    top: 0;
-    left: 0;
+    pointer-events: none;
+    will-change: opacity;
 }
 
-.text.visible {
+.fade-stack > .fade-text.visible {
     opacity: 1;
+    pointer-events: auto;
 }
+
+/* RIGHT: lock width to the widest layer, but align content to the right */
+.fade-stack.right {
+    display: grid;          /* important */
+    justify-items: stretch; /* both layers fill the same width */
+}
+
+.fade-stack.right > .fade-text {
+    width: 100%;
+    text-align: right;
+}
+
+.fade-stack.stats {
+    line-height: 1;              /* match leading-none */
+    align-items: center;         /* keeps grid cell centered */
+}
+
+
+
+
+/* keeps digits from shifting width (optional but recommended) */
+.tabular-nums {
+    font-variant-numeric: tabular-nums;
+}
+/* visual centering tweak for big temperature next to icon */
+.temp-align {
+    display: inline-flex;
+    align-items: center;
+
+}
+
+/* make the degree/unit sit nicer relative to big number */
+.temp-unit {
+    line-height: 1;
+}
+
+/* Align right-column fading values nicely inside the grid row */
+.stat-align {
+    display: inline-flex;
+    justify-content: flex-end;
+    align-items: center;
+    transform: translateY(0px); /* subtle nudge; try 0–2px */
+}
+
+/* Slight lift for °C/°F in the right column */
+.stat-unit {
+    font-size: 0.95em;
+    margin-left: 0.05em;
+    position: static; /* remove top shift */
+}
+
+
 
 
 

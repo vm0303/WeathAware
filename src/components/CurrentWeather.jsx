@@ -15,7 +15,6 @@ export default function CurrentWeather({
 
     const [lastCity, setLastCity] = useState(null);
     const [relativeUpdated, setRelativeUpdated] = useState("");
-    const [tempAnim, setTempAnim] = useState(false);
 
 
     const loc = weather?.location ?? {};
@@ -85,14 +84,6 @@ export default function CurrentWeather({
 
         // DO NOT auto-switch after this point
     }, [weather, lastCity, onUnitChange]);
-
-
-    // Trigger animation on unit change
-    useEffect(() => {
-        setTempAnim(true);
-        const t = setTimeout(() => setTempAnim(false), 450);
-        return () => clearTimeout(t);
-    }, [unit]);
 
 
     if (!weather) return null;
@@ -308,28 +299,26 @@ export default function CurrentWeather({
                             </div>
 
                             {/* Fixed-width temperature block */}
-                            <div className="text-container leading-none block">
-  <span
-      className={`text ${unit === "F" ? "visible" : ""}`}
-  >
-    <span className="text-7xl font-light leading-none">
-      {Math.round(w.temp_f)}
-        <span className="text-4xl align-top ml-1">°F</span>
+                            <div className="ml-3 temp-align min-w-[9ch]">
+                                <div className="fade-stack tabular-nums">
+    <span className={`fade-text ${unit === "F" ? "visible" : ""}`}>
+      <span className="text-7xl font-light leading-none inline-flex items-baseline">
+        {Math.round(w.temp_f)}
+          <span className="text-4xl ml-1 temp-unit">°F</span>
+      </span>
     </span>
-  </span>
 
-                                <span
-                                    className={`text ${unit === "C" ? "visible" : ""}`}
-                                >
-    <span className="text-7xl font-light leading-none">
-      {Math.round(w.temp_c)}
-        <span className="text-4xl align-top ml-1">°C</span>
+                                    <span className={`fade-text ${unit === "C" ? "visible" : ""}`}>
+      <span className="text-7xl font-light leading-none inline-flex items-baseline">
+        {Math.round(w.temp_c)}
+          <span className="text-4xl ml-1 temp-unit">°C</span>
+      </span>
     </span>
-  </span>
+                                </div>
                             </div>
 
-                        </div>
 
+                        </div>
 
                         <h4 className="text-2xl mt-2 capitalize">
                             {w.condition.text}
@@ -337,61 +326,67 @@ export default function CurrentWeather({
                     </div>
 
                     {/* RIGHT */}
-                    <div className={`grid grid-cols-[auto,1fr] gap-y-3 gap-x-6 w-full md:w-auto text-md ${theme.text}`}>
+                    <div className={`grid items-center leading-4 grid-cols-[auto,minmax(160px,1fr)] sm:grid-cols-[auto,minmax(220px,1fr)] gap-y-5 gap-x-6 w-full md:w-auto text-md ${theme.text}`}>
 
-                        <span className="opacity-70">Feels like:</span>
-                        <div className="text-container font-semibold text-right whitespace-nowrap">
-  <span className={`text ${unit === "F" ? "visible" : ""}`}>
-    {Math.round(w.feelslike_f)}°F
+
+                    <span className="opacity-70">Feels like:</span>
+                        <div className="fade-stack stats right tabular-nums font-semibold text-right whitespace-nowrap justify-self-end">
+  <span className={`fade-text ${unit === "F" ? "visible" : ""}`}>
+    {Math.round(w.feelslike_f)}
+      <span className="stat-unit">°F</span>
   </span>
 
-                            <span className={`text ${unit === "C" ? "visible" : ""}`}>
-    {Math.round(w.feelslike_c)}°C
+                            <span className={`fade-text ${unit === "C" ? "visible" : ""}`}>
+    {Math.round(w.feelslike_c)}
+                                <span className="stat-unit">°C</span>
   </span>
                         </div>
 
                         <span className="opacity-70">Humidity:</span>
-                        <span className="font-semibold text-right whitespace-nowrap">
+                        <span className="font-semibold whitespace-nowrap justify-self-end text-right">
         {w.humidity}%
     </span>
 
                         <span className="opacity-70">Wind:</span>
-                        <div className="text-container font-semibold text-right whitespace-nowrap">
-  <span className={`text ${unit === "F" ? "visible" : ""}`}>
-    {`${Math.round(w.wind_mph )} mph • ${w.wind_degree}° ${w.wind_dir || ""}`}
+
+                        <div className="fade-stack stats right tabular-nums font-semibold text-right justify-self-end whitespace-nowrap ">
+  <span className={`fade-text ${unit === "F" ? "visible" : ""}`}>
+    {`${Math.round(w.wind_mph)} mph • ${w.wind_degree}° ${w.wind_dir || ""}`}
   </span>
 
-                            <span className={`text ${unit === "C" ? "visible" : ""}`}>
+                            <span className={`fade-text ${unit === "C" ? "visible" : ""}`}>
     {`${Math.round(w.wind_kph)} kph • ${w.wind_degree}° ${w.wind_dir || ""}`}
   </span>
                         </div>
 
 
+
+
                         <span className="opacity-70">Visibility:</span>
-                        <div className="text-container font-semibold text-right whitespace-nowrap">
-  <span className={`text ${unit === "F" ? "visible" : ""}`}>
+                        <div className="fade-stack stats right tabular-nums font-semibold text-right justify-self-end whitespace-nowrap">
+  <span className={`fade-text ${unit === "F" ? "visible" : ""}`}>
     {`${w.vis_miles ?? "-"} miles`}
   </span>
 
-                            <span className={`text ${unit === "C" ? "visible" : ""}`}>
+                            <span className={`fade-text ${unit === "C" ? "visible" : ""}`}>
     {`${w.vis_km ?? "-"} km`}
   </span>
                         </div>
 
 
-
                         <span className="opacity-70">Pressure:</span>
-                        <span className="font-semibold text-right whitespace-nowrap">
-        {pressure}
+                        <span className="font-semibold whitespace-nowrap justify-self-end text-right">
+                        {pressure}
     </span>
 
                         <span className="opacity-70">Cloud cover:</span>
-                        <span className="font-semibold text-right whitespace-nowrap">
+                        <span className="font-semibold whitespace-nowrap justify-self-end text-right">
         {cloudCover}
     </span>
 
                         <span className="opacity-70">UV Index:</span>
-                        <span className="font-semibold text-right whitespace-nowrap">
+                        <span className="font-semibold whitespace-nowrap justify-self-end text-right">
+
         {uv != null ? uv : "-"}
                             {uvLabel && <span className="text-xs ml-1 opacity-80">({uvLabel})</span>}
     </span>
@@ -399,7 +394,7 @@ export default function CurrentWeather({
                         {aqiLabel && (
                             <>
                                 <span className="opacity-70">Air Quality:</span>
-                                <span className="font-semibold text-right whitespace-nowrap">
+                                <span className="font-semibold whitespace-nowrap justify-self-end text-right">
                 AQI {aqiIndex}
                                     <span className="text-xs ml-1 opacity-80">({aqiLabel})</span>
             </span>
