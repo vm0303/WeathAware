@@ -225,6 +225,18 @@ body {
     position: static; /* remove top shift */
 }
 
+/* CENTER: make both layers fill the same width, and center text */
+.fade-stack.center {
+    display: grid;           /* not inline-grid */
+    justify-items: stretch;  /* both layers fill width */
+}
+
+.fade-stack.center > .fade-text {
+    width: 100%;
+    text-align: center;
+}
+
+
 
 
 
