@@ -89,21 +89,6 @@ export default function CurrentWeather({
     if (!weather) return null;
 
 
-    const convertTemp = (c) =>
-        unit === "C" ? Math.round(c) : Math.round((c * 9) / 5 + 32);
-
-    const temp = convertTemp(w.temp_c);
-    const feels = convertTemp(w.feelslike_c);
-
-    const windSpeed = unit === "C"
-        ? `${Math.round(w.wind_kph)} kph`
-        : `${Math.round(w.wind_kph / 1.609)} mph`;
-
-    const windLabel = `${windSpeed} • ${w.wind_degree}° ${w.wind_dir || ""}`.trim();
-
-    const visibility = unit === "C"
-        ? `${w.vis_km ?? "-"} km`
-        : `${w.vis_miles ?? "-"} miles`;
 
     const pressure = `${w.pressure_mb} hPa / ${w.pressure_in} inHg`;
     const cloudCover = `${w.cloud}%`;
@@ -206,10 +191,20 @@ export default function CurrentWeather({
   </span>
 
                                 {/* Tooltip wrapper */}
-                                <div className="relative inline-block group">
-
+                                {/* Tooltip wrapper */}
+                                <div className="relative inline-flex items-center group">
                                     {/* Icon */}
-                                    <button className={`${theme.text} cursor-pointer`}>
+                                    <button
+                                        type="button"
+                                        className="
+      w-6 h-6 inline-flex items-center justify-center
+      rounded-full
+      opacity-80 group-hover:opacity-100
+      focus:outline-none focus:ring-2 focus:ring-white/30
+      transition
+    "
+                                        aria-label="About update frequency"
+                                    >
                                         <svg
                                             xmlns="http://www.w3.org/2000/svg"
                                             width="17"
@@ -220,36 +215,44 @@ export default function CurrentWeather({
                                             strokeWidth="2"
                                             strokeLinecap="round"
                                             strokeLinejoin="round"
-                                            className="opacity-80 group-hover:opacity-100 transition"
+                                            className="block"
                                         >
-                                            <circle cx="12" cy="12" r="10"/>
-                                            <line x1="12" y1="8" x2="12" y2="12"/>
-                                            <line x1="12" y1="16" x2="12.01" y2="16"/>
+                                            <circle cx="12" cy="12" r="10" />
+                                            <line x1="12" y1="8" x2="12" y2="12" />
+                                            <line x1="12" y1="16" x2="12.01" y2="16" />
                                         </svg>
                                     </button>
 
                                     {/* Tooltip */}
                                     <div
                                         className="
-        absolute right-full left-1/2 -translate-x-1/2 mt-2
-        w-74 sm:w-72
-        bg-black text-white
-        text-[11px] sm:text-xs leading-snug
-        px-3 py-2 rounded-lg shadow-lg
-        whitespace-normal
-        opacity-0 group-hover:opacity-100
-        pointer-events-none
-        transition-opacity duration-500 ease-out
-        z-50
-      "
+      absolute top-full left-1/2 -translate-x-1/2 mt-2
+      w-[280px] sm:w-[320px]
+      bg-black text-white
+      text-[11px] sm:text-xs leading-snug
+      px-3 py-2 rounded-lg shadow-lg
+      whitespace-normal
+      opacity-0 group-hover:opacity-100 group-focus-within:opacity-100
+      pointer-events-none
+      transition-opacity duration-300 ease-out
+      z-50
+    "
                                     >
-                                        WeatherAPI data refreshes every <span
-                                        className='font-semibold'>30–60 minutes</span>,
-                                        depending on the area. So the timestamp may show <span className='italic'>“X
-                                        minutes ago”</span> or <span className='italic'>“X hours ago”</span> instead
-                                        of live data.
+                                        {/* arrow */}
+                                        <div
+                                            className="
+        absolute left-1/2 -top-1.5 -translate-x-1/2
+        w-3 h-3 rotate-45 bg-black
+      "
+                                        />
+
+                                        WeatherAPI data refreshes every <span className="font-semibold">30–60 minutes</span>,
+                                        depending on the area. So the timestamp may show{" "}
+                                        <span className="italic">“X minutes ago”</span> or{" "}
+                                        <span className="italic">“X hours ago”</span> instead of live data.
                                     </div>
                                 </div>
+
                             </div>
 
                         )}
