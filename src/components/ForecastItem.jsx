@@ -33,8 +33,8 @@ export default function ForecastItem({ day, unit, theme, label }) {
             <WeatherIcon code={day.day.condition.code} isDay={true} />
 
             {/* Condition text */}
-            <div className="relative mt-2 h-12 flex items-center justify-center text-center max-w-[120px]">
-                <p
+            <div className="relative mt-2 h-[70px] flex items-center justify-center text-center max-w-[165px]">
+            <p
                     ref={textRef}
                     onClick={() => setShowFull(!showFull)}
                     className={`
@@ -57,21 +57,35 @@ export default function ForecastItem({ day, unit, theme, label }) {
 
             {/* Temps */}
 
-            <div className={`text-container text-lg font-semibold mt-3 ${theme.text}`}>
-                {/* Fahrenheit */}
-                <span className={`text ${unit === "F" ? "visible" : ""}`}>
-    {Math.round(day.day.maxtemp_f)}°F
-    <span className="opacity-70"> / </span>
-                    {Math.round(day.day.mintemp_f)}°F
-  </span>
+            {/* Temps */}
+            <div className={`fade-stack center text-lg font-semibold mt-3 ${theme.text} tabular-nums whitespace-nowrap`}>
 
-                {/* Celsius */}
-                <span className={`text ${unit === "C" ? "visible" : ""}`}>
-    {Math.round(day.day.maxtemp_c)}°C
-    <span className="opacity-70"> / </span>
-                    {Math.round(day.day.mintemp_c)}°C
+                {/* Fahrenheit layer */}
+                <span className={`fade-text ${unit === "F" ? "visible" : ""}`}>
+  <span className="font-semibold">
+    {Math.round(day.day.maxtemp_f)}°F
   </span>
+  <span className="opacity-50"> / </span>
+  <span className="opacity-70">
+    {Math.round(day.day.mintemp_f)}°F
+  </span>
+</span>
+
+                {/* Celsius layer */}
+                <span className={`fade-text ${unit === "C" ? "visible" : ""}`}>
+  <span className="font-semibold">
+    {Math.round(day.day.maxtemp_c)}°C
+  </span>
+  <span className="opacity-50"> / </span>
+  <span className="opacity-70">
+    {Math.round(day.day.mintemp_c)}°C
+  </span>
+</span>
+
+
+
             </div>
+
 
         </div>
     );
