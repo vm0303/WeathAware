@@ -1,6 +1,72 @@
-// src/components/HourlyForecast.jsx
-import React, { useMemo } from "react";
+import React, { useMemo, useRef, useState, useEffect } from "react";
 import WeatherIcon from "./WeatherIcon";
+
+/**
+ * ForecastItem-style condition clamp:
+ * - Detects overflow
+ * - Click to expand/collapse ONLY if ellipsed
+ * - Expands inside fixed-height box (scrollable)
+ */
+function ConditionClamp({ text }) {
+    const textRef = useRef(null);
+    const [isEllipsed, setIsEllipsed] = useState(false);
+    const [showFull, setShowFull] = useState(false);
+
+    useEffect(() => {
+        const el = textRef.current;
+        if (!el) return;
+
+        setShowFull(false);
+
+        const raf = requestAnimationFrame(() => {
+            const node = textRef.current;
+            if (!node) return;
+            const isOver =
+                node.scrollHeight > node.clientHeight || node.scrollWidth > node.clientWidth;
+            setIsEllipsed(isOver);
+        });
+
+        return () => cancelAnimationFrame(raf);
+    }, [text]);
+
+    const toggle = () => {
+        if (isEllipsed) setShowFull((v) => !v);
+    };
+
+    return (
+        <p
+            ref={textRef}
+            onClick={toggle}
+            onKeyDown={(e) => {
+                if (!isEllipsed) return;
+                if (e.key === "Enter" || e.key === " ") {
+                    e.preventDefault();
+                    toggle();
+                }
+            }}
+            role={isEllipsed ? "button" : undefined}
+            tabIndex={isEllipsed ? 0 : -1}
+            className={`
+        w-full px-2 py-[2px]
+  text-sm opacity-70 leading-snug text-center
+  ${isEllipsed ? "cursor-pointer hover:underline" : "cursor-default"}
+      `}
+            style={{
+                overflow: "hidden",
+                textOverflow: "ellipsis",
+                display: showFull ? "block" : "-webkit-box",
+                WebkitLineClamp: showFull ? undefined : 3,
+                WebkitBoxOrient: showFull ? undefined : "vertical",
+                overflowY: showFull ? "auto" : "hidden",
+                maxHeight: "95px",
+            }}
+            title={isEllipsed ? text : undefined}
+        >
+            {text}
+        </p>
+    );
+}
+
 
 export default function HourlyForecast({ hours, unit, theme, localTime }) {
     const safeHours = Array.isArray(hours) ? hours : [];
@@ -48,23 +114,23 @@ export default function HourlyForecast({ hours, unit, theme, localTime }) {
                             <div
                                 key={i}
                                 className={`
-                  flex-shrink-0
-                  w-[110px]
-                  rounded-2xl
-                  px-3 py-3
-                  flex flex-col items-center text-center
-                  ${theme.text}
-                `}
+    flex-shrink-0
+    w-[150px]
+    rounded-2xl
+    px-3 py-3
+    flex flex-col items-center text-center
+    ${theme.text}
+  `}
                             >
                                 {/* Time (fixed height so all columns align) */}
-                                <div className="h-[45px] flex items-center justify-center">
-                                    <p className="text-sm opacity-70 whitespace-nowrap">
+                                <div className="h-[70px] flex items-center justify-center">
+                                    <p className="text-md opacity-70 whitespace-nowrap">
                                         {i === 0 ? "Now" : format12Hour(h.time)}
                                     </p>
                                 </div>
 
                                 {/* Icon (fixed box) */}
-                                <div className="h-[56px] flex items-center justify-center">
+                                <div className="h-[75px] flex items-center justify-center">
                                     <WeatherIcon
                                         code={h.condition.code}
                                         isDay={h.is_day === 1}
@@ -72,34 +138,31 @@ export default function HourlyForecast({ hours, unit, theme, localTime }) {
                                     />
                                 </div>
 
-                                {/* Condition (fixed height so baselines match across all columns) */}
-                                <div className="h-[50px] flex items-center justify-center mt-1">
-                                    <p className="text-xs opacity-70 leading-snug line-clamp-2">
-                                        {h.condition.text}
-                                    </p>
+                                {/* Condition (ForecastItem-style clamp) */}
+                                <div className="h-[95px] flex items-center justify-center mt-1 w-full">
+                                    <ConditionClamp text={h.condition.text} />
                                 </div>
 
                                 {/* Temp (fixed height, perfectly centered) */}
-                                <div className="h-[5px] flex items-center justify-center mt-1">
+                                <div className="h-[10px] flex items-center justify-center mt-1">
                                     <div className="fade-stack center tabular-nums font-semibold leading-none min-w-[5ch]">
                                         {/* Fahrenheit */}
                                         <span className={`fade-text ${unit === "F" ? "visible" : ""}`}>
-                      <span className="inline-flex items-baseline leading-none">
+                      <span className="text-lg inline-flex items-baseline leading-none">
                         {Math.round(h.temp_f)}
-                          <span className="text-xs ml-1 leading-none">°F</span>
+                          <span className="text-sm ml-1 leading-none">°F</span>
                       </span>
                     </span>
 
                                         {/* Celsius */}
                                         <span className={`fade-text ${unit === "C" ? "visible" : ""}`}>
-                      <span className="inline-flex items-baseline leading-none">
+                      <span className="text-lg inline-flex items-baseline leading-none">
                         {Math.round(h.temp_c)}
-                          <span className="text-xs ml-1 leading-none">°C</span>
+                          <span className="text-sm ml-1 leading-none">°C</span>
                       </span>
                     </span>
                                     </div>
                                 </div>
-
                             </div>
                         ))}
                     </div>

@@ -1,7 +1,7 @@
 // src/components/Search.jsx
-import React, {useState, useEffect, useRef} from "react";
-import {searchCities} from "../utils/weatherAPI";
-import {useClickOutside} from "../hooks/clickOutside";
+import React, { useState, useEffect, useRef } from "react";
+import { searchCities } from "../utils/weatherAPI";
+import { useClickOutside } from "../hooks/clickOutside";
 import Suggestion from "./Suggestions";
 import searchGlass from "../assets/searchGlass.svg";
 import location_Globe from "../assets/locationGlobe.svg";
@@ -20,6 +20,10 @@ export default function Search({
 
     const [isFocused, setIsFocused] = useState(false);
     const [mode, setMode] = useState("recents"); // "recents" | "suggestions"
+
+    // ✅ NEW: geo loading state
+    const [geoLoading, setGeoLoading] = useState(false);
+    const geoToastIdRef = useRef(null);
 
     const containerRef = useRef(null);
     const inputRef = useRef(null);
@@ -69,21 +73,15 @@ export default function Search({
     // 1) Handle typing with DEBOUNCE + CANCEL stale fetch
     // =========================================================
     useEffect(() => {
-        if (debounceRef.current) {
-            clearTimeout(debounceRef.current);
-        }
+        if (debounceRef.current) clearTimeout(debounceRef.current);
 
         // ---------- CASE: term length < 2 ----------
         if (term.length < 2) {
-            // length === 1 → fade out suggestions smoothly
             if (term.length === 1) {
-                if (mode === "suggestions" && showBox) {
-                    fadeOutAndCloseBox();
-                }
-                return; // no recents at 1 char
+                if (mode === "suggestions" && showBox) fadeOutAndCloseBox();
+                return;
             }
 
-            // length === 0
             setResults([]);
 
             if (term === "" && isFocused) {
@@ -92,12 +90,10 @@ export default function Search({
                     openBox();
                     return;
                 }
-
                 if (mode === "suggestions") {
                     fadeSwapMode("recents");
                     return;
                 }
-
                 return;
             }
 
@@ -106,64 +102,131 @@ export default function Search({
         }
 
         // ---------- CASE: term length >= 2 ----------
-        // ---------- CASE: term length >= 2 ----------
-        if (term.length >= 2) {
-
-            // If not focused → never open suggestions
-            if (!isFocused) {
-                fadeOutAndCloseBox();
-                return;
-            }
-
-            debounceRef.current = setTimeout(async () => {
-                const currentFetchId = ++fetchIdRef.current;
-
-                try {
-                    const cities = await searchCities(term);
-
-                    if (currentFetchId !== fetchIdRef.current) return;
-
-                    if (!cities || cities.length === 0) {
-                        setResults([]);
-                        fadeOutAndCloseBox();
-                        return;
-                    }
-
-                    const newResults = cities.slice(0, 6);
-                    fadeSwapMode("suggestions", newResults);
-                } catch {
-                    if (currentFetchId !== fetchIdRef.current) return;
-                    setResults([]);
-                    fadeOutAndCloseBox();
-                }
-            }, 300);
-
+        if (!isFocused) {
+            fadeOutAndCloseBox();
             return;
         }
 
+        debounceRef.current = setTimeout(async () => {
+            const currentFetchId = ++fetchIdRef.current;
+
+            try {
+                const cities = await searchCities(term);
+                if (currentFetchId !== fetchIdRef.current) return;
+
+                if (!cities || cities.length === 0) {
+                    setResults([]);
+                    fadeOutAndCloseBox();
+                    return;
+                }
+
+                const newResults = cities.slice(0, 6);
+                fadeSwapMode("suggestions", newResults);
+            } catch {
+                if (currentFetchId !== fetchIdRef.current) return;
+                setResults([]);
+                fadeOutAndCloseBox();
+            }
+        }, 300);
 
         return () => clearTimeout(debounceRef.current);
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [term, isFocused]);
 
     // =========================================================
-    // 2) Geo
+    // 2) Geo (improved)
     // =========================================================
-    const handleGeo = () => {
-        if (!navigator.geolocation) return alert("Geolocation not supported.");
+    const GEO_OPTIONS_FAST = {
+        enableHighAccuracy: false,      // faster for most users
+        timeout: 10000,                 // don't hang forever
+        maximumAge: 10 * 60 * 1000,     // allow cached up to 10 minutes
+    };
 
-        navigator.geolocation.getCurrentPosition((pos) => {
+    const GEO_OPTIONS_ACCURATE = {
+        enableHighAccuracy: true,       // fallback if fast fails
+        timeout: 12000,
+        maximumAge: 0,
+    };
+
+    const clearGeoToast = () => {
+        if (geoToastIdRef.current) {
+            toast.dismiss(geoToastIdRef.current);
+            geoToastIdRef.current = null;
+        }
+    };
+
+    const handleGeo = () => {
+        if (!navigator.geolocation) {
+            toast.error("Geolocation not supported.");
+            return;
+        }
+        if (geoLoading) return;
+
+        setGeoLoading(true);
+        geoToastIdRef.current = toast.info("Getting your location…", {
+            autoClose: false,
+            closeOnClick: false,
+            draggable: false,
+        });
+
+        console.time("geo");
+
+        const onSuccess = (pos) => {
+            console.timeEnd("geo");
+            clearGeoToast();
+            setGeoLoading(false);
+
             const q = `${pos.coords.latitude},${pos.coords.longitude}`;
             onSelectCity(q);
             fadeOutAndCloseBox();
-        });
+        };
+
+        const onError = (err) => {
+            console.timeEnd("geo");
+
+            // Fast attempt failed -> try accurate fallback
+            if (!err || err.code === 3 || err.code === 2) {
+                navigator.geolocation.getCurrentPosition(
+                    onSuccess,
+                    (err2) => {
+                        clearGeoToast();
+                        setGeoLoading(false);
+
+                        const code = err2?.code;
+                        toast.error(
+                            code === 1
+                                ? "Location permission denied."
+                                : code === 2
+                                    ? "Location unavailable. Try again."
+                                    : "Location timed out. Try again."
+                        );
+                        console.error("geo error", err2);
+                    },
+                    GEO_OPTIONS_ACCURATE
+                );
+                return;
+            }
+
+            clearGeoToast();
+            setGeoLoading(false);
+
+            toast.error(
+                err.code === 1
+                    ? "Location permission denied."
+                    : err.code === 2
+                        ? "Location unavailable. Try again."
+                        : "Location timed out. Try again."
+            );
+            console.error("geo error", err);
+        };
+
+        navigator.geolocation.getCurrentPosition(onSuccess, onError, GEO_OPTIONS_FAST);
     };
 
     // =========================================================
     // 3) Search icon click
     // =========================================================
     const handleSearchClick = () => {
-
         onSelectCity(term);
     };
 
@@ -194,18 +257,15 @@ export default function Search({
         <div
             ref={containerRef}
             className="
-                relative
-                bg-white/90 dark:bg-slate-800/60
-                dark:border dark:border-white/10
-                shadow-lg
-                rounded-full
-                h-14 flex items-center px-4 mb-8
-            "
+        relative
+        bg-white/90 dark:bg-slate-800/60
+        dark:border dark:border-white/10
+        shadow-lg
+        rounded-full
+        h-14 flex items-center px-4 mb-8
+      "
         >
-            <button
-                onClick={handleSearchClick}
-                className="flex items-center justify-center"
-            >
+            <button onClick={handleSearchClick} className="flex items-center justify-center">
                 <img
                     src={searchGlass}
                     alt="Search"
@@ -226,55 +286,60 @@ export default function Search({
 
             <button
                 onClick={handleGeo}
-                className="ml-3 flex items-center justify-center
-                    w-8 h-8 rounded-full opacity-100 hover:opacity-100 transition duration-200"
+                disabled={geoLoading}
+                className="
+          ml-3 flex items-center justify-center
+          w-8 h-8 rounded-full
+          transition duration-200
+          disabled:opacity-50 disabled:cursor-not-allowed
+        "
+                title={geoLoading ? "Getting your location…" : "Use my location"}
             >
                 <img
                     src={location_Globe}
                     alt="Use my location"
-                    title="Click here to find the current weather and 3 day forcast in your location."
-                    className="w-7 h-7 object-contain dark:invert dark:brightness-200"
+                    className={`
+            w-7 h-7 object-contain dark:invert dark:brightness-200
+            ${geoLoading ? "opacity-60" : ""}
+          `}
                 />
             </button>
 
             {showBox && (
                 <div
                     className={`
-                        absolute left-0 top-16 w-full bg-white dark:bg-slate-900
-                        rounded-lg shadow-lg overflow-hidden z-20
-                        suggestions-box
-                        ${isClosing ? "hide" : "show"}
-                    `}
+            absolute left-0 top-16 w-full bg-white dark:bg-slate-900
+            rounded-lg shadow-lg overflow-hidden z-20
+            suggestions-box
+            ${isClosing ? "hide" : "show"}
+          `}
                 >
                     {mode === "recents" && (
                         <>
                             <div className="flex items-center justify-between px-4 py-2 border-b border-slate-200 dark:border-slate-700">
-                                <span className="text-xs font-semibold uppercase tracking-wide text-slate-500 dark:text-slate-400">
-                                    Recent searches
-                                </span>
+                <span className="text-xs font-semibold uppercase tracking-wide text-slate-500 dark:text-slate-400">
+                  Recent searches
+                </span>
                                 <button
                                     type="button"
                                     onPointerDown={(e) => {
                                         e.stopPropagation();
-                                        if (recentSearches.length === 0) return; // Safety
+                                        if (recentSearches.length === 0) return;
                                         onClearRecentSearches();
-                                        toast.info("Recent searches cleared!", {
-                                            autoClose: 5000 // 3 seconds
-                                        });
+                                        toast.info("Recent searches cleared!", { autoClose: 5000 });
                                     }}
-                                    className="px-3 py-1 rounded-full text-sm font-semibold
-        bg-slate-300 dark:bg-slate-700
-        text-slate-800 dark:text-slate-200
-        hover:bg-slate-400 dark:hover:bg-slate-600
-        transition
-        disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:bg-slate-300 dark:disabled:hover:bg-slate-700"
+                                    className="
+                    px-3 py-1 rounded-full text-sm font-semibold
+                    bg-slate-300 dark:bg-slate-700
+                    text-slate-800 dark:text-slate-200
+                    hover:bg-slate-400 dark:hover:bg-slate-600
+                    transition
+                    disabled:opacity-40 disabled:cursor-not-allowed
+                  "
                                     disabled={recentSearches.length === 0}
                                 >
                                     Clear recent
                                 </button>
-
-
-
                             </div>
 
                             {recentSearches.length === 0 ? (
