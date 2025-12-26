@@ -15,6 +15,7 @@ export default function CurrentWeather({
 
     const [lastCity, setLastCity] = useState(null);
     const [relativeUpdated, setRelativeUpdated] = useState("");
+    const [showDataTip, setShowDataTip] = useState(false);
 
 
     const loc = weather?.location ?? {};
@@ -225,18 +226,18 @@ export default function CurrentWeather({
 
                                     {/* Tooltip */}
                                     <div
-                                        className="
+                                        className={`
       absolute top-full left-1/2 -translate-x-1/2 mt-2
-      w-[280px] sm:w-[320px]
+      w-[min(20rem,calc(100vw-2rem))] max-w-xs sm:max-w-sm
       bg-black text-white
       text-[11px] sm:text-xs leading-snug
       px-3 py-2 rounded-lg shadow-lg
       whitespace-normal
-      opacity-0 group-hover:opacity-100 group-focus-within:opacity-100
-      pointer-events-none
+      ${showDataTip ? "opacity-100" : "opacity-0 group-hover:opacity-100 group-focus-within:opacity-100"}
+      pointer-events-auto
       transition-opacity duration-300 ease-out
       z-50
-    "
+    `}
                                     >
                                         {/* arrow */}
                                         <div
@@ -295,9 +296,9 @@ export default function CurrentWeather({
                             </p>
                         )}
 
-                        <div className="flex items-center mt-4 h-[100px]">
+                        <div className="flex items-center mt-4 h-[84px] sm:h-[100px]">
                             {/* Fixed icon box */}
-                            <div className="w-[100px] flex justify-center items-center">
+                            <div className="w-[84px] sm:w-[100px] flex justify-center items-center">
                                 <WeatherIcon code={w.condition.code} isDay={w.is_day === 1}/>
                             </div>
 
@@ -329,10 +330,10 @@ export default function CurrentWeather({
                     </div>
 
                     {/* RIGHT */}
-                    <div className={`grid items-center leading-4 grid-cols-[auto,minmax(160px,1fr)] sm:grid-cols-[auto,minmax(220px,1fr)] gap-y-5 gap-x-6 w-full md:w-auto text-md ${theme.text}`}>
+                    <div className={`grid items-center leading-4 grid-cols-[auto,minmax(120px,1fr)] sm:grid-cols-[auto,minmax(200px,1fr)] gap-y-5 gap-x-6 w-full md:w-auto text-sm sm:text-md ${theme.text}`}>
 
 
-                    <span className="opacity-70">Feels like:</span>
+                        <span className="opacity-70">Feels like:</span>
                         <div className="fade-stack stats right tabular-nums font-semibold text-right whitespace-nowrap justify-self-end">
   <span className={`fade-text ${unit === "F" ? "visible" : ""}`}>
     {Math.round(w.feelslike_f)}
