@@ -57,7 +57,7 @@ export default function LoadingScreen({weather}) {
         return [colorPick()];
     }, []);
     return (
-        <div className="fixed inset-0 flex flex-col items-center justify-center bg-black/60 backdrop-blur-md z-50">
+        <div className="fixed inset-0 flex flex-col items-center justify-center bg-black/60 backdrop-blur-md z-[100000]">
 
             {/* ICON WITH SHINE */}
             <div

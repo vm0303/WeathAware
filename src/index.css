@@ -236,6 +236,91 @@ body {
     text-align: center;
 }
 
+/* Make Toastify behave nicely on tiny devices (240–280px) */
+@media (min-width: 280px) {
+    .Toastify__toast-container.app-toast-container {
+        width: calc(100vw - 10px);
+        padding: 6px;
+        font-size: 11px;
+        right: 5px;
+        left: auto;
+        top: 6px;
+        box-sizing: border-box;
+    }
+
+    .Toastify__toast.app-toast {
+        width: 100%;
+        margin-bottom: 8px;
+        border-radius: 10px;
+        padding: 8px 10px;
+        box-sizing: border-box;
+    }
+
+    .Toastify__toast-body.app-toast-body {
+        line-height: 1.15;
+        margin: 0;
+        padding: 0;
+    }
+}
+
+
+@media (min-width: 320px) {
+    /* container positioning + width */
+    .Toastify__toast-container.app-toast-container {
+        width: min(95vw, 260px);
+        padding: 6px;
+        right: 6px;
+        top: 6px;
+    }
+
+    /* toast box sizing */
+    .Toastify__toast.app-toast {
+        min-height: unset;
+        padding: 8px 10px;
+        border-radius: 10px;
+        margin-bottom: 8px;
+    }
+
+    /* text sizing */
+    .Toastify__toast-body.app-toast-body {
+        margin: 0;
+        padding: 0;
+        font-size: 12px;
+        line-height: 1.2;
+    }
+
+    /* icon + close button shrink */
+    .Toastify__toast-icon {
+        width: 16px;
+        margin-inline-end: 8px;
+    }
+
+    .Toastify__close-button {
+        width: 18px;
+        height: 18px;
+        opacity: 0.9;
+    }
+
+    /* progress bar a bit thinner */
+    .Toastify__progress-bar {
+        height: 3px;
+    }
+
+}
+
+/* smoother dropdown scrolling on iOS */
+@supports (-webkit-touch-callout: none) {
+    .suggestions-box {
+        -webkit-overflow-scrolling: touch;
+    }
+}
+@media (max-width: 420px) {
+    .suggestions-box {
+        border-radius: 16px;
+    }
+}
+
+
 
 
 
