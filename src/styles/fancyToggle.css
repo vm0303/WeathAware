@@ -317,3 +317,10 @@ body,
     stroke 0.5s ease,
     background 0.5s ease;
 }
+
+@media (max-width: 320px) {
+    .switch {
+        transform: scale(0.88);
+        transform-origin: right center;
+    }
+}
