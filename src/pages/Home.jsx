@@ -249,9 +249,13 @@ export default function Home() {
                     {/* 🔹 Search bar stays SAME SIZE, ONLY vertical position changes */}
                     <div
                         className={`
-                            w-full opacity-100 transition-all duration-700
-                            ${!weather ? "pt-[30vh] animate-fadeIn" : "pt-6"}
-                        `}
+    w-full opacity-100 transition-all duration-700
+    ${
+                            !weather
+                                ? "max-[280px]:pt-1 max-[600px]:pt-3 min-[601px]:pt-[30vh] animate-fadeIn"
+                                : "pt-6"
+                        }
+  `}
                     >
                         <Search
                             onSelectCity={handleSelectCity}
@@ -259,6 +263,7 @@ export default function Home() {
                             onClearRecentSearches={clearRecentSearches}
                         />
                     </div>
+
 
 
                     {weather && (

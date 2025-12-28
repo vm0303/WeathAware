@@ -262,21 +262,21 @@ export default function Search({
         dark:border dark:border-white/10
         shadow-lg
         rounded-full
-        h-14 flex items-center px-4 mb-8
+        h-14 flex items-center px-4 mb-8 max-[280px]:h-10
       "
         >
             <button onClick={handleSearchClick} className="flex items-center justify-center">
                 <img
                     src={searchGlass}
                     alt="Search"
-                    className="w-7 h-7 object-contain opacity-70 dark:opacity-90 dark:invert dark:brightness-200"
+                    className="w-7 h-7 object-contain opacity-70 dark:opacity-90 dark:invert dark:brightness-200 max-[280px]:w-5 max-[280px]:h-5"
                 />
             </button>
 
             <input
                 ref={inputRef}
                 type="text"
-                className="flex-1 bg-transparent border-none focus:outline-none ml-3 text-lg text-slate-800 dark:text-slate-200 placeholder-slate-700 dark:placeholder-slate-200"
+                className="flex-1 bg-transparent border-none focus:outline-none ml-3 text-lg text-slate-800 dark:text-slate-200 placeholder-slate-700 dark:placeholder-slate-200 max-[280px]:text-xs"
                 placeholder="Search for a location"
                 value={term}
                 onChange={(e) => setTerm(e.target.value)}
@@ -291,7 +291,7 @@ export default function Search({
           ml-3 flex items-center justify-center
           w-8 h-8 rounded-full
           transition duration-200
-          disabled:opacity-50 disabled:cursor-not-allowed
+          disabled:opacity-50 disabled:cursor-not-allowed max-[280px]:w-5 max-[280px]:h-5
         "
                 title={geoLoading ? "Getting your location…" : "Use my location"}
             >
@@ -299,7 +299,7 @@ export default function Search({
                     src={location_Globe}
                     alt="Use my location"
                     className={`
-            w-7 h-7 object-contain dark:invert dark:brightness-200
+            w-7 h-7 object-contain dark:invert dark:brightness-200 max-[280px]:w-5 max-[280px]:h-5
             ${geoLoading ? "opacity-60" : ""}
           `}
                 />
@@ -308,13 +308,15 @@ export default function Search({
             {showBox && (
                 <div
                     className={`
-            absolute left-0 top-16 w-full bg-white dark:bg-slate-900
-            rounded-lg shadow-lg overflow-hidden z-20
-            suggestions-box
-            ${isClosing ? "hide" : "show"}
-          `}
+    absolute left-0 top-16 w-full bg-white dark:bg-slate-900
+    rounded-lg shadow-lg overflow-hidden z-20
+    max-h-[40vh] overflow-y-auto
+    suggestions-box
+    ${isClosing ? "hide" : "show"}
+  `}
                 >
-                    {mode === "recents" && (
+
+                {mode === "recents" && (
                         <>
                             <div className="flex items-center justify-between px-4 py-2 border-b border-slate-200 dark:border-slate-700">
                 <span className="text-xs font-semibold uppercase tracking-wide text-slate-500 dark:text-slate-400">

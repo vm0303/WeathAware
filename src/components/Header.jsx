@@ -35,22 +35,22 @@ export default function Header({theme}) {
 
     return (
         <header className="flex justify-between items-center h-28 px-2 animate-fadeIn
-                     min-[240px]:h-16 min-[240px]:px-1">
-            <div className="flex items-center gap-3 min-[240px]:gap-2">
+                     max-[280px]:h-16 max-[280px]:px-1">
+            <div className="flex items-center gap-3 max-[280px]:gap-2">
                 {randomIcon && (
                     <img
                         src={randomIcon}
                         alt="Weather Icon"
-                        className="w-14 h-14 weather-icon min-[240px]:w-9 min-[240px]:h-9"
+                        className="w-14 h-14 weather-icon max-[280px]:w-9 max-[280px]:h-9"
                     />
                 )}
 
-                <h1 className={`font-semibold ${theme} text-3xl min-[240px]:text-sm`}>
+                <h1 className={`font-semibold ${theme} text-3xl max-[280px]:text-[15px]`}>
                     WeathAware
                 </h1>
             </div>
 
-            <div className="flex items-center gap-4 min-[240px]:gap-2">
+            <div className="flex items-center gap-4 max-[280px]:gap-2">
                 {/* shrink toggle via CSS (next section) */}
                 <ThemeToggle />
                 <a
@@ -62,7 +62,7 @@ export default function Header({theme}) {
                     <img
                         src={github}
                         alt="GitHub"
-                        className="w-8 h-8 transition dark:invert min-[240px]:w-6 min-[240px]:h-6"
+                        className="w-8 h-8 transition dark:invert max-[280px]:w-6 max-[280px]:h-6"
                     />
                 </a>
             </div>
