@@ -11,6 +11,7 @@ export default function Search({
                                    onSelectCity,
                                    recentSearches = [],
                                    onClearRecentSearches = () => {},
+                                   onActiveChange = () => {}, // ✅ NEW: lets Home move bar up/down
                                }) {
     const [term, setTerm] = useState("");
     const [results, setResults] = useState([]);
@@ -21,7 +22,7 @@ export default function Search({
     const [isFocused, setIsFocused] = useState(false);
     const [mode, setMode] = useState("recents"); // "recents" | "suggestions"
 
-    // ✅ NEW: geo loading state
+    // ✅ geo loading state
     const [geoLoading, setGeoLoading] = useState(false);
     const geoToastIdRef = useRef(null);
 
@@ -32,6 +33,12 @@ export default function Search({
     const fetchIdRef = useRef(0);
     const debounceRef = useRef(null);
 
+    // ✅ NEW: delay dropdown open on focus (mobile keyboard animation)
+    const focusOpenTimerRef = useRef(null);
+
+    // ---------------------------------------------------------
+    // Helpers
+    // ---------------------------------------------------------
     const openBox = () => {
         setIsClosing(false);
         setShowBox(true);
@@ -63,11 +70,34 @@ export default function Search({
         }, 350);
     };
 
+    // ✅ NEW: force keyboard close (Samsung Internet + mobile browsers)
+    const closeKeyboard = () => {
+        inputRef.current?.blur?.();
+
+        // extra safety: sometimes blur doesn't take on first call
+        requestAnimationFrame(() => {
+            if (document.activeElement === inputRef.current) {
+                inputRef.current?.blur?.();
+            }
+        });
+    };
+
     // click outside closes everything
     useClickOutside(containerRef, () => {
+        if (focusOpenTimerRef.current) clearTimeout(focusOpenTimerRef.current);
         fadeOutAndCloseBox();
         setIsFocused(false);
+        onActiveChange(false);
+        closeKeyboard();
     });
+
+    // cleanup
+    useEffect(() => {
+        return () => {
+            if (focusOpenTimerRef.current) clearTimeout(focusOpenTimerRef.current);
+            if (debounceRef.current) clearTimeout(debounceRef.current);
+        };
+    }, []);
 
     // =========================================================
     // 1) Handle typing with DEBOUNCE + CANCEL stale fetch
@@ -85,9 +115,10 @@ export default function Search({
             setResults([]);
 
             if (term === "" && isFocused) {
+                // if focused + empty, show recents (but do NOT force-open if user hasn't focused)
                 if (!showBox) {
                     setMode("recents");
-                    openBox();
+                    // don't open here; focus handler controls opening with delay
                     return;
                 }
                 if (mode === "suggestions") {
@@ -137,13 +168,13 @@ export default function Search({
     // 2) Geo (improved)
     // =========================================================
     const GEO_OPTIONS_FAST = {
-        enableHighAccuracy: false,      // faster for most users
-        timeout: 10000,                 // don't hang forever
-        maximumAge: 10 * 60 * 1000,     // allow cached up to 10 minutes
+        enableHighAccuracy: false,
+        timeout: 10000,
+        maximumAge: 10 * 60 * 1000,
     };
 
     const GEO_OPTIONS_ACCURATE = {
-        enableHighAccuracy: true,       // fallback if fast fails
+        enableHighAccuracy: true,
         timeout: 12000,
         maximumAge: 0,
     };
@@ -176,9 +207,13 @@ export default function Search({
             clearGeoToast();
             setGeoLoading(false);
 
+            // ✅ close keyboard + dropdown BEFORE loading starts
+            closeKeyboard();
+            onActiveChange(false);
+            fadeOutAndCloseBox();
+
             const q = `${pos.coords.latitude},${pos.coords.longitude}`;
             onSelectCity(q);
-            fadeOutAndCloseBox();
         };
 
         const onError = (err) => {
@@ -227,30 +262,54 @@ export default function Search({
     // 3) Search icon click
     // =========================================================
     const handleSearchClick = () => {
+        closeKeyboard();
+        onActiveChange(false);
+        fadeOutAndCloseBox();
         onSelectCity(term);
     };
 
     // =========================================================
-    // 4) Focus & blur
+    // 4) Focus & blur (with delay on dropdown open)
     // =========================================================
     const handleFocus = () => {
         setIsFocused(true);
-        if (!term) {
-            setMode("recents");
-            openBox();
-        }
+        onActiveChange(true);
+
+        // ✅ delay dropdown open so keyboard animation settles on mobile
+        if (focusOpenTimerRef.current) clearTimeout(focusOpenTimerRef.current);
+
+        focusOpenTimerRef.current = setTimeout(() => {
+            // only open if still focused
+            if (!inputRef.current) return;
+            if (document.activeElement !== inputRef.current) return;
+
+            if (!term) {
+                setMode("recents");
+                openBox();
+            }
+        }, 200);
     };
 
     const handleBlur = () => {
         setIsFocused(false);
+
+        // cancel delayed open
+        if (focusOpenTimerRef.current) clearTimeout(focusOpenTimerRef.current);
+
+        // ❗ don't set inactive here (can break suggestion taps)
+        // click-outside / selection will set inactive false safely
     };
 
     // =========================================================
     // 5) Select from suggestions or recents
     // =========================================================
     const handleSelectCoordinates = (city) => {
-        onSelectCity(`${city.lat},${city.lon}`);
+        // ✅ close keyboard BEFORE parent kicks off loading screen
+        closeKeyboard();
+        onActiveChange(false);
         fadeOutAndCloseBox();
+
+        onSelectCity(`${city.lat},${city.lon}`);
     };
 
     return (
@@ -308,15 +367,14 @@ export default function Search({
             {showBox && (
                 <div
                     className={`
-    absolute left-0 top-16 w-full bg-white dark:bg-slate-900
-    rounded-lg shadow-lg overflow-hidden z-20
-    max-h-[40vh] overflow-y-auto
-    suggestions-box
-    ${isClosing ? "hide" : "show"}
-  `}
+            absolute left-0 top-16 max-[280px]:top-12 w-full bg-white dark:bg-slate-900
+            rounded-lg shadow-lg overflow-hidden z-20
+            max-h-[40vh] overflow-y-auto
+            suggestions-box
+            ${isClosing ? "hide" : "show"}
+          `}
                 >
-
-                {mode === "recents" && (
+                    {mode === "recents" && (
                         <>
                             <div className="flex items-center justify-between px-4 py-2 border-b border-slate-200 dark:border-slate-700">
                 <span className="text-xs font-semibold uppercase tracking-wide text-slate-500 dark:text-slate-400">
@@ -336,7 +394,7 @@ export default function Search({
                     text-slate-800 dark:text-slate-200
                     hover:bg-slate-400 dark:hover:bg-slate-600
                     transition
-                    disabled:opacity-40 disabled:cursor-not-allowed
+                    disabled:opacity-40 disabled:cursor-not-allowed max-[280px]:text-xs
                   "
                                     disabled={recentSearches.length === 0}
                                 >
@@ -345,7 +403,7 @@ export default function Search({
                             </div>
 
                             {recentSearches.length === 0 ? (
-                                <div className="px-4 py-3 text-sm text-slate-500 dark:text-slate-400">
+                                <div className="px-4 py-3 text-sm text-slate-500 dark:text-slate-400 max-[280px]:text-xs">
                                     No recent searches yet.
                                 </div>
                             ) : (
