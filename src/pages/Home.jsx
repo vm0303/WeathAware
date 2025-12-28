@@ -1,6 +1,6 @@
 // src/pages/Home.jsx
-import React, {useState, useEffect} from "react";
-import {motion} from "framer-motion";
+import React, { useState, useEffect } from "react";
+import { motion } from "framer-motion";
 
 import Header from "../components/Header";
 import Search from "../components/Search";
@@ -10,33 +10,32 @@ import Footer from "../components/Footer";
 import LoadingScreen from "../components/LoadingScreen";
 import SunriseSunsetCard from "../components/SunriseSunset";
 
-import {getWeather} from "../utils/weatherAPI";
-import {getWeatherTheme} from "../utils/weatherThemes";
-import {toast} from "react-toastify";
+import { getWeather } from "../utils/weatherAPI";
+import { getWeatherTheme } from "../utils/weatherThemes";
+import { toast } from "react-toastify";
 import HourlyForecast from "../components/HourlyForecast";
-
 
 export default function Home() {
     const [weather, setWeather] = useState(null);
     const [unit, setUnit] = useState("C");
     const [loading, setLoading] = useState(false);
 
-    const [darkMode, setDarkMode] = useState(
-        localStorage.getItem("theme") === "dark"
-    );
+    const [darkMode, setDarkMode] = useState(localStorage.getItem("theme") === "dark");
 
     const initialTheme = getWeatherTheme(null, darkMode);
     const [prevTheme, setPrevTheme] = useState(initialTheme);
     const [fading, setFading] = useState(false);
 
+    // ✅ NEW: track whether search is active (focused/open)
+    const [searchActive, setSearchActive] = useState(false);
+
     useEffect(() => {
         const observer = new MutationObserver(() => {
-            const isDark =
-                document.documentElement.classList.contains("dark");
+            const isDark = document.documentElement.classList.contains("dark");
             setDarkMode(isDark);
         });
 
-        observer.observe(document.documentElement, {attributes: true});
+        observer.observe(document.documentElement, { attributes: true });
 
         return () => observer.disconnect();
     }, []);
@@ -48,39 +47,35 @@ export default function Home() {
         }
 
         try {
-            // Quick check — call API but DO NOT show loading screen yet
             const quickCheck = await getWeather(q);
 
-            // 100% valid → start loading screen
             setLoading(true);
-
             await new Promise((res) => setTimeout(res, 3500));
 
             setWeather(quickCheck);
-            toast.success(`Weather successfully loaded for ${quickCheck.location.name}, ${quickCheck.location.region}!`);
-            //Only add to recents on successful fetch
+            toast.success(
+                `Weather successfully loaded for ${quickCheck.location.name}, ${quickCheck.location.region}!`
+            );
+
             addRecentSearch(quickCheck.location);
+
             // ⭐ AUTO THEME BASED ON LOCAL TIME, SUNRISE, SUNSET
             try {
                 const localTimeStr = quickCheck.location.localtime;
-                // e.g. "2025-12-01 02:18"
-
                 const astro = quickCheck.forecast?.forecastday?.[0]?.astro;
-                const sunriseStr = astro?.sunrise; // e.g. "6:58 AM"
-                const sunsetStr = astro?.sunset;   // e.g. "4:32 PM"
+                const sunriseStr = astro?.sunrise;
+                const sunsetStr = astro?.sunset;
 
                 if (!localTimeStr || !sunriseStr || !sunsetStr) {
                     throw new Error("Missing time/astro data");
                 }
 
-                // ---- parse local time ("YYYY-MM-DD HH:MM") ----
-                const [, timePart] = localTimeStr.split(" "); // ["YYYY-MM-DD", "HH:MM"]
+                const [, timePart] = localTimeStr.split(" ");
                 const [localHourStr, localMinuteStr] = timePart.split(":");
                 const localHour = parseInt(localHourStr, 10);
                 const localMinute = parseInt(localMinuteStr, 10);
                 const localMinutes = localHour * 60 + localMinute;
 
-                // ---- helper to parse "H:MM AM/PM" into minutes since midnight ----
                 const toMinutes = (t) => {
                     const m = t.trim().match(/(\d+):(\d+)\s*(AM|PM)/i);
                     if (!m) throw new Error(`Bad time format: ${t}`);
@@ -97,9 +92,7 @@ export default function Home() {
                 const sunriseMinutes = toMinutes(sunriseStr);
                 const sunsetMinutes = toMinutes(sunsetStr);
 
-                // 🌙 Night if before sunrise OR after/equal sunset
-                const isNight =
-                    localMinutes < sunriseMinutes || localMinutes >= sunsetMinutes;
+                const isNight = localMinutes < sunriseMinutes || localMinutes >= sunsetMinutes;
 
                 if (isNight) {
                     document.documentElement.classList.add("dark");
@@ -113,20 +106,15 @@ export default function Home() {
             } catch (e) {
                 console.warn("Auto theme failed:", e);
             }
-
         } catch (err) {
             const msg = err.message || "";
 
             if (msg.includes("No matching location found")) {
-                toast.error("Invalid city name. Please try again.", {
-                    autoClose: 5000 // 3 seconds
-                });
+                toast.error("Invalid city name. Please try again.", { autoClose: 5000 });
             } else {
-                toast.error(
-                    "Something went wrong while fetching the data. Please try again later."
-                    , {
-                        autoClose: 5000 // 3 seconds
-                    });
+                toast.error("Something went wrong while fetching the data. Please try again later.", {
+                    autoClose: 5000,
+                });
             }
         } finally {
             setLoading(false);
@@ -147,9 +135,8 @@ export default function Home() {
             }, 250);
         }
 
-        return () => clearTimeout(timeout); // ⭐ prevents interruptions
+        return () => clearTimeout(timeout);
     }, [theme, prevTheme]);
-
 
     const [cardsShouldFade, setCardsShouldFade] = useState(false);
     useEffect(() => {
@@ -158,7 +145,6 @@ export default function Home() {
             return;
         }
 
-        // Remove animation class, then re-add it in next tick
         setCardsShouldFade(false);
         const t = setTimeout(() => {
             setCardsShouldFade(true);
@@ -188,17 +174,12 @@ export default function Home() {
         };
 
         setRecentSearches((prev) => {
-            // de-dupe using lat+lon
-            const filtered = prev.filter(
-                (r) => !(r.lat === entry.lat && r.lon === entry.lon)
-            );
-            const updated = [entry, ...filtered].slice(0, 5); // keep last 5
+            const filtered = prev.filter((r) => !(r.lat === entry.lat && r.lon === entry.lon));
+            const updated = [entry, ...filtered].slice(0, 5);
 
             try {
                 localStorage.setItem("recentSearches", JSON.stringify(updated));
-            } catch {
-                // ignore storage errors
-            }
+            } catch {}
 
             return updated;
         });
@@ -208,63 +189,60 @@ export default function Home() {
         setRecentSearches([]);
         try {
             localStorage.removeItem("recentSearches");
-        } catch {
-            // ignore
-        }
+        } catch {}
     };
-
-
 
     return (
         <motion.div className="relative min-h-screen transition-none">
             {/* Background Transition */}
             <div
                 className={`
-                    absolute inset-0 -z-10
-                    ${prevTheme.bg}
-                    transition-opacity duration-300
-                    ${fading ? "opacity-0" : "opacity-100"}
-                `}
+          absolute inset-0 -z-10
+          ${prevTheme.bg}
+          transition-opacity duration-300
+          ${fading ? "opacity-0" : "opacity-100"}
+        `}
             />
             <div
                 className={`
-                    absolute inset-0 -z-20
-                    ${theme.bg}
-                `}
+          absolute inset-0 -z-20
+          ${theme.bg}
+        `}
             />
 
             {/* Page Content */}
             <div className={`relative ${theme.text}`}>
-                {loading && <LoadingScreen darkMode={darkMode}/>}
+                {loading && <LoadingScreen darkMode={darkMode} />}
 
-
-                {/* 🔹 Header ALWAYS visible */}
-
+                {/* Header */}
                 <div className="px-6 md:px-16 lg:px-10 xl:px-6">
-                    <Header theme={theme}/>
+                    <Header theme={theme} />
                 </div>
 
                 <div className="max-w-4xl mx-auto px-4 pb-10">
-
-                    {/* 🔹 Search bar stays SAME SIZE, ONLY vertical position changes */}
+                    {/* Search position logic */}
                     <div
                         className={`
-    w-full opacity-100 transition-all duration-700
-    ${
+              w-full opacity-100 transition-all duration-700
+              ${
                             !weather
-                                ? "max-[280px]:pt-1 max-[600px]:pt-3 min-[601px]:pt-[30vh] animate-fadeIn"
+                                ? `
+                    max-[599px]:${searchActive ? "pt-3" : "pt-[30vh]"}
+                    max-[280px]:${searchActive ? "pt-1" : "pt-[30vh]"}
+                    min-[600px]:pt-[30vh]
+                    animate-fadeIn
+                  `
                                 : "pt-6"
                         }
-  `}
+            `}
                     >
                         <Search
                             onSelectCity={handleSelectCity}
                             recentSearches={recentSearches}
                             onClearRecentSearches={clearRecentSearches}
+                            onActiveChange={setSearchActive} // ✅ NEW
                         />
                     </div>
-
-
 
                     {weather && (
                         <>
@@ -292,21 +270,15 @@ export default function Home() {
                                     theme={theme}
                                     localTime={weather.location.localtime}
                                 />
-
                             </div>
 
                             <div className={cardsShouldFade ? "animate-fadeIn" : ""}>
-                                <Forecast
-                                    weather={weather}
-                                    unit={unit}
-                                    theme={theme}
-                                />
+                                <Forecast weather={weather} unit={unit} theme={theme} />
                             </div>
                         </>
                     )}
 
-
-                    <Footer/>
+                    <Footer />
                 </div>
             </div>
         </motion.div>
