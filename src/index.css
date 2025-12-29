@@ -320,6 +320,46 @@ body {
     }
 }
 
+/* ============================== */
+/* TOOLTIP fade IN/OUT (portal)   */
+/* ============================== */
+
+.tooltip-bubble {
+    opacity: 0;
+    transform: translateY(2px);
+    pointer-events: auto;
+    will-change: opacity, transform;
+}
+
+.tooltip-bubble.tooltip-show {
+    animation: tooltipFadeIn 180ms ease-out forwards;
+}
+
+.tooltip-bubble.tooltip-hide {
+    animation: tooltipFadeOut 180ms ease-in forwards;
+}
+
+@keyframes tooltipFadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(6px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes tooltipFadeOut {
+    from {
+        opacity: 1;
+        transform: translateY(0);
+    }
+    to {
+        opacity: 0;
+        transform: translateY(6px);
+    }
+}
 
 
 
