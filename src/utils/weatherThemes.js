@@ -11,7 +11,7 @@ export const weatherThemes = {
             card: "bg-white/50 backdrop-blur-sm border border-white/20",
         },
         dark: {
-            bg: "bg-gradient-to-br from-[#fde68a] via-[#c38f05] to-[#f5e890]",
+            bg: "bg-[radial-gradient(ellipse_at_left,_var(--tw-gradient-stops))] from-[#fde68a]  to-[#f59e0b]",
             text: "text-black",
             card: "bg-white/30 backdrop-blur-sm border border-white/15",
         },
