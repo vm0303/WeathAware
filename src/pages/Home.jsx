@@ -222,19 +222,15 @@ export default function Home() {
                 <div className="max-w-4xl mx-auto px-4 pb-10">
                     {/* Search position logic */}
                     <div
-                        className={`
-              w-full opacity-100 transition-all duration-700
-              ${
+                        className={[
+                            "w-full opacity-100 transition-all duration-700",
+                            !weather ? "animate-fadeIn" : "pt-6",
                             !weather
-                                ? `
-                    max-[599px]:${searchActive ? "pt-3" : "pt-[30vh]"}
-                    max-[280px]:${searchActive ? "pt-1" : "pt-[30vh]"}
-                    min-[600px]:pt-[30vh]
-                    animate-fadeIn
-                  `
-                                : "pt-6"
-                        }
-            `}
+                                ? searchActive
+                                    ? "max-[599px]:pt-3 max-[280px]:pt-1 min-[600px]:pt-[30vh]"
+                                    : "pt-[30vh]"
+                                : "",
+                        ].join(" ")}
                     >
                         <Search
                             onSelectCity={handleSelectCity}
