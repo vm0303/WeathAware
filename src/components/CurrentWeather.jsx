@@ -552,7 +552,7 @@ export default function CurrentWeather({
             </span>
 
                         <span className="opacity-70 max-[280px]:text-[11px]">Cloud cover:</span>
-                        <span className="font-semibold whitespace-nowrap justify-self-end text-right">
+                        <span className="font-semibold whitespace-nowrap justify-self-end text-right max-[280px]:text-[11px]">
               {cloudCover}
             </span>
 
