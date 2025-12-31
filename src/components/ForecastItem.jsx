@@ -1,92 +1,105 @@
 // src/components/ForecastItem.jsx
-import React, { useRef, useState, useEffect } from "react";
+import React from "react";
 import WeatherIcon from "./WeatherIcon";
 
-
-export default function ForecastItem({ day, unit, theme, label }) {
-
-
-    // FIX: Parse as local calendar date
+export default function ForecastItem({ day, unit, theme, label, isTiny, dragRef }) {
     const [y, m, d] = day.date.split("-");
     const localDate = new Date(y, m - 1, d);
-
     const weekday = localDate.toLocaleDateString("en-US", { weekday: "short" });
 
-    const textRef = useRef(null);
-    const [isEllipsed, setIsEllipsed] = useState(false);
-    const [showFull, setShowFull] = useState(false);
-
-    useEffect(() => {
-        const el = textRef.current;
-        if (!el) return;
-        setIsEllipsed(el.scrollHeight > el.clientHeight);
-    }, [day]);
-
     return (
-        <div className="flex flex-col items-center min-w-[90px]">
+        <div
+            data-forecast-card="true"
+            className={`
+        flex-shrink-0
+        w-[150px]
+        rounded-2xl
+        px-3 py-3
+        flex flex-col items-center text-center
+        ${theme.text}
 
-            {/* Title */}
-            <h6 className={`font-semibold text-xl ${theme.text}`}>
-                {label || weekday}
-            </h6>
+        max-[280px]:w-[124px]
+        max-[280px]:px-2 max-[280px]:py-2
+        max-[280px]:snap-center
+      `}
+        >
+            {/* Title (match Hourly time block height + text feel) */}
+            <div className="h-[70px] flex items-center justify-center max-[280px]:h-[55px]">
+                <p className="text-md opacity-80 font-semibold tracking-tight whitespace-nowrap max-[280px]:text-md">
+                    {label || weekday}
+                </p>
+            </div>
 
-            <WeatherIcon code={day.day.condition.code} isDay={true} />
+            {/* Icon (match Hourly icon box) */}
+            <div className="h-[75px] flex items-center justify-center max-[280px]:h-[55px]">
+                <WeatherIcon code={day.day.condition.code} isDay={true} size={70} />
+            </div>
 
-            {/* Condition text */}
-            <div className="relative mt-2 h-[70px] flex items-center justify-center text-center max-w-[165px]">
-            <p
-                    ref={textRef}
-                    onClick={() => setShowFull(!showFull)}
-                    className={`
-                        text-base capitalize opacity-80 leading-snug
-                        ${theme.text}
-                        ${isEllipsed ? "cursor-pointer" : ""}
-                    `}
-                    style={{
-                        overflow: "hidden",
-                        textOverflow: "ellipsis",
-                        display: "-webkit-box",
-                        WebkitLineClamp: showFull ? "unset" : 2,
-                        WebkitBoxOrient: "vertical",
+            {/* Condition (match Hourly condition box) */}
+            <div
+                className="
+          w-full
+          h-[88px]
+          px-2
+          mt-0.5
+          flex items-center justify-center
+          max-[280px]:h-[80px]
+        "
+            >
+                <p
+                    className="
+            w-full
+            text-sm opacity-80 leading-snug text-center
+            break-words
+            overflow-y-auto
+            scrollbar-none
+            max-h-full
+            py-1
+            max-[280px]:text-[13.5px]
+
+          "
+                    onPointerDown={(e) => {
+                        if (isTiny && dragRef?.current?.didDrag) e.preventDefault();
                     }}
-                    title={isEllipsed ? day.day.condition.text : undefined}
                 >
                     {day.day.condition.text}
                 </p>
             </div>
 
-            {/* Temps */}
+            {/* Temps (match Hourly temp sizing + spacing + baseline) */}
+            <div className="flex items-center justify-center mt-2 max-[280px]:mt-2.5">
+                <div className="fade-stack center tabular-nums font-semibold leading-none min-w-[9ch] whitespace-nowrap">
+                    {/* Fahrenheit layer */}
+                    <span className={`fade-text ${unit === "F" ? "visible" : ""}`}>
+            <span className="text-lg inline-flex items-baseline leading-none max-[280px]:text-md">
+              {Math.round(day.day.maxtemp_f)}
+                <span className="text-sm ml-1 leading-none max-[280px]:text-[13px]">°F</span>
+            </span>
 
-            {/* Temps */}
-            <div className={`fade-stack center text-lg font-semibold mt-3 ${theme.text} tabular-nums whitespace-nowrap`}>
+            <span className="opacity-50 mx-1">/</span>
 
-                {/* Fahrenheit layer */}
-                <span className={`fade-text ${unit === "F" ? "visible" : ""}`}>
-  <span className="font-semibold">
-    {Math.round(day.day.maxtemp_f)}°F
-  </span>
-  <span className="opacity-50"> / </span>
-  <span className="opacity-70">
-    {Math.round(day.day.mintemp_f)}°F
-  </span>
-</span>
+            <span className="text-lg inline-flex items-baseline leading-none opacity-70 max-[280px]:text-md">
+              {Math.round(day.day.mintemp_f)}
+                <span className="text-sm ml-1 leading-none max-[280px]:text-[13px]">°F</span>
+            </span>
+          </span>
 
-                {/* Celsius layer */}
-                <span className={`fade-text ${unit === "C" ? "visible" : ""}`}>
-  <span className="font-semibold">
-    {Math.round(day.day.maxtemp_c)}°C
-  </span>
-  <span className="opacity-50"> / </span>
-  <span className="opacity-70">
-    {Math.round(day.day.mintemp_c)}°C
-  </span>
-</span>
+                    {/* Celsius layer */}
+                    <span className={`fade-text ${unit === "C" ? "visible" : ""}`}>
+            <span className="text-lg inline-flex items-baseline leading-none max-[280px]:text-md">
+              {Math.round(day.day.maxtemp_c)}
+                <span className="text-sm ml-1 leading-none max-[280px]:text-[13px]">°C</span>
+            </span>
 
+            <span className="opacity-50 mx-1">/</span>
 
-
+            <span className="text-lg inline-flex items-baseline leading-none opacity-70 max-[280px]:text-md">
+              {Math.round(day.day.mintemp_c)}
+                <span className="text-sm ml-1 leading-none max-[280px]:text-[13px]">°C</span>
+            </span>
+          </span>
+                </div>
             </div>
-
-
         </div>
     );
 }

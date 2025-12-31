@@ -1,79 +1,31 @@
+// src/components/HourlyForecast.jsx
 import React, { useMemo, useRef, useState, useEffect } from "react";
 import WeatherIcon from "./WeatherIcon";
 
-/**
- * ForecastItem-style condition clamp:
- * - Detects overflow
- * - Click to expand/collapse ONLY if ellipsed
- * - Expands inside fixed-height box (scrollable)
- */
-function ConditionClamp({ text }) {
-    const textRef = useRef(null);
-    const [isEllipsed, setIsEllipsed] = useState(false);
-    const [showFull, setShowFull] = useState(false);
+export default function HourlyForecast({ hours, unit, theme, localTime }) {
+    // tiny breakpoint state (must live INSIDE component)
+    const [isTiny, setIsTiny] = useState(false);
 
     useEffect(() => {
-        const el = textRef.current;
-        if (!el) return;
+        const mq = window.matchMedia("(max-width: 280px)");
+        const sync = () => setIsTiny(mq.matches);
+        sync();
 
-        setShowFull(false);
+        // Safari fallback
+        if (mq.addEventListener) mq.addEventListener("change", sync);
+        else mq.addListener(sync);
 
-        const raf = requestAnimationFrame(() => {
-            const node = textRef.current;
-            if (!node) return;
-            const isOver =
-                node.scrollHeight > node.clientHeight || node.scrollWidth > node.clientWidth;
-            setIsEllipsed(isOver);
-        });
-
-        return () => cancelAnimationFrame(raf);
-    }, [text]);
-
-    const toggle = () => {
-        if (isEllipsed) setShowFull((v) => !v);
-    };
-
-    return (
-        <p
-            ref={textRef}
-            onClick={toggle}
-            onKeyDown={(e) => {
-                if (!isEllipsed) return;
-                if (e.key === "Enter" || e.key === " ") {
-                    e.preventDefault();
-                    toggle();
-                }
-            }}
-            role={isEllipsed ? "button" : undefined}
-            tabIndex={isEllipsed ? 0 : -1}
-            className={`
-        w-full px-2 py-[2px]
-  text-sm opacity-70 leading-snug text-center
-  ${isEllipsed ? "cursor-pointer hover:underline" : "cursor-default"}
-      `}
-            style={{
-                overflow: "hidden",
-                textOverflow: "ellipsis",
-                display: showFull ? "block" : "-webkit-box",
-                WebkitLineClamp: showFull ? undefined : 3,
-                WebkitBoxOrient: showFull ? undefined : "vertical",
-                overflowY: showFull ? "auto" : "hidden",
-                maxHeight: "95px",
-            }}
-            title={isEllipsed ? text : undefined}
-        >
-            {text}
-        </p>
-    );
-}
-
-
-export default function HourlyForecast({ hours, unit, theme, localTime }) {
-    const safeHours = Array.isArray(hours) ? hours : [];
-    const safeLocalTime = localTime || null;
+        return () => {
+            if (mq.removeEventListener) mq.removeEventListener("change", sync);
+            else mq.removeListener(sync);
+        };
+    }, []);
 
     // ---------- Build sorted hours ----------
     const sortedHours = useMemo(() => {
+        const safeHours = Array.isArray(hours) ? hours : [];
+        const safeLocalTime = localTime || null;
+
         if (safeHours.length === 0 || !safeLocalTime) return [];
 
         const local = new Date(safeLocalTime.replace(" ", "T"));
@@ -83,7 +35,18 @@ export default function HourlyForecast({ hours, unit, theme, localTime }) {
         const after = safeHours.slice(0, currentHour);
 
         return [...before, ...after];
-    }, [safeHours, safeLocalTime]);
+    }, [hours, localTime]);
+
+    // hooks must be above early return
+    const scrollerRef = useRef(null);
+
+    // drag tracking (only used to avoid “tap selects text” while swiping on tiny)
+    const dragRef = useRef({
+        isDown: false,
+        startX: 0,
+        scrollLeft: 0,
+        didDrag: false,
+    });
 
     if (sortedHours.length === 0) return null;
 
@@ -103,62 +66,140 @@ export default function HourlyForecast({ hours, unit, theme, localTime }) {
             {/* (optional) left fade overlay for scroll hint */}
             <div className="pointer-events-none absolute left-0 top-0 h-full w-10 z-20" />
 
-            <div className={`${theme.card} p-5`}>
-                <h2 className={`text-xl font-semibold mb-3 ${theme.text}`}>
+            {/* Slightly tighter padding only on <=280px */}
+            <div className={`${theme.card} p-5 max-[280px]:p-4`}>
+                {/* Center title only on <=280px */}
+                <h2 className={`text-xl font-semibold mb-3 ${theme.text} max-[280px]:text-center max-[280px]:text-base`}>
                     Hourly Forecast
                 </h2>
 
                 <div className="relative">
-                    <div className="flex gap-4 overflow-x-auto pb-3 pt-1 scrollbar-none">
+                    {/* Native horizontal scroll everywhere
+              Add snap only on <=280px (carousel feel)
+              Side padding prevents edge clipping inside rounded container */}
+                    <div
+                        ref={scrollerRef}
+                        className={`
+              flex gap-4 overflow-x-auto pb-3 pt-1 scrollbar-none
+              max-[280px]:gap-3
+              max-[280px]:pb-2
+              max-[280px]:snap-x max-[280px]:snap-mandatory
+              max-[280px]:px-4
+              max-[280px]:scroll-px-4
+              max-[280px]:select-none
+            `}
+                        onPointerDown={(e) => {
+                            if (!isTiny) return;
+
+                            const el = scrollerRef.current;
+                            if (!el) return;
+
+                            dragRef.current.isDown = true;
+                            dragRef.current.startX = e.clientX;
+                            dragRef.current.scrollLeft = el.scrollLeft;
+                            dragRef.current.didDrag = false;
+
+                            el.setPointerCapture?.(e.pointerId);
+                        }}
+                        onPointerMove={(e) => {
+                            if (!isTiny) return;
+
+                            const el = scrollerRef.current;
+                            if (!el) return;
+                            if (!dragRef.current.isDown) return;
+
+                            const dx = e.clientX - dragRef.current.startX;
+                            if (Math.abs(dx) > 4) dragRef.current.didDrag = true;
+
+                            el.scrollLeft = dragRef.current.scrollLeft - dx;
+                        }}
+                        onPointerUp={() => {
+                            if (!isTiny) return;
+                            dragRef.current.isDown = false;
+                            // reset shortly after swipe ends so next tap can select/copy if user wants
+                            window.setTimeout(() => {
+                                dragRef.current.didDrag = false;
+                            }, 120);
+                        }}
+                        onPointerCancel={() => {
+                            if (!isTiny) return;
+                            dragRef.current.isDown = false;
+                            dragRef.current.didDrag = false;
+                        }}
+                    >
                         {sortedHours.map((h, i) => (
                             <div
                                 key={i}
+                                data-hour-card="true"
                                 className={`
-    flex-shrink-0
-    w-[150px]
-    rounded-2xl
-    px-3 py-3
-    flex flex-col items-center text-center
-    ${theme.text}
-  `}
+                  flex-shrink-0
+                  w-[150px]
+                  rounded-2xl
+                  px-3 py-3
+                  flex flex-col items-center text-center
+                  ${theme.text}
+
+                  max-[280px]:w-[124px]
+                  max-[280px]:px-2 max-[280px]:py-2
+                  max-[280px]:snap-center
+                `}
                             >
                                 {/* Time (fixed height so all columns align) */}
-                                <div className="h-[70px] flex items-center justify-center">
-                                    <p className="text-md opacity-70 whitespace-nowrap">
+                                <div className="h-[70px] flex items-center justify-center max-[280px]:h-[55px]">
+                                    <p className="text-md font-semibold tracking-tight opacity-80 whitespace-nowrap max-[280px]:text-md">
                                         {i === 0 ? "Now" : format12Hour(h.time)}
                                     </p>
                                 </div>
 
                                 {/* Icon (fixed box) */}
-                                <div className="h-[75px] flex items-center justify-center">
-                                    <WeatherIcon
-                                        code={h.condition.code}
-                                        isDay={h.is_day === 1}
-                                        size={45}
-                                    />
+                                <div className="h-[75px] flex items-center justify-center max-[280px]:h-[55px]">
+                                    <WeatherIcon code={h.condition.code} isDay={h.is_day === 1} size={70} />
                                 </div>
 
-                                {/* Condition (ForecastItem-style clamp) */}
-                                <div className="h-[95px] flex items-center justify-center mt-1 w-full">
-                                    <ConditionClamp text={h.condition.text} />
+                                {/* Condition (fixed height, full text, centered when short, scroll if long) */}
+                                <div
+                                    className="
+                    w-full
+                    h-[88px]
+                    px-2
+                    mt-0.5
+                    flex items-center justify-center
+                    max-[280px]:h-[65px]
+                  "
+                                >
+                                    <p
+                                        className="
+                      w-full
+                      text-sm opacity-80 leading-snug text-center
+                      break-words
+                      overflow-y-auto
+                      scrollbar-none
+                      max-h-full
+                      py-1
+                      max-[280px]:text-[13.5px]
+                    "
+                                        onPointerDown={(e) => {
+                                            if (isTiny && dragRef.current.didDrag) e.preventDefault();
+                                        }}
+                                    >
+                                        {h.condition.text}
+                                    </p>
                                 </div>
 
-                                {/* Temp (fixed height, perfectly centered) */}
-                                <div className="h-[10px] flex items-center justify-center mt-1">
+                                {/* Temp (closer to condition, but still consistent) */}
+                                <div className="flex items-center justify-center mt-2 max-[280px]:mt-2.5">
                                     <div className="fade-stack center tabular-nums font-semibold leading-none min-w-[5ch]">
-                                        {/* Fahrenheit */}
-                                        <span className={`fade-text ${unit === "F" ? "visible" : ""}`}>
-                      <span className="text-lg inline-flex items-baseline leading-none">
+                    <span className={`fade-text ${unit === "F" ? "visible" : ""}`}>
+                      <span className="text-lg inline-flex items-baseline leading-none max-[280px]:text-md">
                         {Math.round(h.temp_f)}
-                          <span className="text-sm ml-1 leading-none">°F</span>
+                          <span className="text-sm ml-1 leading-none max-[280px]:text-[13px]">°F</span>
                       </span>
                     </span>
 
-                                        {/* Celsius */}
                                         <span className={`fade-text ${unit === "C" ? "visible" : ""}`}>
-                      <span className="text-lg inline-flex items-baseline leading-none">
+                      <span className="text-lg inline-flex items-baseline leading-none max-[280px]:text-md">
                         {Math.round(h.temp_c)}
-                          <span className="text-sm ml-1 leading-none">°C</span>
+                          <span className="text-sm ml-1 leading-none max-[280px]:text-[13px]">°C</span>
                       </span>
                     </span>
                                     </div>

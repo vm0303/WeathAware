@@ -1,4 +1,4 @@
-import {motion} from "framer-motion";
+import {motion, useReducedMotion} from "framer-motion";
 
 // Import Meteocons SVGs
 import sun from "../assets/meteocons/sun.svg";
@@ -105,28 +105,24 @@ export const weatherMap = {
     1282: {day: heavySnowThunderDay, night: heavySnowThunderNight, type: "thunder"},
 };
 
-export default function WeatherIcon({code, isDay}) {
-    const entry = weatherMap[code] || weatherMap[1003]; // default partly cloudy
+export default function WeatherIcon({ code, isDay, size = 56, className = "" }) {
+    const entry = weatherMap[code] || weatherMap[1003];
     const icon = isDay ? entry.day : entry.night;
     const type = entry.type;
 
-    // Motion variants by weather type (keep all as-is)
-    const variants = { /* ...keep your current variants... */};
-    const animate = variants[type] || {scale: [1, 1.02, 1]};
+    const prefersReducedMotion = useReducedMotion();
+
+    const variants = { /* ...keep your current variants... */ };
+    const animate = prefersReducedMotion ? undefined : (variants[type] || { scale: [1, 1.02, 1] });
 
     return (
         <motion.img
             src={icon}
             alt="weather icon"
-            className="
-    w-14 h-14
-    md:w-28 md:h-28
-    lg:w-32 lg:h-32
-    mx-auto
-    object-contain weather-icon
-  "
+            style={{ width: size, height: size, display: "block" }}
+            className={`mx-auto object-contain weather-icon ${className}`}
             animate={animate}
-            transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
+            transition={prefersReducedMotion ? undefined : { duration: 2, repeat: Infinity, ease: "easeInOut" }}
         />
     );
 }
