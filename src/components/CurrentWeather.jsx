@@ -398,7 +398,7 @@ export default function CurrentWeather({
                         )}
 
                         {/* Convert button BELOW on <=280 */}
-                        <div className="hidden max-[280px]:flex max-[280px]:justify-center max-[280px]:mt-2">
+                        <div className="hidden max-[280px]:flex max-[280px]:justify-center max-[280px]:mt-3">
                             <button
                                 onClick={() => onUnitChange(unit === "F" ? "C" : "F")}
                                 className="
@@ -480,7 +480,7 @@ export default function CurrentWeather({
                             </div>
                         </div>
 
-                        <h4 className="text-2xl mt-2 capitalize max-[280px]:text-base max-[280px]:mt-1">
+                        <h4 className="text-2xl mt-2 capitalize max-[280px]:text-base max-[280px]:mt-2">
                             {w.condition.text}
                         </h4>
                     </div>
