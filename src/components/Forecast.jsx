@@ -3,15 +3,8 @@ import React, { useMemo, useRef, useState, useEffect } from "react";
 import ForecastItem from "./ForecastItem";
 
 export default function Forecast({ weather, unit, theme }) {
+    // tiny breakpoint (<= 280px)
     const [isTiny, setIsTiny] = useState(false);
-    const scrollerRef = useRef(null);
-
-    const dragRef = useRef({
-        isDown: false,
-        startX: 0,
-        scrollLeft: 0,
-        didDrag: false,
-    });
 
     useEffect(() => {
         const mq = window.matchMedia("(max-width: 280px)");
@@ -27,6 +20,15 @@ export default function Forecast({ weather, unit, theme }) {
         };
     }, []);
 
+    const scrollerRef = useRef(null);
+
+    const dragRef = useRef({
+        isDown: false,
+        startX: 0,
+        scrollLeft: 0,
+        didDrag: false,
+    });
+
     const days = useMemo(() => {
         const forecastDays = weather?.forecast?.forecastday;
         const localtime = weather?.location?.localtime;
@@ -40,8 +42,15 @@ export default function Forecast({ weather, unit, theme }) {
 
     return (
         <div className="rounded-2xl shadow-lg mb-8 overflow-hidden relative">
-            <div className={`${theme.card} p-6 max-[280px]:p-4 transition-colors duration-300`}>
-                <h2 className={`text-xl font-semibold text-center ${theme.text} max-[280px]:text-base`}>
+            {/* Padding: 280 stays tight, 320 gets a touch more room */}
+            <div className={`${theme.card} p-6 max-[320px]:p-4 max-[280px]:p-4 transition-colors duration-300`}>
+                <h2
+                    className={`
+            text-xl font-semibold text-center ${theme.text}
+            max-[320px]:text-lg
+            max-[280px]:text-base
+          `}
+                >
                     3-Day Forecast
                 </h2>
 
@@ -51,9 +60,15 @@ export default function Forecast({ weather, unit, theme }) {
                         className={`
               flex overflow-x-auto mt-4 pb-2 scrollbar-none
 
-              /* tiny phones: same behavior as Hourly */
-              justify-start gap-3
-              snap-x snap-mandatory px-4 scroll-px-4 select-none
+              /* <=320: slightly tighter than desktop, but not as tight as 280 */
+              max-[320px]:gap-3.5
+              max-[320px]:px-4
+              max-[320px]:scroll-px-4
+
+              /* <=280: keep tiny carousel behavior identical */
+              max-[280px]:gap-3
+              max-[280px]:snap-x max-[280px]:snap-mandatory
+              max-[280px]:select-none
 
               /* larger screens: keep centered like before */
               md:justify-center md:gap-12 md:px-0 md:snap-none
