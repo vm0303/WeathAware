@@ -23,7 +23,7 @@ export default function CurrentWeather({
     const w = weather?.current ?? {};
     const lastUpdated = w.last_updated ?? "";
 
-    // ✅ Tooltip portal positioning
+    // Tooltip portal positioning
     const iconBtnRef = useRef(null);
     const [tipPos, setTipPos] = useState({
         top: 0,
@@ -44,8 +44,7 @@ export default function CurrentWeather({
         const diffDay = Math.floor(diffHr / 24);
 
         if (diffMin < 1) return "just now";
-        if (diffMin < 60)
-            return `${diffMin} minute${diffMin === 1 ? "" : "s"} ago`;
+        if (diffMin < 60) return `${diffMin} minute${diffMin === 1 ? "" : "s"} ago`;
         if (diffHr < 24) return `${diffHr} hour${diffHr === 1 ? "" : "s"} ago`;
 
         if (diffDay === 1) {
@@ -89,7 +88,7 @@ export default function CurrentWeather({
         }
     }, [weather, lastCity, onUnitChange]);
 
-    // ✅ Compute tooltip position (always opens DOWN)
+    // Compute tooltip position (always opens DOWN)
     const computeTipPos = () => {
         const el = iconBtnRef.current;
         if (!el) return;
@@ -111,7 +110,10 @@ export default function CurrentWeather({
         const iconCenterX = r.left + r.width / 2;
         let arrowLeft = iconCenterX - left;
         const ARROW_HALF = 6; // half of w-3 (12px)
-        arrowLeft = Math.max(ARROW_HALF + 2, Math.min(arrowLeft, desiredWidth - (ARROW_HALF + 2)));
+        arrowLeft = Math.max(
+            ARROW_HALF + 2,
+            Math.min(arrowLeft, desiredWidth - (ARROW_HALF + 2))
+        );
 
         setTipPos({ top, left, width: desiredWidth, arrowLeft });
     };
@@ -146,9 +148,7 @@ export default function CurrentWeather({
         else closeTip();
     };
 
-    // ✅ Close on outside click/tap + resize — ONLY when open
-    // 🚫 Do NOT close on scroll (requested)
-    // ✅ Close on outside click/tap + scroll + resize — ONLY when open
+    // Close on outside click/tap + scroll + resize — ONLY when open
     useEffect(() => {
         if (!showDataTip) return;
 
@@ -157,13 +157,12 @@ export default function CurrentWeather({
         const onDocPointerDown = (e) => {
             // if tapping the icon itself, let its handler toggle
             if (iconBtnRef.current && iconBtnRef.current.contains(e.target)) return;
-
             closeTip(); // fade out
         };
 
         const onResize = () => closeTip();
 
-        // ✅ Throttled scroll close (fade out) to avoid rendering jitter
+        // Throttled scroll close (fade out) to avoid rendering jitter
         let ticking = false;
         const onScroll = () => {
             if (ticking) return;
@@ -188,7 +187,6 @@ export default function CurrentWeather({
         };
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [showDataTip]);
-
 
     // Cleanup timer on unmount
     useEffect(() => {
@@ -256,9 +254,7 @@ export default function CurrentWeather({
     const getOrdinalSuffix = (day) => {
         if (day > 3 && day < 21) return `${day}th`;
         const last = day % 10;
-        return `${day}${
-            last === 1 ? "st" : last === 2 ? "nd" : last === 3 ? "rd" : "th"
-        }`;
+        return `${day}${last === 1 ? "st" : last === 2 ? "nd" : last === 3 ? "rd" : "th"}`;
     };
 
     const formatLocalTimeDisplay = (localTimeStr, tz) => {
@@ -283,35 +279,26 @@ export default function CurrentWeather({
         <div className="relative rounded-2xl shadow-lg mb-8 overflow-hidden">
             {/* Previous theme for fade */}
             <div
-                className={`absolute inset-0 ${
-                    prevTheme?.card || theme.card
-                } transition-opacity duration-700`}
+                className={`absolute inset-0 ${prevTheme?.card || theme.card} transition-opacity duration-700`}
                 style={{ opacity: 0 }}
             />
 
             {/* Current theme */}
-            <div
-                className={`relative z-10 ${theme.card} p-6 max-[280px]:p-3 transition-colors duration-300`}
-            >
+            <div className={`relative z-10 ${theme.card} p-6 max-[320px]:p-3 transition-colors duration-300`}>
                 {/* Header */}
-                <div className="flex justify-between items-center gap-4 max-[280px]:flex-col max-[280px]:items-center max-[280px]:gap-2">
+                <div className="flex justify-between items-center gap-4 max-[320px]:flex-col max-[320px]:items-center max-[320px]:gap-2">
                     <div>
-                        <h2
-                            className={`text-xl font-semibold ${theme.text} max-[280px]:text-base max-[280px]:text-center`}
-                        >
+                        <h2 className={`text-xl font-semibold ${theme.text} max-[280px]:text-base max-[320px]:text-lg max-[320px]:text-center`}>
                             Current Weather
                         </h2>
 
                         {lastUpdated && (
-                            <div
-                                className={`text-xs sm:text-sm flex items-center gap-2 ${theme.text} max-[280px]:justify-center max-[280px]:text-[11px]`}
-                            >
+                            <div className={`text-xs sm:text-sm flex items-center gap-2 ${theme.text} max-[320px]:justify-center max-[280px]:text-[11px] max-[320px]:text-[12px]`}>
                 <span className="opacity-80">
-                  Last updated:{" "}
-                    <span className="font-semibold">{relativeUpdated}</span>
+                  Last updated: <span className="font-semibold">{relativeUpdated}</span>
                 </span>
 
-                                {/* ✅ Info icon (ONLY this toggles tooltip) */}
+                                {/* Info icon (ONLY this toggles tooltip) */}
                                 <div className="relative inline-flex items-center">
                                     <button
                                         ref={iconBtnRef}
@@ -349,7 +336,7 @@ export default function CurrentWeather({
                                         </svg>
                                     </button>
 
-                                    {/* ✅ PORTAL TOOLTIP: not clipped by overflow-hidden */}
+                                    {/* PORTAL TOOLTIP: not clipped by overflow-hidden */}
                                     {showDataTip &&
                                         createPortal(
                                             <div
@@ -367,6 +354,7 @@ export default function CurrentWeather({
                           px-3 py-2
                           text-[11px] sm:text-xs
                           max-[280px]:text-[10px]
+                          max-[320px]:text-[12px]
                           tooltip-bubble
                           ${tipAnim === "in" ? "tooltip-show" : ""}
                           ${tipAnim === "out" ? "tooltip-hide" : ""}
@@ -385,11 +373,8 @@ export default function CurrentWeather({
                                                 />
 
                                                 WeatherAPI data refreshes every{" "}
-                                                <span className="font-semibold">30–60 minutes</span>,
-                                                depending on the area. So the timestamp may show{" "}
-                                                <span className="italic">“X minutes ago”</span> or{" "}
-                                                <span className="italic">“X hours ago”</span> instead of
-                                                live data.
+                                                <span className="font-semibold">30–60 minutes</span>, depending on the area. So the timestamp may show{" "}
+                                                <span className="italic">“X minutes ago”</span> or <span className="italic">“X hours ago”</span> instead of live data.
                                             </div>,
                                             document.body
                                         )}
@@ -397,16 +382,17 @@ export default function CurrentWeather({
                             </div>
                         )}
 
-                        {/* Convert button BELOW on <=280 */}
-                        <div className="hidden max-[280px]:flex max-[280px]:justify-center max-[280px]:mt-3">
+                        {/* ✅ ONE mobile convert block for <=320px (covers 280 + 320) */}
+                        <div className="hidden max-[320px]:flex max-[320px]:justify-center max-[320px]:mt-3">
                             <button
                                 onClick={() => onUnitChange(unit === "F" ? "C" : "F")}
                                 className="
-                  px-3 py-1 rounded-full text-xs font-semibold
+                  px-2.5 py-1 rounded-full text-sm font-semibold
                   bg-slate-300 dark:bg-slate-700
                   text-slate-800 dark:text-slate-200
                   hover:bg-slate-400 dark:hover:bg-slate-600
                   transition
+                  max-[280px]:text-xs
                 "
                             >
                                 {unit === "F" ? "Convert to °C" : "Convert to °F"}
@@ -414,7 +400,7 @@ export default function CurrentWeather({
                         </div>
                     </div>
 
-                    {/* Convert button right on >280 */}
+                    {/* Convert button right on >320px */}
                     <button
                         onClick={() => onUnitChange(unit === "F" ? "C" : "F")}
                         className="
@@ -423,7 +409,7 @@ export default function CurrentWeather({
               text-slate-800 dark:text-slate-200
               hover:bg-slate-400 dark:hover:bg-slate-600
               transition
-              max-[280px]:hidden
+              max-[320px]:hidden
             "
                     >
                         {unit === "F" ? "Convert to °C" : "Convert to °F"}
@@ -431,20 +417,20 @@ export default function CurrentWeather({
                 </div>
 
                 {/* Main layout */}
-                <div className="flex flex-wrap mt-6 items-start justify-between gap-12 max-[280px]:mt-4 max-[280px]:gap-4 max-[280px]:flex-col max-[280px]:items-center">
+                <div className="flex flex-wrap mt-6 items-start justify-between gap-12 max-[320px]:mt-4 max-[320px]:gap-4 max-[320px]:flex-col max-[320px]:items-center">
                     {/* LEFT */}
-                    <div className={`${theme.text} max-[280px]:text-center max-[280px]:w-full`}>
-                        <h3 className="text-3xl font-semibold max-[280px]:text-[22px]">
+                    <div className={`${theme.text} max-[320px]:text-center max-[320px]:w-full`}>
+                        <h3 className="text-3xl font-semibold max-[280px]:text-[22px] max-[320px]:text-[24px] max-[320px]:mt-0.5">
                             {loc.name}
                         </h3>
 
-                        <p className="text-md opacity-80 max-[280px]:text-xs">
+                        <p className="text-md opacity-80 max-[280px]:text-xs max-[320px]:text-sm">
                             {loc.region && `${loc.region}, `}
                             {loc.country}
                         </p>
 
                         {localTime && timezone && (
-                            <p className="text-xs mt-1 opacity-75 max-[280px]:text-[11px] max-[280px]:mt-2.5">
+                            <p className="text-xs mt-1 opacity-75 max-[280px]:text-[11px] max-[280px]:mt-2.5 max-[320px]:text-[13px] max-[320px]:mt-3">
                                 <span className="block">Local date and time:</span>
                                 <span className="block font-medium">
                   {formatLocalTimeDisplay(localTime, timezone)}
@@ -452,36 +438,32 @@ export default function CurrentWeather({
                             </p>
                         )}
 
-                        <div className="flex items-center mt-4 h-[84px] sm:h-[100px] max-[280px]:mt-3 max-[280px]:h-[56px] max-[280px]:justify-center">
-                            <div className="w-[84px] sm:w-[100px] flex justify-center items-center max-[280px]:w-[56px]">
-                                <WeatherIcon code={w.condition.code} isDay={w.is_day === 1} />
+                        <div className="flex items-center mt-4 h-[84px] sm:h-[100px] max-[320px]:mt-3 max-[320px]:h-[56px] max-[320px]:justify-center">
+                            <div className="w-[84px] sm:w-[100px] flex justify-center items-center max-[320px]:w-[64px]">
+                                <WeatherIcon code={w?.condition?.code} isDay={w.is_day === 1} size={64} />
                             </div>
 
                             <div className="ml-3 temp-align min-w-[9ch]">
                                 <div className="fade-stack tabular-nums">
                   <span className={`fade-text ${unit === "F" ? "visible" : ""}`}>
-                    <span className="text-7xl font-light leading-none inline-flex items-baseline max-[280px]:text-5xl">
+                    <span className="text-7xl font-light leading-none inline-flex items-baseline max-[320px]:text-5xl">
                       {Math.round(w.temp_f)}
-                        <span className="text-4xl ml-1 temp-unit max-[280px]:text-2xl">
-                        °F
-                      </span>
+                        <span className="text-4xl ml-1 temp-unit max-[320px]:text-2xl">°F</span>
                     </span>
                   </span>
 
                                     <span className={`fade-text ${unit === "C" ? "visible" : ""}`}>
-                    <span className="text-7xl font-light leading-none inline-flex items-baseline max-[280px]:text-5xl">
+                    <span className="text-7xl font-light leading-none inline-flex items-baseline max-[320px]:text-5xl">
                       {Math.round(w.temp_c)}
-                        <span className="text-4xl ml-1 temp-unit max-[280px]:text-2xl">
-                        °C
-                      </span>
+                        <span className="text-4xl ml-1 temp-unit max-[320px]:text-2xl">°C</span>
                     </span>
                   </span>
                                 </div>
                             </div>
                         </div>
 
-                        <h4 className="text-2xl mt-2 capitalize max-[280px]:text-base max-[280px]:mt-2">
-                            {w.condition.text}
+                        <h4 className="text-2xl mt-2 capitalize max-[280px]:text-base max-[280px]:mt-2 max-[320px]:text-lg">
+                            {w?.condition?.text}
                         </h4>
                     </div>
 
@@ -497,70 +479,73 @@ export default function CurrentWeather({
               max-[280px]:grid-cols-[auto,1fr]
               max-[280px]:gap-y-3 max-[280px]:gap-x-3
               max-[280px]:text-xs
+
+              max-[320px]:grid-cols-[auto,1fr]
+              max-[320px]:gap-y-3.5 max-[320px]:gap-x-4
+              max-[320px]:text-[13px]
             `}
                     >
-                        <span className="opacity-70 max-[280px]:text-[11px]">Feels like:</span>
+                        <span className="opacity-70 max-[280px]:text-[11px] max-[320px]:text-[13px]">Feels like:</span>
                         <div className="fade-stack stats right tabular-nums font-semibold text-right whitespace-nowrap justify-self-end">
-              <span className={`fade-text ${unit === "F" ? "visible" : ""} max-[280px]:text-[11px]`}>
+              <span className={`fade-text ${unit === "F" ? "visible" : ""} max-[280px]:text-[11px] max-[320px]:text-[13px]`}>
                 {Math.round(w.feelslike_f)}
                   <span className="stat-unit">°F</span>
               </span>
 
-                            <span className={`fade-text ${unit === "C" ? "visible" : ""} max-[280px]:text-[11px]`}>
+                            <span className={`fade-text ${unit === "C" ? "visible" : ""} max-[280px]:text-[11px] max-[320px]:text-[13px]`}>
                 {Math.round(w.feelslike_c)}
                                 <span className="stat-unit">°C</span>
               </span>
                         </div>
 
-                        <span className="opacity-70 max-[280px]:text-[11px]">Humidity:</span>
-                        <span className="font-semibold whitespace-nowrap justify-self-end text-right max-[280px]:text-[11px]">
+                        <span className="opacity-70 max-[280px]:text-[11px] max-[320px]:text-[13px]">Humidity:</span>
+                        <span className="font-semibold whitespace-nowrap justify-self-end text-right max-[280px]:text-[11px] max-[320px]:text-[13px]">
               {w.humidity}%
             </span>
 
-                        <span className="opacity-70 max-[280px]:text-[11px]">Wind:</span>
+                        <span className="opacity-70 max-[280px]:text-[11px] max-[320px]:text-[13px]">Wind:</span>
                         <div className="fade-stack stats right tabular-nums font-semibold text-right justify-self-end whitespace-nowrap">
-              <span className={`fade-text ${unit === "F" ? "visible" : ""} max-[280px]:text-[11px]`}>
+              <span className={`fade-text ${unit === "F" ? "visible" : ""} max-[280px]:text-[11px] max-[320px]:text-[13px]`}>
                 {`${Math.round(w.wind_mph)} mph • ${w.wind_degree}° ${w.wind_dir || ""}`}
               </span>
 
-                            <span className={`fade-text ${unit === "C" ? "visible" : ""} max-[280px]:text-[11px]`}>
+                            <span className={`fade-text ${unit === "C" ? "visible" : ""} max-[280px]:text-[11px] max-[320px]:text-[13px]`}>
                 {`${Math.round(w.wind_kph)} kph • ${w.wind_degree}° ${w.wind_dir || ""}`}
               </span>
                         </div>
 
-                        <span className="opacity-70 max-[280px]:text-[11px]">Visibility:</span>
+                        <span className="opacity-70 max-[280px]:text-[11px] max-[320px]:text-[13px]">Visibility:</span>
                         <div className="fade-stack stats right tabular-nums font-semibold text-right justify-self-end whitespace-nowrap">
-              <span className={`fade-text ${unit === "F" ? "visible" : ""} max-[280px]:text-[11px]`}>
-  {(() => {
-      const v = w.vis_miles;
-      if (v == null) return "-";
-      const n = Number(v);
-      const label = n === 1 ? "mile" : "miles";
-      return `${v} ${label}`;
-  })()}
-</span>
+              <span className={`fade-text ${unit === "F" ? "visible" : ""} max-[280px]:text-[11px] max-[320px]:text-[13px]`}>
+                {(() => {
+                    const v = w.vis_miles;
+                    if (v == null) return "-";
+                    const n = Number(v);
+                    const label = n === 1 ? "mile" : "miles";
+                    return `${v} ${label}`;
+                })()}
+              </span>
 
-
-                            <span className={`fade-text ${unit === "C" ? "visible" : ""} max-[280px]:text-[11px]`}>
+                            <span className={`fade-text ${unit === "C" ? "visible" : ""} max-[280px]:text-[11px] max-[320px]:text-[13px]`}>
                 {`${w.vis_km ?? "-"} km`}
               </span>
                         </div>
 
-                        <span className="opacity-70 max-[280px]:text-[11px]">Pressure:</span>
-                        <span className="font-semibold whitespace-nowrap justify-self-end text-right max-[280px]:text-[11px]">
+                        <span className="opacity-70 max-[280px]:text-[11px] max-[320px]:text-[13px]">Pressure:</span>
+                        <span className="font-semibold whitespace-nowrap justify-self-end text-right max-[280px]:text-[11px] max-[320px]:text-[13px]">
               {pressure}
             </span>
 
-                        <span className="opacity-70 max-[280px]:text-[11px]">Cloud cover:</span>
-                        <span className="font-semibold whitespace-nowrap justify-self-end text-right max-[280px]:text-[11px]">
+                        <span className="opacity-70 max-[280px]:text-[11px] max-[320px]:text-[13px]">Cloud cover:</span>
+                        <span className="font-semibold whitespace-nowrap justify-self-end text-right max-[280px]:text-[11px] max-[320px]:text-[13px]">
               {cloudCover}
             </span>
 
-                        <span className="opacity-70 max-[280px]:text-[11px]">UV Index:</span>
-                        <span className="font-semibold whitespace-nowrap justify-self-end text-right max-[280px]:text-[11px]">
+                        <span className="opacity-70 max-[280px]:text-[11px] max-[320px]:text-[13px]">UV Index:</span>
+                        <span className="font-semibold whitespace-nowrap justify-self-end text-right max-[280px]:text-[11px] max-[320px]:text-[13px]">
               {uv != null ? uv : "-"}
                             {uvLabel && (
-                                <span className="text-xs ml-1 opacity-80 max-[280px]:text-[11px]">
+                                <span className="text-xs ml-1 opacity-80 max-[280px]:text-[11px] max-[320px]:text-[12px]">
                   ({uvLabel})
                 </span>
                             )}
@@ -568,10 +553,10 @@ export default function CurrentWeather({
 
                         {aqiLabel && (
                             <>
-                                <span className="opacity-70 max-[280px]:text-[11px]">Air Quality:</span>
-                                <span className="font-semibold whitespace-nowrap justify-self-end text-right">
+                                <span className="opacity-70 max-[280px]:text-[11px] max-[320px]:text-[13px]">Air Quality:</span>
+                                <span className="font-semibold whitespace-nowrap justify-self-end text-right max-[320px]:text-[13px]">
                   AQI {aqiIndex}
-                                    <span className="text-xs ml-1 opacity-80 max-[280px]:text-[11px]">
+                                    <span className="text-xs ml-1 opacity-80 max-[280px]:text-[11px] max-[320px]:text-[12px]">
                     ({aqiLabel})
                   </span>
                 </span>
