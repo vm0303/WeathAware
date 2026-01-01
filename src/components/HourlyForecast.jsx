@@ -3,7 +3,7 @@ import React, { useMemo, useRef, useState, useEffect } from "react";
 import WeatherIcon from "./WeatherIcon";
 
 export default function HourlyForecast({ hours, unit, theme, localTime }) {
-    // tiny breakpoint state (must live INSIDE component)
+    // tiny breakpoint state (<= 280px)
     const [isTiny, setIsTiny] = useState(false);
 
     useEffect(() => {
@@ -11,7 +11,6 @@ export default function HourlyForecast({ hours, unit, theme, localTime }) {
         const sync = () => setIsTiny(mq.matches);
         sync();
 
-        // Safari fallback
         if (mq.addEventListener) mq.addEventListener("change", sync);
         else mq.addListener(sync);
 
@@ -37,10 +36,8 @@ export default function HourlyForecast({ hours, unit, theme, localTime }) {
         return [...before, ...after];
     }, [hours, localTime]);
 
-    // hooks must be above early return
     const scrollerRef = useRef(null);
 
-    // drag tracking (only used to avoid “tap selects text” while swiping on tiny)
     const dragRef = useRef({
         isDown: false,
         startX: 0,
@@ -63,34 +60,40 @@ export default function HourlyForecast({ hours, unit, theme, localTime }) {
 
     return (
         <div className="rounded-2xl shadow-lg mb-8 overflow-hidden relative">
-            {/* (optional) left fade overlay for scroll hint */}
             <div className="pointer-events-none absolute left-0 top-0 h-full w-10 z-20" />
 
-            {/* Slightly tighter padding only on <=280px */}
-            <div className={`${theme.card} p-5 max-[280px]:p-4`}>
-                {/* Center title only on <=280px */}
-                <h2 className={`text-xl font-semibold mb-3 ${theme.text} max-[280px]:text-center max-[280px]:text-base`}>
+            {/* Padding: 280 stays tight, 320 gets a touch more room */}
+            <div className={`${theme.card} p-5 max-[320px]:p-4 max-[280px]:p-4`}>
+                <h2
+                    className={`
+            text-xl font-semibold mb-3 ${theme.text}
+            max-[320px]:text-lg max-[320px]:text-center
+            max-[280px]:text-base max-[280px]:text-center
+          `}
+                >
                     Hourly Forecast
                 </h2>
 
                 <div className="relative">
-                    {/* Native horizontal scroll everywhere
-              Add snap only on <=280px (carousel feel)
-              Side padding prevents edge clipping inside rounded container */}
                     <div
                         ref={scrollerRef}
                         className={`
               flex gap-4 overflow-x-auto pb-3 pt-1 scrollbar-none
+
+              /* <=320: slightly tighter than desktop, but not as tight as 280 */
+              max-[320px]:gap-3.5
+              max-[320px]:pb-2.5
+              max-[320px]:px-4
+              max-[320px]:scroll-px-4
+
+              /* <=280: keep your tiny carousel behavior */
               max-[280px]:gap-3
               max-[280px]:pb-2
               max-[280px]:snap-x max-[280px]:snap-mandatory
-              max-[280px]:px-4
-              max-[280px]:scroll-px-4
               max-[280px]:select-none
             `}
                         onPointerDown={(e) => {
                             if (!isTiny) return;
-
                             const el = scrollerRef.current;
                             if (!el) return;
 
@@ -103,7 +106,6 @@ export default function HourlyForecast({ hours, unit, theme, localTime }) {
                         }}
                         onPointerMove={(e) => {
                             if (!isTiny) return;
-
                             const el = scrollerRef.current;
                             if (!el) return;
                             if (!dragRef.current.isDown) return;
@@ -116,7 +118,6 @@ export default function HourlyForecast({ hours, unit, theme, localTime }) {
                         onPointerUp={() => {
                             if (!isTiny) return;
                             dragRef.current.isDown = false;
-                            // reset shortly after swipe ends so next tap can select/copy if user wants
                             window.setTimeout(() => {
                                 dragRef.current.didDrag = false;
                             }, 120);
@@ -139,24 +140,34 @@ export default function HourlyForecast({ hours, unit, theme, localTime }) {
                   flex flex-col items-center text-center
                   ${theme.text}
 
+                  /* <=320: slightly wider than 280 so it breathes */
+                  max-[320px]:w-[136px]
+                  max-[320px]:px-2.5 max-[320px]:py-2.5
+
+                  /* <=280: keep your exact tiny sizing */
                   max-[280px]:w-[124px]
                   max-[280px]:px-2 max-[280px]:py-2
                   max-[280px]:snap-center
                 `}
                             >
-                                {/* Time (fixed height so all columns align) */}
-                                <div className="h-[70px] flex items-center justify-center max-[280px]:h-[55px]">
-                                    <p className="text-md font-semibold tracking-tight opacity-80 whitespace-nowrap max-[280px]:text-md">
+                                {/* Time */}
+                                <div className="h-[70px] flex items-center justify-center max-[320px]:h-[62px] max-[280px]:h-[55px]">
+                                    <p className="text-md font-semibold tracking-tight opacity-80 whitespace-nowrap max-[320px]:text-[15px] max-[280px]:text-md">
                                         {i === 0 ? "Now" : format12Hour(h.time)}
                                     </p>
                                 </div>
 
-                                {/* Icon (fixed box) */}
-                                <div className="h-[75px] flex items-center justify-center max-[280px]:h-[55px]">
-                                    <WeatherIcon code={h.condition.code} isDay={h.is_day === 1} size={70} />
+                                {/* Icon */}
+                                <div className="h-[75px] flex items-center justify-center max-[320px]:h-[64px] max-[280px]:h-[55px]">
+                                    <WeatherIcon
+                                        code={h.condition.code}
+                                        isDay={h.is_day === 1}
+                                        // 320 gets a tiny bump; 280 stays the same feel
+                                        size={isTiny ? 70 : 75}
+                                    />
                                 </div>
 
-                                {/* Condition (fixed height, full text, centered when short, scroll if long) */}
+                                {/* Condition */}
                                 <div
                                     className="
                     w-full
@@ -164,6 +175,7 @@ export default function HourlyForecast({ hours, unit, theme, localTime }) {
                     px-2
                     mt-0.5
                     flex items-center justify-center
+                    max-[320px]:h-[74px]
                     max-[280px]:h-[65px]
                   "
                                 >
@@ -176,6 +188,7 @@ export default function HourlyForecast({ hours, unit, theme, localTime }) {
                       scrollbar-none
                       max-h-full
                       py-1
+                      max-[320px]:text-[14px]
                       max-[280px]:text-[13.5px]
                     "
                                         onPointerDown={(e) => {
@@ -186,20 +199,24 @@ export default function HourlyForecast({ hours, unit, theme, localTime }) {
                                     </p>
                                 </div>
 
-                                {/* Temp (closer to condition, but still consistent) */}
-                                <div className="flex items-center justify-center mt-2 max-[280px]:mt-2.5">
+                                {/* Temp */}
+                                <div className="flex items-center justify-center mt-2 max-[320px]:mt-2.5 max-[280px]:mt-2.5">
                                     <div className="fade-stack center tabular-nums font-semibold leading-none min-w-[5ch]">
                     <span className={`fade-text ${unit === "F" ? "visible" : ""}`}>
-                      <span className="text-lg inline-flex items-baseline leading-none max-[280px]:text-md">
+                      <span className="text-lg inline-flex items-baseline leading-none max-[320px]:text-lg max-[280px]:text-md">
                         {Math.round(h.temp_f)}
-                          <span className="text-sm ml-1 leading-none max-[280px]:text-[13px]">°F</span>
+                          <span className="text-sm ml-1 leading-none max-[320px]:text-sm max-[280px]:text-[13px]">
+                          °F
+                        </span>
                       </span>
                     </span>
 
                                         <span className={`fade-text ${unit === "C" ? "visible" : ""}`}>
-                      <span className="text-lg inline-flex items-baseline leading-none max-[280px]:text-md">
+                      <span className="text-lg inline-flex items-baseline leading-none max-[320px]:text-lg max-[280px]:text-md">
                         {Math.round(h.temp_c)}
-                          <span className="text-sm ml-1 leading-none max-[280px]:text-[13px]">°C</span>
+                          <span className="text-sm ml-1 leading-none max-[320px]:text-sm max-[280px]:text-[13px]">
+                          °C
+                        </span>
                       </span>
                     </span>
                                     </div>

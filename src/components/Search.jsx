@@ -313,29 +313,41 @@ export default function Search({
     };
 
     return (
+
         <div
             ref={containerRef}
             className="
-        relative
-        bg-white/90 dark:bg-slate-800/60
-        dark:border dark:border-white/10
-        shadow-lg
-        rounded-full
-        h-14 flex items-center px-4 mb-8 max-[280px]:h-10
-      "
+    relative
+    bg-white/90 dark:bg-slate-800/60
+    dark:border dark:border-white/10
+    shadow-lg
+    rounded-full
+    h-14 flex items-center px-4 mb-8
+    max-[320px]:h-10 max-[320px]:px-3
+  "
         >
-            <button onClick={handleSearchClick} className="flex items-center justify-center">
-                <img
-                    src={searchGlass}
-                    alt="Search"
-                    className="w-7 h-7 object-contain opacity-70 dark:opacity-90 dark:invert dark:brightness-200 max-[280px]:w-5 max-[280px]:h-5"
-                />
-            </button>
 
+        <button onClick={handleSearchClick} className="flex items-center justify-center">
+            <img
+                src={searchGlass}
+                alt="Search"
+                className="
+    w-7 h-7 object-contain opacity-70 dark:opacity-90 dark:invert dark:brightness-200
+    max-[320px]:w-5 max-[320px]:h-5
+  "
+            />
+
+        </button>
             <input
                 ref={inputRef}
                 type="text"
-                className="flex-1 bg-transparent border-none focus:outline-none ml-3 text-lg text-slate-800 dark:text-slate-200 placeholder-slate-700 dark:placeholder-slate-200 max-[280px]:text-xs"
+                className="
+    flex-1 bg-transparent border-none focus:outline-none
+    ml-3 text-lg
+    text-slate-800 dark:text-slate-200
+    placeholder-slate-700 dark:placeholder-slate-200
+    max-[320px]:ml-2 max-[320px]:text-sm
+  "
                 placeholder="Search for a location"
                 value={term}
                 onChange={(e) => setTerm(e.target.value)}
@@ -343,38 +355,45 @@ export default function Search({
                 onBlur={handleBlur}
             />
 
+
+
             <button
                 onClick={handleGeo}
                 disabled={geoLoading}
                 className="
-          ml-3 flex items-center justify-center
-          w-8 h-8 rounded-full
-          transition duration-200
-          disabled:opacity-50 disabled:cursor-not-allowed max-[280px]:w-5 max-[280px]:h-5
-        "
+    ml-3 flex items-center justify-center
+    w-8 h-8 rounded-full
+    transition duration-200
+    disabled:opacity-50 disabled:cursor-not-allowed
+    max-[320px]:w-7 max-[320px]:h-7 max-[320px]:ml-2
+  "
                 title={geoLoading ? "Getting your location…" : "Use my location"}
             >
                 <img
                     src={location_Globe}
                     alt="Use my location"
                     className={`
-            w-7 h-7 object-contain dark:invert dark:brightness-200 max-[280px]:w-5 max-[280px]:h-5
-            ${geoLoading ? "opacity-60" : ""}
-          `}
+    w-7 h-7 object-contain dark:invert dark:brightness-200
+    max-[320px]:w-5 max-[320px]:h-5
+    ${geoLoading ? "opacity-60" : ""}
+  `}
                 />
+
             </button>
 
             {showBox && (
+                // dropdown (fine as-is, optional: slightly smaller rounding on tiny)
                 <div
                     className={`
-            absolute left-0 top-16 max-[280px]:top-12 w-full bg-white dark:bg-slate-900
-            rounded-lg shadow-lg overflow-hidden z-20
-            max-h-[40vh] overflow-y-auto
-            suggestions-box
-            ${isClosing ? "hide" : "show"}
-          `}
+    absolute left-0 top-16 max-[320px]:top-12 w-full
+    bg-white dark:bg-slate-900
+    rounded-lg shadow-lg overflow-hidden z-20
+    max-h-[40vh] overflow-y-auto
+    suggestions-box
+    ${isClosing ? "hide" : "show"}
+  `}
                 >
-                    {mode === "recents" && (
+                {mode === "recents" && (
                         <>
                             <div className="flex items-center justify-between px-4 py-2 border-b border-slate-200 dark:border-slate-700">
                 <span className="text-xs font-semibold uppercase tracking-wide text-slate-500 dark:text-slate-400">
@@ -394,7 +413,7 @@ export default function Search({
                     text-slate-800 dark:text-slate-200
                     hover:bg-slate-400 dark:hover:bg-slate-600
                     transition
-                    disabled:opacity-40 disabled:cursor-not-allowed max-[280px]:text-xs
+                    disabled:opacity-40 disabled:cursor-not-allowed max-[320px]:text-xs
                   "
                                     disabled={recentSearches.length === 0}
                                 >
@@ -403,7 +422,7 @@ export default function Search({
                             </div>
 
                             {recentSearches.length === 0 ? (
-                                <div className="px-4 py-3 text-sm text-slate-500 dark:text-slate-400 max-[280px]:text-xs">
+                                <div className="px-4 py-3 text-sm text-slate-500 dark:text-slate-400 max-[320px]:text-xs">
                                     No recent searches yet.
                                 </div>
                             ) : (
