@@ -295,59 +295,106 @@ export default function Search({
 
         // cancel delayed open
         if (focusOpenTimerRef.current) clearTimeout(focusOpenTimerRef.current);
-
-        // ❗ don't set inactive here (can break suggestion taps)
-        // click-outside / selection will set inactive false safely
     };
 
     // =========================================================
     // 5) Select from suggestions or recents
     // =========================================================
     const handleSelectCoordinates = (city) => {
-        // ✅ close keyboard BEFORE parent kicks off loading screen
         closeKeyboard();
         onActiveChange(false);
         fadeOutAndCloseBox();
-
         onSelectCity(`${city.lat},${city.lon}`);
     };
 
     return (
-
         <div
             ref={containerRef}
             className="
-    relative
-    bg-white/90 dark:bg-slate-800/60
-    dark:border dark:border-white/10
-    shadow-lg
-    rounded-full
-    h-14 flex items-center px-4 mb-8
-    max-[320px]:h-10 max-[320px]:px-3
-  "
+        relative
+        bg-white/90 dark:bg-slate-800/60
+        dark:border dark:border-white/10
+        shadow-lg
+        rounded-full
+        h-14 flex items-center px-4 mb-8
+
+        /* 347–360 */
+        min-[347px]:max-[360px]:h-12
+        min-[347px]:max-[360px]:px-4
+        min-[347px]:max-[360px]:mb-7
+
+        /* 321–346 */
+        min-[321px]:max-[346px]:h-12
+        min-[321px]:max-[346px]:px-4
+        min-[321px]:max-[346px]:mb-7
+
+        /* 281–320 (LESS padding, BIGGER text) */
+        min-[281px]:max-[320px]:h-12
+        min-[281px]:max-[320px]:px-3
+        min-[281px]:max-[320px]:mb-7
+
+        /* 240–280 */
+        min-[240px]:max-[280px]:h-12
+        min-[240px]:max-[280px]:px-3
+        min-[240px]:max-[280px]:mb-6
+      "
         >
+            <button
+                onClick={handleSearchClick}
+                className="flex items-center justify-center shrink-0 rounded-full"
+                aria-label="Search"
+            >
+                <img
+                    src={searchGlass}
+                    alt="Search"
+                    className="
+            w-7 h-7 object-contain opacity-70 dark:opacity-90 dark:invert dark:brightness-200
 
-        <button onClick={handleSearchClick} className="flex items-center justify-center">
-            <img
-                src={searchGlass}
-                alt="Search"
-                className="
-    w-7 h-7 object-contain opacity-70 dark:opacity-90 dark:invert dark:brightness-200
-    max-[320px]:w-5 max-[320px]:h-5
-  "
-            />
+            /* 347–360 */
+            min-[347px]:max-[360px]:w-6
+            min-[347px]:max-[360px]:h-6
 
-        </button>
+            /* 321–346 */
+            min-[321px]:max-[346px]:w-6
+            min-[321px]:max-[346px]:h-6
+
+            /* 281–320 */
+            min-[281px]:max-[320px]:w-6
+            min-[281px]:max-[320px]:h-6
+
+            /* 240–280 */
+            min-[240px]:max-[280px]:w-6
+            min-[240px]:max-[280px]:h-6
+          "
+                />
+            </button>
+
             <input
                 ref={inputRef}
                 type="text"
                 className="
-    flex-1 bg-transparent border-none focus:outline-none
-    ml-3 text-lg
-    text-slate-800 dark:text-slate-200
-    placeholder-slate-700 dark:placeholder-slate-200
-    max-[320px]:ml-2 max-[320px]:text-sm
-  "
+          flex-1 bg-transparent border-none focus:outline-none
+          ml-3 text-lg
+          text-slate-800 dark:text-slate-200
+          placeholder-slate-700 dark:placeholder-slate-200
+          min-w-0
+
+          /* 347–360 */
+          min-[347px]:max-[360px]:ml-3
+          min-[347px]:max-[360px]:text-base
+
+          /* 321–346 */
+          min-[321px]:max-[346px]:ml-3
+          min-[321px]:max-[346px]:text-base
+
+          /* 281–320 (BIGGER than before) */
+          min-[281px]:max-[320px]:ml-3
+          min-[281px]:max-[320px]:text-base
+
+          /* 240–280 */
+          min-[240px]:max-[280px]:ml-3
+          min-[240px]:max-[280px]:text-sm
+        "
                 placeholder="Search for a location"
                 value={term}
                 onChange={(e) => setTerm(e.target.value)}
@@ -355,50 +402,93 @@ export default function Search({
                 onBlur={handleBlur}
             />
 
-
-
             <button
                 onClick={handleGeo}
                 disabled={geoLoading}
                 className="
-    ml-3 flex items-center justify-center
-    w-8 h-8 rounded-full
-    transition duration-200
-    disabled:opacity-50 disabled:cursor-not-allowed
-    max-[320px]:w-7 max-[320px]:h-7 max-[320px]:ml-2
-  "
+          ml-3 flex items-center justify-center
+          w-8 h-8 rounded-full
+          transition duration-200
+          disabled:opacity-50 disabled:cursor-not-allowed
+          shrink-0
+
+          /* 347–360 */
+          min-[347px]:max-[360px]:w-8
+          min-[347px]:max-[360px]:h-8
+          min-[347px]:max-[360px]:ml-3
+
+          /* 321–346 */
+          min-[321px]:max-[346px]:w-8
+          min-[321px]:max-[346px]:h-8
+          min-[321px]:max-[346px]:ml-3
+
+          /* 281–320 */
+          min-[281px]:max-[320px]:w-8
+          min-[281px]:max-[320px]:h-8
+          min-[281px]:max-[320px]:ml-3
+
+          /* 240–280 */
+          min-[240px]:max-[280px]:w-8
+          min-[240px]:max-[280px]:h-8
+          min-[240px]:max-[280px]:ml-3
+        "
                 title={geoLoading ? "Getting your location…" : "Use my location"}
+                aria-label={geoLoading ? "Getting your location…" : "Use my location"}
             >
                 <img
                     src={location_Globe}
                     alt="Use my location"
                     className={`
-    w-7 h-7 object-contain dark:invert dark:brightness-200
-    max-[320px]:w-5 max-[320px]:h-5
-    ${geoLoading ? "opacity-60" : ""}
-  `}
-                />
+            w-7 h-7 object-contain dark:invert dark:brightness-200
+            ${geoLoading ? "opacity-60" : ""}
 
+            /* 347–360 */
+            min-[347px]:max-[360px]:w-6 min-[347px]:max-[360px]:h-6
+
+            /* 321–346 */
+            min-[321px]:max-[346px]:w-6 min-[321px]:max-[346px]:h-6
+
+            /* 281–320 */
+            min-[281px]:max-[320px]:w-6 min-[281px]:max-[320px]:h-6
+
+            /* 240–280 */
+            min-[240px]:max-[280px]:w-6 min-[240px]:max-[280px]:h-6
+          `}
+                />
             </button>
 
             {showBox && (
-                // dropdown (fine as-is, optional: slightly smaller rounding on tiny)
                 <div
                     className={`
-    absolute left-0 top-16 max-[320px]:top-12 w-full
-    bg-white dark:bg-slate-900
-    rounded-lg shadow-lg overflow-hidden z-20
-    max-h-[40vh] overflow-y-auto
-    suggestions-box
-    ${isClosing ? "hide" : "show"}
-  `}
+            absolute left-0 w-full
+            bg-white dark:bg-slate-900
+            shadow-lg overflow-hidden z-20
+            max-h-[40vh] overflow-y-auto
+            suggestions-box
+            ${isClosing ? "hide" : "show"}
+
+            top-16 rounded-lg
+
+            /* 347–360 */
+            min-[347px]:max-[360px]:top-14
+
+            /* 321–346 */
+            min-[321px]:max-[346px]:top-14
+
+            /* 281–320 */
+            min-[281px]:max-[320px]:top-14
+
+            /* 240–280 */
+            min-[240px]:max-[280px]:top-14
+          `}
                 >
-                {mode === "recents" && (
+                    {mode === "recents" && (
                         <>
                             <div className="flex items-center justify-between px-4 py-2 border-b border-slate-200 dark:border-slate-700">
-                <span className="text-xs font-semibold uppercase tracking-wide text-slate-500 dark:text-slate-400">
+                <span className="text-xs font-semibold uppercase tracking-wide text-slate-500 dark:text-slate-400 min-[240px]:max-[280px]:text-[11px]">
                   Recent searches
                 </span>
+
                                 <button
                                     type="button"
                                     onPointerDown={(e) => {
@@ -413,7 +503,13 @@ export default function Search({
                     text-slate-800 dark:text-slate-200
                     hover:bg-slate-400 dark:hover:bg-slate-600
                     transition
-                    disabled:opacity-40 disabled:cursor-not-allowed max-[320px]:text-xs
+                    disabled:opacity-40 disabled:cursor-not-allowed
+
+                    /* 281–320 */
+                    min-[281px]:max-[320px]:text-xs
+
+                    /* 240–280 */
+                    min-[240px]:max-[280px]:text-[11px]
                   "
                                     disabled={recentSearches.length === 0}
                                 >
@@ -422,7 +518,7 @@ export default function Search({
                             </div>
 
                             {recentSearches.length === 0 ? (
-                                <div className="px-4 py-3 text-sm text-slate-500 dark:text-slate-400 max-[320px]:text-xs">
+                                <div className="px-4 py-3 text-sm text-slate-500 dark:text-slate-400 min-[240px]:max-[280px]:text-xs min-[281px]:max-[320px]:text-xs">
                                     No recent searches yet.
                                 </div>
                             ) : (

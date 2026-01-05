@@ -6,25 +6,41 @@ export default function HourlyForecast({ hours, unit, theme, localTime }) {
     // tiny breakpoint state (<= 280px)
     const [isTiny, setIsTiny] = useState(false);
 
+    // ✅ Option B: viewport-based icon sizing (range-aware)
+    const [vw, setVw] = useState(
+        typeof window !== "undefined" ? window.innerWidth : 9999
+    );
+
     useEffect(() => {
         const mq = window.matchMedia("(max-width: 280px)");
-        const sync = () => setIsTiny(mq.matches);
-        sync();
+        const syncTiny = () => setIsTiny(mq.matches);
+        syncTiny();
 
-        if (mq.addEventListener) mq.addEventListener("change", sync);
-        else mq.addListener(sync);
+        if (mq.addEventListener) mq.addEventListener("change", syncTiny);
+        else mq.addListener(syncTiny);
+
+        const onResize = () => setVw(window.innerWidth);
+        window.addEventListener("resize", onResize, { passive: true });
 
         return () => {
-            if (mq.removeEventListener) mq.removeEventListener("change", sync);
-            else mq.removeListener(sync);
+            if (mq.removeEventListener) mq.removeEventListener("change", syncTiny);
+            else mq.removeListener(syncTiny);
+            window.removeEventListener("resize", onResize);
         };
     }, []);
+
+    const iconSize = useMemo(() => {
+        if (vw <= 280) return 70; // 240–280
+        if (vw <= 320) return 76; // 281–320
+        if (vw <= 346) return 78; // 321–346
+        if (vw <= 360) return 82; // 347–360
+        return 78; // fallback (desktop-ish)
+    }, [vw]);
 
     // ---------- Build sorted hours ----------
     const sortedHours = useMemo(() => {
         const safeHours = Array.isArray(hours) ? hours : [];
         const safeLocalTime = localTime || null;
-
         if (safeHours.length === 0 || !safeLocalTime) return [];
 
         const local = new Date(safeLocalTime.replace(" ", "T"));
@@ -37,7 +53,6 @@ export default function HourlyForecast({ hours, unit, theme, localTime }) {
     }, [hours, localTime]);
 
     const scrollerRef = useRef(null);
-
     const dragRef = useRef({
         isDown: false,
         startX: 0,
@@ -62,13 +77,16 @@ export default function HourlyForecast({ hours, unit, theme, localTime }) {
         <div className="rounded-2xl shadow-lg mb-8 overflow-hidden relative">
             <div className="pointer-events-none absolute left-0 top-0 h-full w-10 z-20" />
 
-            {/* Padding: 280 stays tight, 320 gets a touch more room */}
-            <div className={`${theme.card} p-5 max-[320px]:p-4 max-[280px]:p-4`}>
+            {/* Card */}
+            <div className={`${theme.card} p-5 max-[360px]:p-4 max-[280px]:p-4`}>
                 <h2
                     className={`
-            text-xl font-semibold mb-3 ${theme.text}
-            max-[320px]:text-lg max-[320px]:text-center
-            max-[280px]:text-base max-[280px]:text-center
+            text-xl font-semibold mb-4 ${theme.text}
+            min-[347px]:max-[360px]:text-xl
+            min-[321px]:max-[346px]:text-xl
+            min-[281px]:max-[320px]:text-xl
+            min-[240px]:max-[280px]:text-lg
+            max-[360px]:text-center
           `}
                 >
                     Hourly Forecast
@@ -78,18 +96,25 @@ export default function HourlyForecast({ hours, unit, theme, localTime }) {
                     <div
                         ref={scrollerRef}
                         className={`
-              flex gap-4 overflow-x-auto pb-3 pt-1 scrollbar-none
+              flex overflow-x-auto scrollbar-none
+              gap-5 pb-4 px-2
 
-              /* <=320: slightly tighter than desktop, but not as tight as 280 */
-              max-[320px]:gap-3.5
-              max-[320px]:pb-2.5
-              max-[320px]:px-4
-              max-[320px]:scroll-px-4
+              /* 347–360 */
+              min-[347px]:max-[360px]:gap-5
+              min-[347px]:max-[360px]:px-4
 
-              /* <=280: keep your tiny carousel behavior */
+              /* 321–346 */
+              min-[321px]:max-[346px]:gap-4.5
+              min-[321px]:max-[346px]:px-4
+
+              /* 281–320 */
+              min-[281px]:max-[320px]:gap-4
+              min-[281px]:max-[320px]:px-3
+
+              /* <=280 tiny carousel */
               max-[280px]:gap-3
-              max-[280px]:pb-2
-              max-[280px]:snap-x max-[280px]:snap-mandatory
+              max-[280px]:snap-x
+              max-[280px]:snap-mandatory
               max-[280px]:select-none
             `}
                         onPointerDown={(e) => {
@@ -106,24 +131,19 @@ export default function HourlyForecast({ hours, unit, theme, localTime }) {
                         }}
                         onPointerMove={(e) => {
                             if (!isTiny) return;
-                            const el = scrollerRef.current;
-                            if (!el) return;
                             if (!dragRef.current.isDown) return;
 
+                            const el = scrollerRef.current;
                             const dx = e.clientX - dragRef.current.startX;
                             if (Math.abs(dx) > 4) dragRef.current.didDrag = true;
 
                             el.scrollLeft = dragRef.current.scrollLeft - dx;
                         }}
                         onPointerUp={() => {
-                            if (!isTiny) return;
                             dragRef.current.isDown = false;
-                            window.setTimeout(() => {
-                                dragRef.current.didDrag = false;
-                            }, 120);
+                            setTimeout(() => (dragRef.current.didDrag = false), 120);
                         }}
                         onPointerCancel={() => {
-                            if (!isTiny) return;
                             dragRef.current.isDown = false;
                             dragRef.current.didDrag = false;
                         }}
@@ -134,63 +154,81 @@ export default function HourlyForecast({ hours, unit, theme, localTime }) {
                                 data-hour-card="true"
                                 className={`
                   flex-shrink-0
-                  w-[150px]
                   rounded-2xl
-                  px-3 py-3
                   flex flex-col items-center text-center
                   ${theme.text}
 
-                  /* <=320: slightly wider than 280 so it breathes */
-                  max-[320px]:w-[136px]
-                  max-[320px]:px-2.5 max-[320px]:py-2.5
+                  /* 347–360 */
+                  min-[347px]:max-[360px]:w-[160px]
+                  min-[347px]:max-[360px]:px-3 min-[347px]:max-[360px]:py-3.5
 
-                  /* <=280: keep your exact tiny sizing */
+                  /* 321–346 */
+                  min-[321px]:max-[346px]:w-[154px]
+                  min-[321px]:max-[346px]:px-3 min-[321px]:max-[346px]:py-3
+
+                  /* 281–320 */
+                  min-[281px]:max-[320px]:w-[148px]
+                  min-[281px]:max-[320px]:px-2.5 min-[281px]:max-[320px]:py-3
+
+                  /* <=280 */
                   max-[280px]:w-[124px]
                   max-[280px]:px-2 max-[280px]:py-2
                   max-[280px]:snap-center
                 `}
                             >
                                 {/* Time */}
-                                <div className="h-[70px] flex items-center justify-center max-[320px]:h-[62px] max-[280px]:h-[55px]">
-                                    <p className="text-md font-semibold tracking-tight opacity-80 whitespace-nowrap max-[320px]:text-[15px] max-[280px]:text-md">
+                                <div className="h-[78px] flex items-center justify-center max-[320px]:h-[70px] max-[280px]:h-[60px]">
+                                    <p
+                                        className={`
+                      font-semibold opacity-85 whitespace-nowrap
+                      min-[347px]:max-[360px]:text-[19px]
+                      min-[321px]:max-[346px]:text-[18px]
+                      min-[281px]:max-[320px]:text-[17px]
+                      min-[240px]:max-[280px]:text-[16px]
+                    `}
+                                    >
                                         {i === 0 ? "Now" : format12Hour(h.time)}
                                     </p>
                                 </div>
 
                                 {/* Icon */}
-                                <div className="h-[75px] flex items-center justify-center max-[320px]:h-[64px] max-[280px]:h-[55px]">
+                                <div className="h-[78px] flex items-center justify-center max-[320px]:h-[68px] max-[280px]:h-[58px]">
                                     <WeatherIcon
                                         code={h.condition.code}
                                         isDay={h.is_day === 1}
-                                        // 320 gets a tiny bump; 280 stays the same feel
-                                        size={isTiny ? 70 : 75}
+                                        // ✅ Range-aware size (Option B). isTiny can still be used by your drag logic.
+                                        size={iconSize}
                                     />
                                 </div>
 
                                 {/* Condition */}
                                 <div
-                                    className="
+                                    className={`
                     w-full
-                    h-[88px]
-                    px-2
-                    mt-0.5
                     flex items-center justify-center
-                    max-[320px]:h-[74px]
-                    max-[280px]:h-[65px]
-                  "
+                    mt-1
+                    min-[347px]:max-[360px]:h-[104px]
+                    min-[321px]:max-[346px]:h-[96px]
+                    min-[281px]:max-[320px]:h-[90px]
+                    min-[240px]:max-[280px]:h-[80px]
+                  `}
                                 >
                                     <p
-                                        className="
+                                        className={`
                       w-full
-                      text-sm opacity-80 leading-snug text-center
+                      text-center
+                      leading-snug
+                      opacity-80
                       break-words
-                      overflow-y-auto
-                      scrollbar-none
-                      max-h-full
-                      py-1
-                      max-[320px]:text-[14px]
-                      max-[280px]:text-[13.5px]
-                    "
+                      overflow-hidden
+                      px-2
+
+                      min-[347px]:max-[360px]:text-[17px]
+                      min-[321px]:max-[346px]:text-[16px]
+                      min-[281px]:max-[320px]:text-[15px]
+                      min-[240px]:max-[280px]:text-[14px]
+                      min-[240px]:max-[280px]:px-0
+                    `}
                                         onPointerDown={(e) => {
                                             if (isTiny && dragRef.current.didDrag) e.preventDefault();
                                         }}
@@ -200,23 +238,19 @@ export default function HourlyForecast({ hours, unit, theme, localTime }) {
                                 </div>
 
                                 {/* Temp */}
-                                <div className="flex items-center justify-center mt-2 max-[320px]:mt-2.5 max-[280px]:mt-2.5">
+                                <div className="flex items-center justify-center mt-3 max-[320px]:mt-3 max-[280px]:mt-2.5">
                                     <div className="fade-stack center tabular-nums font-semibold leading-none min-w-[5ch]">
                     <span className={`fade-text ${unit === "F" ? "visible" : ""}`}>
-                      <span className="text-lg inline-flex items-baseline leading-none max-[320px]:text-lg max-[280px]:text-md">
+                      <span className="text-[20px] inline-flex items-baseline max-[280px]:text-[17px]">
                         {Math.round(h.temp_f)}
-                          <span className="text-sm ml-1 leading-none max-[320px]:text-sm max-[280px]:text-[13px]">
-                          °F
-                        </span>
+                          <span className="text-[14px] ml-1 max-[280px]:text-[13px]">°F</span>
                       </span>
                     </span>
 
                                         <span className={`fade-text ${unit === "C" ? "visible" : ""}`}>
-                      <span className="text-lg inline-flex items-baseline leading-none max-[320px]:text-lg max-[280px]:text-md">
+                      <span className="text-[20px] inline-flex items-baseline max-[280px]:text-[17px]">
                         {Math.round(h.temp_c)}
-                          <span className="text-sm ml-1 leading-none max-[320px]:text-sm max-[280px]:text-[13px]">
-                          °C
-                        </span>
+                          <span className="text-[14px] ml-1 max-[280px]:text-[13px]">°C</span>
                       </span>
                     </span>
                                     </div>

@@ -3,7 +3,6 @@ import React, { useMemo, useRef, useState, useEffect } from "react";
 import ForecastItem from "./ForecastItem";
 
 export default function Forecast({ weather, unit, theme }) {
-    // tiny breakpoint (<= 280px)
     const [isTiny, setIsTiny] = useState(false);
 
     useEffect(() => {
@@ -21,7 +20,6 @@ export default function Forecast({ weather, unit, theme }) {
     }, []);
 
     const scrollerRef = useRef(null);
-
     const dragRef = useRef({
         isDown: false,
         startX: 0,
@@ -42,13 +40,35 @@ export default function Forecast({ weather, unit, theme }) {
 
     return (
         <div className="rounded-2xl shadow-lg mb-8 overflow-hidden relative">
-            {/* Padding: 280 stays tight, 320 gets a touch more room */}
-            <div className={`${theme.card} p-6 max-[320px]:p-4 max-[280px]:p-4 transition-colors duration-300`}>
+            <div
+                className={`
+          ${theme.card}
+          transition-colors duration-300
+
+          p-6
+
+          /* 347–360 */
+          min-[347px]:max-[360px]:p-5
+
+          /* 321–346 */
+          min-[321px]:max-[346px]:p-5
+
+          /* 281–320 */
+          min-[281px]:max-[320px]:p-4
+
+          /* 240–280 */
+          min-[240px]:max-[280px]:p-4
+        `}
+            >
                 <h2
                     className={`
             text-xl font-semibold text-center ${theme.text}
-            max-[320px]:text-lg
-            max-[280px]:text-base
+
+            /* match Hourly Forecast rhythm */
+            min-[347px]:max-[360px]:text-xl
+            min-[321px]:max-[346px]:text-xl
+            min-[281px]:max-[320px]:text-xl
+            min-[240px]:max-[280px]:text-lg
           `}
                 >
                     3-Day Forecast
@@ -60,15 +80,26 @@ export default function Forecast({ weather, unit, theme }) {
                         className={`
               flex overflow-x-auto mt-4 pb-2 scrollbar-none
 
-              /* <=320: slightly tighter than desktop, but not as tight as 280 */
-              max-[320px]:gap-3.5
-              max-[320px]:px-4
-              max-[320px]:scroll-px-4
+              /* 347–360 */
+              min-[347px]:max-[360px]:gap-5
+              min-[347px]:max-[360px]:px-4
+              min-[347px]:max-[360px]:scroll-px-4
 
-              /* <=280: keep tiny carousel behavior identical */
-              max-[280px]:gap-3
-              max-[280px]:snap-x max-[280px]:snap-mandatory
-              max-[280px]:select-none
+              /* 321–346 */
+              min-[321px]:max-[346px]:gap-4.5
+              min-[321px]:max-[346px]:px-4
+              min-[321px]:max-[346px]:scroll-px-4
+
+              /* 281–320 */
+              min-[281px]:max-[320px]:gap-4
+              min-[281px]:max-[320px]:px-3
+              min-[281px]:max-[320px]:scroll-px-3
+
+              /* 240–280 tiny carousel behavior */
+              min-[240px]:max-[280px]:gap-3
+              min-[240px]:max-[280px]:snap-x
+              min-[240px]:max-[280px]:snap-mandatory
+              min-[240px]:max-[280px]:select-none
 
               /* larger screens: keep centered like before */
               md:justify-center md:gap-12 md:px-0 md:snap-none
