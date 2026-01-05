@@ -8,9 +8,7 @@ export default function ForecastItem({ day, unit, theme, label, isTiny, dragRef 
     const weekday = localDate.toLocaleDateString("en-US", { weekday: "short" });
 
     // ✅ Option B: viewport-based icon sizing (range-aware)
-    const [vw, setVw] = useState(
-        typeof window !== "undefined" ? window.innerWidth : 9999
-    );
+    const [vw, setVw] = useState(typeof window !== "undefined" ? window.innerWidth : 9999);
 
     useEffect(() => {
         const onResize = () => setVw(window.innerWidth);
@@ -32,7 +30,6 @@ export default function ForecastItem({ day, unit, theme, label, isTiny, dragRef 
             className={`
         flex-shrink-0
         rounded-2xl
-        flex flex-col items-center text-center
         ${theme.text}
 
         /* base */
@@ -60,25 +57,29 @@ export default function ForecastItem({ day, unit, theme, label, isTiny, dragRef 
         min-[240px]:max-[280px]:snap-center
       `}
         >
-            {/* Title */}
+            {/* ✅ 4-row grid ensures alignment across all forecast cards */}
             <div
                 className={`
-          flex items-center justify-center
-          h-[78px]
+          grid items-center justify-items-center text-center
+          [grid-template-rows:58px_58px_84px_28px]
+
+          /* 347–360 */
+          min-[347px]:max-[360px]:[grid-template-rows:78px_72px_104px_48px]
 
           /* 321–346 */
-          min-[321px]:max-[346px]:h-[74px]
+          min-[321px]:max-[346px]:[grid-template-rows:74px_70px_96px_48px]
 
           /* 281–320 */
-          min-[281px]:max-[320px]:h-[70px]
+          min-[281px]:max-[320px]:[grid-template-rows:70px_68px_90px_48px]
 
           /* 240–280 */
-          min-[240px]:max-[280px]:h-[60px]
+          min-[240px]:max-[280px]:[grid-template-rows:60px_58px_80px_44px]
         `}
             >
+                {/* Title */}
                 <p
                     className={`
-            opacity-80 font-semibold tracking-tight whitespace-nowrap
+            opacity-80 text-lg font-semibold tracking-tight whitespace-nowrap
             min-[347px]:max-[360px]:text-[18px]
             min-[321px]:max-[346px]:text-[17px]
             min-[281px]:max-[320px]:text-[16px]
@@ -87,109 +88,80 @@ export default function ForecastItem({ day, unit, theme, label, isTiny, dragRef 
                 >
                     {label || weekday}
                 </p>
-            </div>
 
-            {/* Icon */}
-            <div
-                className={`
-          flex items-center justify-center
-          h-[78px]
+                {/* Icon */}
+                <div className="flex items-center justify-center">
+                    <WeatherIcon code={day.day.condition.code} isDay={true} size={iconSize} />
+                </div>
 
-          /* 347–360 */
-          min-[347px]:max-[360px]:h-[72px]
+                {/* ✅ Condition: fixed slot + centered vertically */}
+                <div className="w-full flex items-center justify-center px-2 min-[240px]:max-[280px]:px-0">
+                    <p
+                        className={`
+              w-full text-center leading-snug opacity-80
+              break-words whitespace-normal hyphens-auto
+              overflow-hidden
+              line-clamp-3
 
-          /* 321–346 */
-          min-[321px]:max-[346px]:h-[70px]
+              min-[347px]:max-[360px]:text-[17px]
+              min-[321px]:max-[346px]:text-[16px]
+              min-[281px]:max-[320px]:text-[15px]
+              min-[240px]:max-[280px]:text-[14px]
+            `}
+                        onPointerDown={(e) => {
+                            if (isTiny && dragRef?.current?.didDrag) e.preventDefault();
+                        }}
+                        title={day.day.condition.text}
+                    >
+                        {day.day.condition.text}
+                    </p>
+                </div>
 
-          /* 281–320 */
-          min-[281px]:max-[320px]:h-[68px]
+                {/* ✅ Temps: fixed slot so all temps align */}
+                <div className="flex items-center justify-center">
+                    <div className="fade-stack center tabular-nums font-semibold leading-none min-w-[9ch] whitespace-nowrap">
+                        {/* F */}
+                        <span className={`fade-text ${unit === "F" ? "visible" : ""}`}>
+              {/* HIGH */}
+                            <span
+                                className={`inline-flex items-baseline text-[20px] opacity-95 max-[280px]:text-[17px] ${theme.text}`}
+                            >
+                {Math.round(day.day.maxtemp_f)}
+                                <span className="text-[14px] ml-1 max-[280px]:text-[13px]">°F</span>
+              </span>
 
-          /* 240–280 */
-          min-[240px]:max-[280px]:h-[58px]
-        `}
-            >
-                <WeatherIcon
-                    code={day.day.condition.code}
-                    isDay={true}
-                    size={iconSize}
-                />
-            </div>
+              <span className="opacity-40 mx-1">/</span>
 
-            {/* Condition */}
-            <div
-                className={`
-          w-full
-          flex items-center justify-center
-          mt-1
-          min-[347px]:max-[360px]:h-[104px]
-          min-[321px]:max-[346px]:h-[96px]
-          min-[281px]:max-[320px]:h-[90px]
-          min-[240px]:max-[280px]:h-[80px]
-        `}
-            >
-                <p
-                    className={`
-            w-full
-            text-center
-            leading-snug
-            opacity-80
-            break-words
-            overflow-y-auto
-            scrollbar-none
-            px-2
-
-            min-[347px]:max-[360px]:text-[17px]
-            min-[321px]:max-[346px]:text-[16px]
-            min-[281px]:max-[320px]:text-[15px]
-            min-[240px]:max-[280px]:text-[14px]
-            min-[240px]:max-[280px]:px-0
-          `}
-                    onPointerDown={(e) => {
-                        if (isTiny && dragRef?.current?.didDrag) e.preventDefault();
-                    }}
-                >
-                    {day.day.condition.text}
-                </p>
-            </div>
-
-            {/* Temps */}
-            <div
-                className={`
-          flex items-center justify-center
-          mt-3
-          min-[240px]:max-[280px]:mt-2.5
-        `}
-            >
-                <div className="fade-stack center tabular-nums font-semibold leading-none min-w-[9ch] whitespace-nowrap">
-                    {/* F */}
-                    <span className={`fade-text ${unit === "F" ? "visible" : ""}`}>
-            <span className="text-[20px] inline-flex items-baseline max-[280px]:text-[17px]">
-              {Math.round(day.day.maxtemp_f)}
-                <span className="text-[14px] ml-1 max-[280px]:text-[13px]">°F</span>
+                            {/* LOW */}
+                            <span
+                                className={`inline-flex items-baseline text-[20px] opacity-70 max-[280px]:text-[17px] ${theme.text}`}
+                            >
+                {Math.round(day.day.mintemp_f)}
+                                <span className="text-[14px] ml-1 max-[280px]:text-[13px]">°F</span>
+              </span>
             </span>
 
-            <span className="opacity-50 mx-1">/</span>
+                        {/* C */}
+                        <span className={`fade-text ${unit === "C" ? "visible" : ""}`}>
+              {/* HIGH */}
+                            <span
+                                className={`inline-flex items-baseline text-[20px] opacity-95 max-[280px]:text-[17px] ${theme.text}`}
+                            >
+                {Math.round(day.day.maxtemp_c)}
+                                <span className="text-[14px] ml-1 max-[280px]:text-[13px]">°C</span>
+              </span>
 
-            <span className="text-[20px] inline-flex items-baseline opacity-70 max-[280px]:text-[17px]">
-              {Math.round(day.day.mintemp_f)}
-                <span className="text-[14px] ml-1 max-[280px]:text-[13px]">°F</span>
+              <span className="opacity-40 mx-1">/</span>
+
+                            {/* LOW */}
+                            <span
+                                className={`inline-flex items-baseline text-[20px] opacity-70 max-[280px]:text-[17px] ${theme.text}`}
+                            >
+                {Math.round(day.day.mintemp_c)}
+                                <span className="text-[14px] ml-1 max-[280px]:text-[13px]">°C</span>
+              </span>
             </span>
-          </span>
-
-                    {/* C */}
-                    <span className={`fade-text ${unit === "C" ? "visible" : ""}`}>
-            <span className="text-[20px] inline-flex items-baseline max-[280px]:text-[17px]">
-              {Math.round(day.day.maxtemp_c)}
-                <span className="text-[14px] ml-1 max-[280px]:text-[13px]">°C</span>
-            </span>
-
-            <span className="opacity-50 mx-1">/</span>
-
-            <span className="text-[20px] inline-flex items-baseline opacity-70 max-[280px]:text-[17px]">
-              {Math.round(day.day.mintemp_c)}
-                <span className="text-[14px] ml-1 max-[280px]:text-[13px]">°C</span>
-            </span>
-          </span>
+                    </div>
                 </div>
             </div>
         </div>
