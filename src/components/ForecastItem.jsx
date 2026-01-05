@@ -1,5 +1,5 @@
 // src/components/ForecastItem.jsx
-import React from "react";
+import React, { useMemo, useState, useEffect } from "react";
 import WeatherIcon from "./WeatherIcon";
 
 export default function ForecastItem({ day, unit, theme, label, isTiny, dragRef }) {
@@ -7,68 +7,143 @@ export default function ForecastItem({ day, unit, theme, label, isTiny, dragRef 
     const localDate = new Date(y, m - 1, d);
     const weekday = localDate.toLocaleDateString("en-US", { weekday: "short" });
 
+    // ✅ Option B: viewport-based icon sizing (range-aware)
+    const [vw, setVw] = useState(
+        typeof window !== "undefined" ? window.innerWidth : 9999
+    );
+
+    useEffect(() => {
+        const onResize = () => setVw(window.innerWidth);
+        window.addEventListener("resize", onResize, { passive: true });
+        return () => window.removeEventListener("resize", onResize);
+    }, []);
+
+    const iconSize = useMemo(() => {
+        if (vw <= 280) return 70; // 240–280
+        if (vw <= 320) return 76; // 281–320
+        if (vw <= 346) return 78; // 321–346
+        if (vw <= 360) return 82; // 347–360
+        return 78;
+    }, [vw]);
+
     return (
         <div
             data-forecast-card="true"
             className={`
         flex-shrink-0
-        w-[150px]
         rounded-2xl
-        px-3 py-3
         flex flex-col items-center text-center
         ${theme.text}
 
-        /* <=320: slightly wider than 280 so it breathes (mirror Hourly) */
-        max-[320px]:w-[136px]
-        max-[320px]:px-2.5 max-[320px]:py-2.5
+        /* base */
+        w-[150px] px-3 py-3.5
 
-        /* <=280: keep exact tiny sizing */
-        max-[280px]:w-[124px]
-        max-[280px]:px-2 max-[280px]:py-2
-        max-[280px]:snap-center
+        /* 347–360 (match Hourly rhythm) */
+        min-[347px]:max-[360px]:w-[160px]
+        min-[347px]:max-[360px]:px-3
+        min-[347px]:max-[360px]:py-3.5
+
+        /* 321–346 */
+        min-[321px]:max-[346px]:w-[154px]
+        min-[321px]:max-[346px]:px-3
+        min-[321px]:max-[346px]:py-3
+
+        /* 281–320 */
+        min-[281px]:max-[320px]:w-[148px]
+        min-[281px]:max-[320px]:px-2.5
+        min-[281px]:max-[320px]:py-3
+
+        /* 240–280 */
+        min-[240px]:max-[280px]:w-[124px]
+        min-[240px]:max-[280px]:px-2
+        min-[240px]:max-[280px]:py-2
+        min-[240px]:max-[280px]:snap-center
       `}
         >
             {/* Title */}
-            <div className="h-[70px] flex items-center justify-center max-[320px]:h-[62px] max-[280px]:h-[55px]">
-                <p className="text-md opacity-80 font-semibold tracking-tight whitespace-nowrap max-[320px]:text-[15px] max-[280px]:text-md">
+            <div
+                className={`
+          flex items-center justify-center
+          h-[78px]
+
+          /* 321–346 */
+          min-[321px]:max-[346px]:h-[74px]
+
+          /* 281–320 */
+          min-[281px]:max-[320px]:h-[70px]
+
+          /* 240–280 */
+          min-[240px]:max-[280px]:h-[60px]
+        `}
+            >
+                <p
+                    className={`
+            opacity-80 font-semibold tracking-tight whitespace-nowrap
+            min-[347px]:max-[360px]:text-[18px]
+            min-[321px]:max-[346px]:text-[17px]
+            min-[281px]:max-[320px]:text-[16px]
+            min-[240px]:max-[280px]:text-[15px]
+          `}
+                >
                     {label || weekday}
                 </p>
             </div>
 
             {/* Icon */}
-            <div className="h-[75px] flex items-center justify-center max-[320px]:h-[64px] max-[280px]:h-[55px]">
+            <div
+                className={`
+          flex items-center justify-center
+          h-[78px]
+
+          /* 347–360 */
+          min-[347px]:max-[360px]:h-[72px]
+
+          /* 321–346 */
+          min-[321px]:max-[346px]:h-[70px]
+
+          /* 281–320 */
+          min-[281px]:max-[320px]:h-[68px]
+
+          /* 240–280 */
+          min-[240px]:max-[280px]:h-[58px]
+        `}
+            >
                 <WeatherIcon
                     code={day.day.condition.code}
                     isDay={true}
-                    // match Hourly behavior: tiny stays same, 320 gets a small bump
-                    size={isTiny ? 70 : 75}
+                    size={iconSize}
                 />
             </div>
 
             {/* Condition */}
             <div
-                className="
+                className={`
           w-full
-          h-[88px]
-          px-2
-          mt-0.5
           flex items-center justify-center
-          max-[320px]:h-[74px]
-          max-[280px]:h-[65px]
-        "
+          mt-1
+          min-[347px]:max-[360px]:h-[104px]
+          min-[321px]:max-[346px]:h-[96px]
+          min-[281px]:max-[320px]:h-[90px]
+          min-[240px]:max-[280px]:h-[80px]
+        `}
             >
                 <p
-                    className="
+                    className={`
             w-full
-            text-sm opacity-80 leading-snug text-center
+            text-center
+            leading-snug
+            opacity-80
             break-words
             overflow-y-auto
             scrollbar-none
-            max-h-full
-            py-1
-            max-[320px]:text-[14px]
-            max-[280px]:text-[13.5px]
-          "
+            px-2
+
+            min-[347px]:max-[360px]:text-[17px]
+            min-[321px]:max-[346px]:text-[16px]
+            min-[281px]:max-[320px]:text-[15px]
+            min-[240px]:max-[280px]:text-[14px]
+            min-[240px]:max-[280px]:px-0
+          `}
                     onPointerDown={(e) => {
                         if (isTiny && dragRef?.current?.didDrag) e.preventDefault();
                     }}
@@ -78,35 +153,41 @@ export default function ForecastItem({ day, unit, theme, label, isTiny, dragRef 
             </div>
 
             {/* Temps */}
-            <div className="flex items-center justify-center mt-2 max-[320px]:mt-2.5 max-[280px]:mt-2.5">
+            <div
+                className={`
+          flex items-center justify-center
+          mt-3
+          min-[240px]:max-[280px]:mt-2.5
+        `}
+            >
                 <div className="fade-stack center tabular-nums font-semibold leading-none min-w-[9ch] whitespace-nowrap">
                     {/* F */}
                     <span className={`fade-text ${unit === "F" ? "visible" : ""}`}>
-            <span className="text-lg inline-flex items-baseline leading-none max-[320px]:text-lg max-[280px]:text-md">
+            <span className="text-[20px] inline-flex items-baseline max-[280px]:text-[17px]">
               {Math.round(day.day.maxtemp_f)}
-                <span className="text-sm ml-1 leading-none max-[320px]:text-sm max-[280px]:text-[13px]">°F</span>
+                <span className="text-[14px] ml-1 max-[280px]:text-[13px]">°F</span>
             </span>
 
             <span className="opacity-50 mx-1">/</span>
 
-            <span className="text-lg inline-flex items-baseline leading-none opacity-70 max-[320px]:text-lg max-[280px]:text-md">
+            <span className="text-[20px] inline-flex items-baseline opacity-70 max-[280px]:text-[17px]">
               {Math.round(day.day.mintemp_f)}
-                <span className="text-sm ml-1 leading-none max-[320px]:text-sm max-[280px]:text-[13px]">°F</span>
+                <span className="text-[14px] ml-1 max-[280px]:text-[13px]">°F</span>
             </span>
           </span>
 
                     {/* C */}
                     <span className={`fade-text ${unit === "C" ? "visible" : ""}`}>
-            <span className="text-lg inline-flex items-baseline leading-none max-[320px]:text-lg max-[280px]:text-md">
+            <span className="text-[20px] inline-flex items-baseline max-[280px]:text-[17px]">
               {Math.round(day.day.maxtemp_c)}
-                <span className="text-sm ml-1 leading-none max-[320px]:text-sm max-[280px]:text-[13px]">°C</span>
+                <span className="text-[14px] ml-1 max-[280px]:text-[13px]">°C</span>
             </span>
 
             <span className="opacity-50 mx-1">/</span>
 
-            <span className="text-lg inline-flex items-baseline leading-none opacity-70 max-[320px]:text-lg max-[280px]:text-md">
+            <span className="text-[20px] inline-flex items-baseline opacity-70 max-[280px]:text-[17px]">
               {Math.round(day.day.mintemp_c)}
-                <span className="text-sm ml-1 leading-none max-[320px]:text-sm max-[280px]:text-[13px]">°C</span>
+                <span className="text-[14px] ml-1 max-[280px]:text-[13px]">°C</span>
             </span>
           </span>
                 </div>

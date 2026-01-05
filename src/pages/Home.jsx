@@ -223,7 +223,7 @@ export default function Home() {
                     {/* Search position logic */}
                     <div
                         className={[
-                            "w-full opacity-100 transition-all duration-700",
+                            "w-full opacity-100 transition-all relative z-50 duration-700",
                             !weather ? "animate-fadeIn" : "pt-6",
                             !weather
                                 ? searchActive
@@ -274,7 +274,8 @@ export default function Home() {
                         </>
                     )}
 
-                    <Footer />
+                    <Footer theme={theme} />
+
                 </div>
             </div>
         </motion.div>
