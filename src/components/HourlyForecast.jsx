@@ -3,10 +3,8 @@ import React, { useMemo, useRef, useState, useEffect } from "react";
 import WeatherIcon from "./WeatherIcon";
 
 export default function HourlyForecast({ hours, unit, theme, localTime }) {
-    // tiny breakpoint state (<= 280px)
     const [isTiny, setIsTiny] = useState(false);
 
-    // ✅ Option B: viewport-based icon sizing (range-aware)
     const [vw, setVw] = useState(
         typeof window !== "undefined" ? window.innerWidth : 9999
     );
@@ -34,10 +32,9 @@ export default function HourlyForecast({ hours, unit, theme, localTime }) {
         if (vw <= 320) return 76; // 281–320
         if (vw <= 346) return 78; // 321–346
         if (vw <= 360) return 82; // 347–360
-        return 78; // fallback (desktop-ish)
+        return 78; // desktop
     }, [vw]);
 
-    // ---------- Build sorted hours ----------
     const sortedHours = useMemo(() => {
         const safeHours = Array.isArray(hours) ? hours : [];
         const safeLocalTime = localTime || null;
@@ -155,32 +152,56 @@ export default function HourlyForecast({ hours, unit, theme, localTime }) {
                                 className={`
                   flex-shrink-0
                   rounded-2xl
-                  flex flex-col items-center text-center
                   ${theme.text}
+
+                  /* ✅ base (desktop too) */
+                  w-[150px] px-3 py-3.5
 
                   /* 347–360 */
                   min-[347px]:max-[360px]:w-[160px]
-                  min-[347px]:max-[360px]:px-3 min-[347px]:max-[360px]:py-3.5
+                  min-[347px]:max-[360px]:px-3
+                  min-[347px]:max-[360px]:py-3.5
 
                   /* 321–346 */
                   min-[321px]:max-[346px]:w-[154px]
-                  min-[321px]:max-[346px]:px-3 min-[321px]:max-[346px]:py-3
+                  min-[321px]:max-[346px]:px-3
+                  min-[321px]:max-[346px]:py-3
 
                   /* 281–320 */
                   min-[281px]:max-[320px]:w-[148px]
-                  min-[281px]:max-[320px]:px-2.5 min-[281px]:max-[320px]:py-3
+                  min-[281px]:max-[320px]:px-2.5
+                  min-[281px]:max-[320px]:py-3
 
                   /* <=280 */
                   max-[280px]:w-[124px]
-                  max-[280px]:px-2 max-[280px]:py-2
+                  max-[280px]:px-2
+                  max-[280px]:py-2
                   max-[280px]:snap-center
                 `}
                             >
-                                {/* Time */}
-                                <div className="h-[78px] flex items-center justify-center max-[320px]:h-[70px] max-[280px]:h-[60px]">
+                                {/* ✅ 4-row grid ensures alignment across all cards */}
+                                <div
+                                    className={`
+                    grid items-center justify-items-center text-center
+                    [grid-template-rows:58px_58px_84px_28px]
+
+                    /* 347–360 */
+                    min-[347px]:max-[360px]:[grid-template-rows:78px_72px_104px_48px]
+
+                    /* 321–346 */
+                    min-[321px]:max-[346px]:[grid-template-rows:74px_70px_96px_48px]
+
+                    /* 281–320 */
+                    min-[281px]:max-[320px]:[grid-template-rows:70px_68px_90px_48px]
+
+                    /* 240–280 */
+                    max-[280px]:[grid-template-rows:60px_58px_80px_44px]
+                  `}
+                                >
+                                    {/* Time */}
                                     <p
                                         className={`
-                      font-semibold opacity-85 whitespace-nowrap
+                      font-semibold text-lg opacity-85 whitespace-nowrap
                       min-[347px]:max-[360px]:text-[19px]
                       min-[321px]:max-[346px]:text-[18px]
                       min-[281px]:max-[320px]:text-[17px]
@@ -189,70 +210,56 @@ export default function HourlyForecast({ hours, unit, theme, localTime }) {
                                     >
                                         {i === 0 ? "Now" : format12Hour(h.time)}
                                     </p>
-                                </div>
 
-                                {/* Icon */}
-                                <div className="h-[78px] flex items-center justify-center max-[320px]:h-[68px] max-[280px]:h-[58px]">
-                                    <WeatherIcon
-                                        code={h.condition.code}
-                                        isDay={h.is_day === 1}
-                                        // ✅ Range-aware size (Option B). isTiny can still be used by your drag logic.
-                                        size={iconSize}
-                                    />
-                                </div>
+                                    {/* Icon */}
+                                    <div className="flex items-center justify-center">
+                                        <WeatherIcon
+                                            code={h.condition.code}
+                                            isDay={h.is_day === 1}
+                                            size={iconSize}
+                                        />
+                                    </div>
 
-                                {/* Condition */}
-                                <div
-                                    className={`
-                    w-full
-                    flex items-center justify-center
-                    mt-1
-                    min-[347px]:max-[360px]:h-[104px]
-                    min-[321px]:max-[346px]:h-[96px]
-                    min-[281px]:max-[320px]:h-[90px]
-                    min-[240px]:max-[280px]:h-[80px]
-                  `}
-                                >
-                                    <p
-                                        className={`
-                      w-full
-                      text-center
-                      leading-snug
-                      opacity-80
-                      break-words
-                      overflow-hidden
-                      px-2
+                                    {/* ✅ Condition: fixed slot + centered vertically */}
+                                    <div className="w-full flex items-center justify-center px-2 max-[280px]:px-0">
+                                        <p
+                                            className={`
+                        w-full text-center leading-snug opacity-80
+                        break-words whitespace-normal hyphens-auto
+                        overflow-hidden
+                        line-clamp-3
 
-                      min-[347px]:max-[360px]:text-[17px]
-                      min-[321px]:max-[346px]:text-[16px]
-                      min-[281px]:max-[320px]:text-[15px]
-                      min-[240px]:max-[280px]:text-[14px]
-                      min-[240px]:max-[280px]:px-0
-                    `}
-                                        onPointerDown={(e) => {
-                                            if (isTiny && dragRef.current.didDrag) e.preventDefault();
-                                        }}
-                                    >
-                                        {h.condition.text}
-                                    </p>
-                                </div>
+                        min-[347px]:max-[360px]:text-[17px]
+                        min-[321px]:max-[346px]:text-[16px]
+                        min-[281px]:max-[320px]:text-[15px]
+                        min-[240px]:max-[280px]:text-[14px]
+                      `}
+                                            onPointerDown={(e) => {
+                                                if (isTiny && dragRef.current.didDrag) e.preventDefault();
+                                            }}
+                                            title={h.condition.text}
+                                        >
+                                            {h.condition.text}
+                                        </p>
+                                    </div>
 
-                                {/* Temp */}
-                                <div className="flex items-center justify-center mt-3 max-[320px]:mt-3 max-[280px]:mt-2.5">
-                                    <div className="fade-stack center tabular-nums font-semibold leading-none min-w-[5ch]">
-                    <span className={`fade-text ${unit === "F" ? "visible" : ""}`}>
-                      <span className="text-[20px] inline-flex items-baseline max-[280px]:text-[17px]">
-                        {Math.round(h.temp_f)}
-                          <span className="text-[14px] ml-1 max-[280px]:text-[13px]">°F</span>
+                                    {/* ✅ Temp: fixed slot so all temps align */}
+                                    <div className="flex items-center justify-center">
+                                        <div className="fade-stack center tabular-nums font-semibold leading-none min-w-[5ch]">
+                      <span className={`fade-text ${unit === "F" ? "visible" : ""}`}>
+                        <span className="text-[20px] inline-flex items-baseline max-[280px]:text-[17px]">
+                          {Math.round(h.temp_f)}
+                            <span className="text-[14px] ml-1 max-[280px]:text-[13px]">°F</span>
+                        </span>
                       </span>
-                    </span>
 
-                                        <span className={`fade-text ${unit === "C" ? "visible" : ""}`}>
-                      <span className="text-[20px] inline-flex items-baseline max-[280px]:text-[17px]">
-                        {Math.round(h.temp_c)}
-                          <span className="text-[14px] ml-1 max-[280px]:text-[13px]">°C</span>
+                                            <span className={`fade-text ${unit === "C" ? "visible" : ""}`}>
+                        <span className="text-[20px] inline-flex items-baseline max-[280px]:text-[17px]">
+                          {Math.round(h.temp_c)}
+                            <span className="text-[14px] ml-1 max-[280px]:text-[13px]">°C</span>
+                        </span>
                       </span>
-                    </span>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
