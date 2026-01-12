@@ -1,13 +1,10 @@
 // src/components/HourlyForecast.jsx
 import React, { useMemo, useRef, useState, useEffect } from "react";
-import WeatherIcon from "./WeatherIcon";
+import WeatherIcon, {useWeatherIconSize} from "./WeatherIcon";
 
 export default function HourlyForecast({ hours, unit, theme, localTime }) {
     const [isTiny, setIsTiny] = useState(false);
-
-    const [vw, setVw] = useState(
-        typeof window !== "undefined" ? window.innerWidth : 9999
-    );
+    const iconSize = useWeatherIconSize();
 
     useEffect(() => {
         const mq = window.matchMedia("(max-width: 280px)");
@@ -17,23 +14,13 @@ export default function HourlyForecast({ hours, unit, theme, localTime }) {
         if (mq.addEventListener) mq.addEventListener("change", syncTiny);
         else mq.addListener(syncTiny);
 
-        const onResize = () => setVw(window.innerWidth);
-        window.addEventListener("resize", onResize, { passive: true });
-
         return () => {
             if (mq.removeEventListener) mq.removeEventListener("change", syncTiny);
             else mq.removeListener(syncTiny);
-            window.removeEventListener("resize", onResize);
         };
     }, []);
 
-    const iconSize = useMemo(() => {
-        if (vw <= 280) return 70; // 240–280
-        if (vw <= 320) return 76; // 281–320
-        if (vw <= 346) return 78; // 321–346
-        if (vw <= 360) return 82; // 347–360
-        return 78; // desktop
-    }, [vw]);
+
 
     const sortedHours = useMemo(() => {
         const safeHours = Array.isArray(hours) ? hours : [];
@@ -78,12 +65,44 @@ export default function HourlyForecast({ hours, unit, theme, localTime }) {
             <div className={`${theme.card} p-5 max-[360px]:p-4 max-[280px]:p-4`}>
                 <h2
                     className={`
-            text-xl font-semibold mb-4 ${theme.text}
+            text-xl text-center font-semibold mb-4 ${theme.text}
+            
+
+            /* 413–432 */
+            min-[413px]:max-[432px]:text-[22px]
+            
+
+            /* 401–412 */
+            min-[401px]:max-[412px]:text-[22px]
+            
+
+            /* 391–400 */
+            min-[391px]:max-[400px]:text-[21px]
+            
+
+            /* 385–390 */
+            min-[385px]:max-[390px]:text-[21px]
+            
+
+            /* 377–384 */
+            min-[377px]:max-[384px]:text-[20px]
+            
+
+            /* 361–376 */
+            min-[361px]:max-[376px]:text-[20px]
+            
+
+            /* 347–360 */
             min-[347px]:max-[360px]:text-xl
+
+            /* 321–346 */
             min-[321px]:max-[346px]:text-xl
+
+            /* 281–320 */
             min-[281px]:max-[320px]:text-xl
+
+            /* 240–280 */
             min-[240px]:max-[280px]:text-lg
-            max-[360px]:text-center
           `}
                 >
                     Hourly Forecast
@@ -95,6 +114,30 @@ export default function HourlyForecast({ hours, unit, theme, localTime }) {
                         className={`
               flex overflow-x-auto scrollbar-none
               gap-5 pb-4 px-2
+
+              /* 413–432 */
+              min-[413px]:max-[432px]:gap-6
+              min-[413px]:max-[432px]:px-5
+
+              /* 401–412 */
+              min-[401px]:max-[412px]:gap-6
+              min-[401px]:max-[412px]:px-5
+
+              /* 391–400 */
+              min-[391px]:max-[400px]:gap-5.5
+              min-[391px]:max-[400px]:px-5
+
+              /* 385–390 */
+              min-[385px]:max-[390px]:gap-5.5
+              min-[385px]:max-[390px]:px-5
+
+              /* 377–384 */
+              min-[377px]:max-[384px]:gap-5
+              min-[377px]:max-[384px]:px-4.5
+
+              /* 361–376 */
+              min-[361px]:max-[376px]:gap-5
+              min-[361px]:max-[376px]:px-4.5
 
               /* 347–360 */
               min-[347px]:max-[360px]:gap-5
@@ -157,6 +200,36 @@ export default function HourlyForecast({ hours, unit, theme, localTime }) {
                   /* ✅ base (desktop too) */
                   w-[150px] px-3 py-3.5
 
+                  /* 413–432 */
+                  min-[413px]:max-[432px]:w-[176px]
+                  min-[413px]:max-[432px]:px-3.5
+                  min-[413px]:max-[432px]:py-4
+
+                  /* 401–412 */
+                  min-[401px]:max-[412px]:w-[172px]
+                  min-[401px]:max-[412px]:px-3.5
+                  min-[401px]:max-[412px]:py-4
+
+                  /* 391–400 */
+                  min-[391px]:max-[400px]:w-[168px]
+                  min-[391px]:max-[400px]:px-3.5
+                  min-[391px]:max-[400px]:py-4
+
+                  /* 385–390 */
+                  min-[385px]:max-[390px]:w-[166px]
+                  min-[385px]:max-[390px]:px-3.25
+                  min-[385px]:max-[390px]:py-3.75
+
+                  /* 377–384 */
+                  min-[377px]:max-[384px]:w-[164px]
+                  min-[377px]:max-[384px]:px-3.25
+                  min-[377px]:max-[384px]:py-3.75
+
+                  /* 361–376 */
+                  min-[361px]:max-[376px]:w-[162px]
+                  min-[361px]:max-[376px]:px-3.25
+                  min-[361px]:max-[376px]:py-3.75
+
                   /* 347–360 */
                   min-[347px]:max-[360px]:w-[160px]
                   min-[347px]:max-[360px]:px-3
@@ -183,7 +256,25 @@ export default function HourlyForecast({ hours, unit, theme, localTime }) {
                                 <div
                                     className={`
                     grid items-center justify-items-center text-center
-                    [grid-template-rows:58px_58px_84px_28px]
+                    [grid-template-rows:68px_68px_95px_30px]
+
+                    /* 413–432 */
+                    min-[413px]:max-[432px]:[grid-template-rows:82px_76px_110px_50px]
+
+                    /* 401–412 */
+                    min-[401px]:max-[412px]:[grid-template-rows:82px_76px_110px_50px]
+
+                    /* 391–400 */
+                    min-[391px]:max-[400px]:[grid-template-rows:80px_74px_108px_50px]
+
+                    /* 385–390 */
+                    min-[385px]:max-[390px]:[grid-template-rows:80px_74px_106px_50px]
+
+                    /* 377–384 */
+                    min-[377px]:max-[384px]:[grid-template-rows:79px_73px_106px_50px]
+
+                    /* 361–376 */
+                    min-[361px]:max-[376px]:[grid-template-rows:79px_73px_104px_50px]
 
                     /* 347–360 */
                     min-[347px]:max-[360px]:[grid-template-rows:78px_72px_104px_48px]
@@ -202,6 +293,19 @@ export default function HourlyForecast({ hours, unit, theme, localTime }) {
                                     <p
                                         className={`
                       font-semibold text-lg opacity-85 whitespace-nowrap
+
+                      /* 401–412 */
+                      min-[401px]:max-[412px]:text-[20px]
+
+                      /* 391–400 */
+                      min-[391px]:max-[400px]:text-[19px]
+
+                      /* 385–390 */
+                      min-[385px]:max-[390px]:text-[19px]
+
+                      /* 361–384 */
+                      min-[361px]:max-[384px]:text-[18px]
+
                       min-[347px]:max-[360px]:text-[19px]
                       min-[321px]:max-[346px]:text-[18px]
                       min-[281px]:max-[320px]:text-[17px]
@@ -213,21 +317,34 @@ export default function HourlyForecast({ hours, unit, theme, localTime }) {
 
                                     {/* Icon */}
                                     <div className="flex items-center justify-center">
-                                        <WeatherIcon
-                                            code={h.condition.code}
-                                            isDay={h.is_day === 1}
-                                            size={iconSize}
-                                        />
+                                        <WeatherIcon code={h.condition.code} isDay={h.is_day === 1} size={iconSize} />
                                     </div>
 
                                     {/* ✅ Condition: fixed slot + centered vertically */}
-                                    <div className="w-full flex items-center justify-center px-2 max-[280px]:px-0">
+                                    <div className="w-full flex items-center justify-center px-2 max-[280px]:px-0 ">
                                         <p
                                             className={`
                         w-full text-center leading-snug opacity-80
-                        break-words whitespace-normal hyphens-auto
-                        overflow-hidden
-                        line-clamp-3
+                        break-words whitespace-normal
+                        
+                        
+                        /* 433-440 */
+                        min-[433px]:max:[440px]:text-[20px]
+
+                        /* 413–432 */
+                        min-[413px]:max-[432px]:text-[17px]
+
+                        /* 401–412 */
+                        min-[401px]:max-[412px]:text-[17px]
+
+                        /* 391–400 */
+                        min-[391px]:max-[400px]:text-[16px]
+
+                        /* 385–390 */
+                        min-[385px]:max-[390px]:text-[17px]
+
+                        /* 361–384 */
+                        min-[361px]:max-[384px]:text-[17px]
 
                         min-[347px]:max-[360px]:text-[17px]
                         min-[321px]:max-[346px]:text-[16px]
@@ -247,14 +364,52 @@ export default function HourlyForecast({ hours, unit, theme, localTime }) {
                                     <div className="flex items-center justify-center">
                                         <div className="fade-stack center tabular-nums font-semibold leading-none min-w-[5ch]">
                       <span className={`fade-text ${unit === "F" ? "visible" : ""}`}>
-                        <span className="text-[20px] inline-flex items-baseline max-[280px]:text-[17px]">
+                        <span
+                            className={`
+                            text-[20px] inline-flex items-baseline max-[280px]:text-[17px]
+
+                            /* 413–432 */
+                            min-[413px]:max-[432px]:text-[21px]
+
+                            /* 401–412 */
+                            min-[401px]:max-[412px]:text-[21px]
+
+                            /* 391–400 */
+                            min-[391px]:max-[400px]:text-[20px]
+
+                            /* 385–390 */
+                            min-[385px]:max-[390px]:text-[20px]
+
+                            /* 361–384 */
+                            min-[361px]:max-[384px]:text-[19px]
+                          `}
+                        >
                           {Math.round(h.temp_f)}
                             <span className="text-[14px] ml-1 max-[280px]:text-[13px]">°F</span>
                         </span>
                       </span>
 
                                             <span className={`fade-text ${unit === "C" ? "visible" : ""}`}>
-                        <span className="text-[20px] inline-flex items-baseline max-[280px]:text-[17px]">
+                        <span
+                            className={`
+                            text-[20px] inline-flex items-baseline max-[280px]:text-[17px]
+
+                            /* 413–432 */
+                            min-[413px]:max-[432px]:text-[21px]
+
+                            /* 401–412 */
+                            min-[401px]:max-[412px]:text-[21px]
+
+                            /* 391–400 */
+                            min-[391px]:max-[400px]:text-[20px]
+
+                            /* 385–390 */
+                            min-[385px]:max-[390px]:text-[20px]
+
+                            /* 361–384 */
+                            min-[361px]:max-[384px]:text-[19px]
+                          `}
+                        >
                           {Math.round(h.temp_c)}
                             <span className="text-[14px] ml-1 max-[280px]:text-[13px]">°C</span>
                         </span>

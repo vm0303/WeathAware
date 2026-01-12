@@ -1,7 +1,7 @@
 // src/components/CurrentWeather.jsx
 import React, { useEffect, useState, useRef } from "react";
 import { createPortal } from "react-dom";
-import WeatherIcon from "./WeatherIcon";
+import WeatherIcon,{useWeatherIconSize} from "./WeatherIcon";
 
 export default function CurrentWeather({
                                            weather,
@@ -22,6 +22,7 @@ export default function CurrentWeather({
     const loc = weather?.location ?? {};
     const w = weather?.current ?? {};
     const lastUpdated = w.last_updated ?? "";
+    const iconSize = useWeatherIconSize();
 
     // Tooltip portal positioning
     const iconBtnRef = useRef(null);
@@ -254,7 +255,9 @@ export default function CurrentWeather({
     const getOrdinalSuffix = (day) => {
         if (day > 3 && day < 21) return `${day}th`;
         const last = day % 10;
-        return `${day}${last === 1 ? "st" : last === 2 ? "nd" : last === 3 ? "rd" : "th"}`;
+        return `${day}${
+            last === 1 ? "st" : last === 2 ? "nd" : last === 3 ? "rd" : "th"
+        }`;
     };
 
     const formatLocalTimeDisplay = (localTimeStr, tz) => {
@@ -279,7 +282,9 @@ export default function CurrentWeather({
         <div className="relative rounded-2xl shadow-lg mb-8 overflow-hidden">
             {/* Previous theme for fade */}
             <div
-                className={`absolute inset-0 ${prevTheme?.card || theme.card} transition-opacity duration-700`}
+                className={`absolute inset-0 ${
+                    prevTheme?.card || theme.card
+                } transition-opacity duration-700`}
                 style={{ opacity: 0 }}
             />
 
@@ -288,6 +293,27 @@ export default function CurrentWeather({
                 className={`
           relative z-10 ${theme.card} transition-colors duration-300
           p-6
+          
+          /* 433–440 (mimic 360) */
+          min-[433px]:max-[440px]:p-5
+
+          /* 413–432 (mimic 360) */
+          min-[413px]:max-[432px]:p-5
+
+          /* 401–412 (mimic 360) */
+          min-[401px]:max-[412px]:p-5
+
+          /* 391–400 (mimic 360) */
+          min-[391px]:max-[400px]:p-5
+
+          /* 385–390 (mimic 360) */
+          min-[385px]:max-[390px]:p-5
+
+          /* 377–384 (mimic 360) */
+          min-[377px]:max-[384px]:p-5
+
+          /* 361–376 (mimic 360) */
+          min-[361px]:max-[376px]:p-5
 
           /* 347–360 */
           min-[347px]:max-[360px]:p-5
@@ -306,6 +332,16 @@ export default function CurrentWeather({
                 <div
                     className={`
             flex justify-between items-center gap-4
+            
+            /* 433-440* /
+            min-[433px]:max-[440px]:flex-col
+            min-[433px]:max-[440px]:items-center
+            min-[433px]:max-[440px]:gap-3
+            
+            /* 361–432: treat like small (match 240–360 behavior) */
+            min-[361px]:max-[432px]:flex-col
+            min-[361px]:max-[432px]:items-center
+            min-[361px]:max-[432px]:gap-2
 
             /* 240–360: mobile stacking */
             min-[240px]:max-[360px]:flex-col
@@ -313,10 +349,31 @@ export default function CurrentWeather({
             min-[240px]:max-[360px]:gap-2
           `}
                 >
-                    <div className="min-[240px]:max-[360px]:text-center">
+                    <div className="min-[240px]:max-[360px]:text-center min-[361px]:max-[440px]:text-center">
                         <h2
                             className={`
                 text-xl font-semibold ${theme.text}
+                
+                /* 433–440 (mimic 360) */
+                min-[433px]:max-[440px]:text-2xl
+                
+                /* 413–432 (mimic 360) */
+                min-[413px]:max-[432px]:text-2xl
+
+                /* 401–412 (mimic 360) */
+                min-[401px]:max-[412px]:text-2xl
+
+                /* 391–400 (mimic 360) */
+                min-[391px]:max-[400px]:text-xl
+
+                /* 385–390 (mimic 360) */
+                min-[385px]:max-[390px]:text-xl
+
+                /* 377–384 (mimic 360) */
+                min-[377px]:max-[384px]:text-xl
+
+                /* 361–376 (mimic 360) */
+                min-[361px]:max-[376px]:text-xl
 
                 /* 347–360 */
                 min-[347px]:max-[360px]:text-xl
@@ -339,6 +396,35 @@ export default function CurrentWeather({
                                 className={`
                   flex items-center gap-2 ${theme.text}
                   text-sm
+                  
+                  /* 433–440 (mimic 360) */
+                  min-[433px]:max-[440px]:text-sm
+                  min-[433px]:max-[440px]:justify-center
+                  
+
+                  /* 413–432 (mimic 360) */
+                  min-[413px]:max-[432px]:text-sm
+                  min-[413px]:max-[432px]:justify-center
+
+                  /* 401–412 (mimic 360) */
+                  min-[401px]:max-[412px]:text-sm
+                  min-[401px]:max-[412px]:justify-center
+
+                  /* 391–400 (mimic 360) */
+                  min-[391px]:max-[400px]:text-sm
+                  min-[391px]:max-[400px]:justify-center
+
+                  /* 385–390 (mimic 360) */
+                  min-[385px]:max-[390px]:text-sm
+                  min-[385px]:max-[390px]:justify-center
+
+                  /* 377–384 (mimic 360) */
+                  min-[377px]:max-[384px]:text-sm
+                  min-[377px]:max-[384px]:justify-center
+
+                  /* 361–376 (mimic 360) */
+                  min-[361px]:max-[376px]:text-sm
+                  min-[361px]:max-[376px]:justify-center
 
                   /* 347–360 */
                   min-[347px]:max-[360px]:text-sm
@@ -417,6 +503,10 @@ export default function CurrentWeather({
                           leading-snug whitespace-normal
                           px-3 py-2
                           text-xs
+
+                          /* 361–432: match small text sizing */
+                          min-[361px]:max-[440px]:text-[12px]
+
                           min-[321px]:max-[360px]:text-[12px]
                           min-[281px]:max-[320px]:text-[12px]
                           min-[240px]:max-[280px]:text-[11px]
@@ -461,9 +551,29 @@ export default function CurrentWeather({
                   hover:bg-slate-400 dark:hover:bg-slate-600
                   transition
 
+
                   min-[321px]:max-[360px]:text-sm
                   min-[281px]:max-[320px]:text-sm
                   min-[240px]:max-[280px]:text-xs
+                "
+                            >
+                                {unit === "F" ? "Convert to °C" : "Convert to °F"}
+                            </button>
+                        </div>
+
+                        {/* Convert button for 361–440 */}
+                        <div className="hidden min-[361px]:max-[440px]:flex min-[361px]:max-[440px]:justify-center min-[361px]:max-[440px]:mt-3">
+                            <button
+                                onClick={() => onUnitChange(unit === "F" ? "C" : "F")}
+                                className="
+                  px-3 py-1 rounded-full font-semibold
+                  bg-slate-300 dark:bg-slate-700
+                  text-slate-800 dark:text-slate-200
+                  hover:bg-slate-400 dark:hover:bg-slate-600
+                  transition
+                  text-sm
+                  min-[401px]:max-[432px]:text-base
+                  min-[433px]:max-[440px]:text-lg
                 "
                             >
                                 {unit === "F" ? "Convert to °C" : "Convert to °F"}
@@ -475,12 +585,13 @@ export default function CurrentWeather({
                     <button
                         onClick={() => onUnitChange(unit === "F" ? "C" : "F")}
                         className="
-              px-3 py-1 rounded-full text-sm font-semibold
-              bg-slate-300 dark:bg-slate-700
-              text-slate-800 dark:text-slate-200
-              hover:bg-slate-400 dark:hover:bg-slate-600
-              transition
+              px-3 py-1 rounded-full font-semibold
+                  bg-slate-300 dark:bg-slate-700
+                  text-slate-800 dark:text-slate-200
+                  hover:bg-slate-400 dark:hover:bg-slate-600
+                  transition
               min-[240px]:max-[360px]:hidden
+              min-[361px]:max-[440px]:hidden
             "
                     >
                         {unit === "F" ? "Convert to °C" : "Convert to °F"}
@@ -492,6 +603,12 @@ export default function CurrentWeather({
                     className={`
             flex flex-wrap mt-6 items-start justify-between gap-12
 
+            /* 361–432: treat like small (match 240–360 behavior) */
+            min-[361px]:max-[432px]:mt-4
+            min-[361px]:max-[432px]:gap-4
+            min-[361px]:max-[432px]:flex-col
+            min-[361px]:max-[432px]:items-center
+
             min-[240px]:max-[360px]:mt-4
             min-[240px]:max-[360px]:gap-4
             min-[240px]:max-[360px]:flex-col
@@ -499,19 +616,22 @@ export default function CurrentWeather({
           `}
                 >
                     {/* LEFT */}
-                    <div className={`${theme.text} min-[240px]:max-[360px]:text-center min-[240px]:max-[360px]:w-full`}>
+                    <div
+                        className={`${theme.text} min-[240px]:max-[360px]:text-center min-[240px]:max-[360px]:w-full min-[361px]:max-[432px]:text-center min-[361px]:max-[432px]:w-full min-[433px]:max-[440px]:text-center min-[433px]:max-[440px]:w-full`}
+                    >
                         <h3
                             className="
                 text-3xl font-semibold
+
 
                 /* 347–360 */
                 min-[347px]:max-[360px]:text-[30px]
 
                 /* 321–346 */
-                min-[321px]:max-[346px]:text-[30px]
+                min-[321px]:max-[346px]:text-[28px]
 
                 /* 281–320 */
-                min-[281px]:max-[320px]:text-[28px]
+                min-[281px]:max-[320px]:text-[26px]
 
                 /* 240–280 */
                 min-[240px]:max-[280px]:text-[24px]
@@ -523,9 +643,14 @@ export default function CurrentWeather({
                         <p
                             className="
                 opacity-80
+                min-[433px]:max-[440px]:text-base
+                min-[401px]:max-[432px]:text-base
+                min-[361px]:max-[400px]:text-sm
                 min-[321px]:max-[360px]:text-sm
                 min-[281px]:max-[320px]:text-sm
                 min-[240px]:max-[280px]:text-xs
+
+
               "
                         >
                             {loc.region && `${loc.region}, `}
@@ -536,6 +661,8 @@ export default function CurrentWeather({
                             <p
                                 className="
                   mt-2 opacity-75 text-sm
+
+                  min-[361px]:max-[400px]:text-[13.5px]
                   min-[321px]:max-[360px]:text-[13px]
                   min-[281px]:max-[320px]:text-[13px]
                   min-[240px]:max-[280px]:text-[12px]
@@ -554,36 +681,46 @@ export default function CurrentWeather({
                 min-[240px]:max-[360px]:mt-3
                 min-[240px]:max-[360px]:justify-center
                 min-[240px]:max-[360px]:h-[72px]
+
+
+                min-[361px]:max-[432px]:mt-3
+                min-[361px]:max-[432px]:justify-center
+                min-[361px]:max-[432px]:h-[72px]
+
+                min-[433px]:max-[440px]:mt-3
+                min-[433px]:max-[440px]:justify-center
+                min-[433px]:max-[440px]:h-[74px]
+
+
               "
                         >
                             <div
                                 className="
                   w-[84px] flex justify-center items-center
                   min-[240px]:max-[360px]:w-[72px]
+
+                  /* 361–440: match 240–360 */
+                  min-[361px]:max-[440px]:w-[72px]
                 "
                             >
-                                <WeatherIcon
-                                    code={w?.condition?.code}
-                                    isDay={w.is_day === 1}
-                                    size={64}
-                                />
+                                <WeatherIcon code={w?.condition?.code} isDay={w.is_day === 1} size={iconSize} />
                             </div>
 
                             <div className="ml-3 temp-align min-w-[9ch]">
                                 <div className="fade-stack tabular-nums">
                   <span className={`fade-text ${unit === "F" ? "visible" : ""}`}>
-                    <span className="text-7xl font-light leading-none inline-flex items-baseline min-[240px]:max-[360px]:text-6xl">
+                    <span className="text-7xl font-light leading-none inline-flex items-baseline min-[240px]:max-[360px]:text-5xl min-[361px]:max-[432px]:text-6xl">
                       {Math.round(w.temp_f)}
-                        <span className="text-4xl ml-1 temp-unit min-[240px]:max-[360px]:text-3xl">
+                        <span className="text-4xl ml-1 temp-unit min-[240px]:max-[360px]:text-3xl min-[361px]:max-[432px]:text-3xl">
                         °F
                       </span>
                     </span>
                   </span>
 
                                     <span className={`fade-text ${unit === "C" ? "visible" : ""}`}>
-                    <span className="text-7xl font-light leading-none inline-flex items-baseline min-[240px]:max-[360px]:text-6xl">
+                    <span className="text-7xl font-light leading-none inline-flex items-baseline min-[240px]:max-[360px]:text-5xl min-[361px]:max-[432px]:text-6xl">
                       {Math.round(w.temp_c)}
-                        <span className="text-4xl ml-1 temp-unit min-[240px]:max-[360px]:text-3xl">
+                        <span className="text-4xl ml-1 temp-unit min-[240px]:max-[360px]:text-3xl min-[361px]:max-[432px]:text-3xl">
                         °C
                       </span>
                     </span>
@@ -592,9 +729,25 @@ export default function CurrentWeather({
                             </div>
                         </div>
 
-                        <h4 className="text-2xl mt-2 capitalize min-[321px]:max-[360px]:text-xl min-[281px]:max-[320px]:text-xl min-[240px]:max-[280px]:text-lg">
+                        <h4
+                            className={`
+    mt-2 capitalize  mx-auto
+    whitespace-normal break-words hyphens-auto text-balance
+    max-w-[22ch]
+    
+    min-[240px]:max-[440px]:text-center
+    min-[240px]:max-[440px]:mx-auto
+
+    text-2xl
+    min-[361px]:max-[400px]:text-xl
+    min-[321px]:max-[360px]:text-xl
+    min-[281px]:max-[320px]:text-xl
+    min-[240px]:max-[280px]:text-lg
+  `}
+                        >
                             {w?.condition?.text}
                         </h4>
+
                     </div>
 
                     {/* RIGHT */}
@@ -604,7 +757,38 @@ export default function CurrentWeather({
               grid-cols-[auto,1fr]
               gap-y-5 gap-x-6
               w-full md:w-auto ${theme.text}
-              text-sm
+              text-[17px]
+             
+
+              /* 413–432 (mimic 360) */
+              min-[413px]:max-[432px]:text-[15px]
+              min-[413px]:max-[432px]:gap-y-4
+              min-[413px]:max-[432px]:gap-x-5
+
+              /* 401–412 (mimic 360) */
+              min-[401px]:max-[412px]:text-[15px]
+              min-[401px]:max-[412px]:gap-y-4
+              min-[401px]:max-[412px]:gap-x-5
+
+              /* 391–400 (mimic 360) */
+              min-[391px]:max-[400px]:text-[15px]
+              min-[391px]:max-[400px]:gap-y-4
+              min-[391px]:max-[400px]:gap-x-5
+
+              /* 385–390 (mimic 360) */
+              min-[385px]:max-[390px]:text-[15px]
+              min-[385px]:max-[390px]:gap-y-4
+              min-[385px]:max-[390px]:gap-x-5
+
+              /* 377–384 (mimic 360) */
+              min-[377px]:max-[384px]:text-[15px]
+              min-[377px]:max-[384px]:gap-y-4
+              min-[377px]:max-[384px]:gap-x-5
+
+              /* 361–376 (mimic 360) */
+              min-[361px]:max-[376px]:text-[14px]
+              min-[361px]:max-[376px]:gap-y-4
+              min-[361px]:max-[376px]:gap-x-5
 
               /* 347–360 */
               min-[347px]:max-[360px]:text-[14px]
@@ -648,11 +832,15 @@ export default function CurrentWeather({
                         <span className="opacity-70">Wind:</span>
                         <div className="fade-stack stats right tabular-nums font-semibold text-right justify-self-end whitespace-nowrap">
               <span className={`fade-text ${unit === "F" ? "visible" : ""}`}>
-                {`${Math.round(w.wind_mph)} mph • ${w.wind_degree}° ${w.wind_dir || ""}`}
+                {`${Math.round(w.wind_mph)} mph • ${w.wind_degree}° ${
+                    w.wind_dir || ""
+                }`}
               </span>
 
                             <span className={`fade-text ${unit === "C" ? "visible" : ""}`}>
-                {`${Math.round(w.wind_kph)} kph • ${w.wind_degree}° ${w.wind_dir || ""}`}
+                {`${Math.round(w.wind_kph)} kph • ${w.wind_degree}° ${
+                    w.wind_dir || ""
+                }`}
               </span>
                         </div>
 
@@ -690,6 +878,25 @@ export default function CurrentWeather({
                                 <span
                                     className="
                     ml-1 opacity-80 text-xs
+
+                    /* 413–440 (mimic 360) */
+                    min-[413px]:max-[440px]:text-[12px]
+
+                    /* 401–412 (mimic 360) */
+                    min-[401px]:max-[412px]:text-[12px]
+
+                    /* 391–400 (mimic 360) */
+                    min-[391px]:max-[400px]:text-[12px]
+
+                    /* 385–390 (mimic 360) */
+                    min-[385px]:max-[390px]:text-[12px]
+
+                    /* 377–384 (mimic 360) */
+                    min-[377px]:max-[384px]:text-[12px]
+
+                    /* 361–376 (mimic 360) */
+                    min-[361px]:max-[376px]:text-[12px]
+
                     min-[347px]:max-[360px]:text-[12px]
                     min-[321px]:max-[346px]:text-[12px]
                     min-[281px]:max-[320px]:text-[12px]
@@ -709,6 +916,25 @@ export default function CurrentWeather({
                                     <span
                                         className="
                       ml-1 opacity-80 text-xs
+
+                      /* 413–440 (mimic 360) */
+                      min-[413px]:max-[440px]:text-[12px]
+
+                      /* 401–412 (mimic 360) */
+                      min-[401px]:max-[412px]:text-[12px]
+
+                      /* 391–400 (mimic 360) */
+                      min-[391px]:max-[400px]:text-[12px]
+
+                      /* 385–390 (mimic 360) */
+                      min-[385px]:max-[390px]:text-[12px]
+
+                      /* 377–384 (mimic 360) */
+                      min-[377px]:max-[384px]:text-[12px]
+
+                      /* 361–376 (mimic 360) */
+                      min-[361px]:max-[376px]:text-[12px]
+
                       min-[347px]:max-[360px]:text-[12px]
                       min-[321px]:max-[346px]:text-[12px]
                       min-[281px]:max-[320px]:text-[12px]

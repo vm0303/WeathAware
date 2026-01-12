@@ -1,28 +1,15 @@
 // src/components/ForecastItem.jsx
-import React, { useMemo, useState, useEffect } from "react";
-import WeatherIcon from "./WeatherIcon";
+import React from "react";
+import WeatherIcon,{useWeatherIconSize} from "./WeatherIcon";
 
 export default function ForecastItem({ day, unit, theme, label, isTiny, dragRef }) {
     const [y, m, d] = day.date.split("-");
     const localDate = new Date(y, m - 1, d);
     const weekday = localDate.toLocaleDateString("en-US", { weekday: "short" });
+    const iconSize =useWeatherIconSize();
 
-    // ✅ Option B: viewport-based icon sizing (range-aware)
-    const [vw, setVw] = useState(typeof window !== "undefined" ? window.innerWidth : 9999);
 
-    useEffect(() => {
-        const onResize = () => setVw(window.innerWidth);
-        window.addEventListener("resize", onResize, { passive: true });
-        return () => window.removeEventListener("resize", onResize);
-    }, []);
 
-    const iconSize = useMemo(() => {
-        if (vw <= 280) return 70; // 240–280
-        if (vw <= 320) return 76; // 281–320
-        if (vw <= 346) return 78; // 321–346
-        if (vw <= 360) return 82; // 347–360
-        return 78;
-    }, [vw]);
 
     return (
         <div
@@ -34,6 +21,36 @@ export default function ForecastItem({ day, unit, theme, label, isTiny, dragRef 
 
         /* base */
         w-[150px] px-3 py-3.5
+
+        /* 413–432 */
+        min-[413px]:max-[432px]:w-[176px]
+        min-[413px]:max-[432px]:px-3.5
+        min-[413px]:max-[432px]:py-4
+
+        /* 401–412 */
+        min-[401px]:max-[412px]:w-[172px]
+        min-[401px]:max-[412px]:px-3.5
+        min-[401px]:max-[412px]:py-4
+
+        /* 391–400 */
+        min-[391px]:max-[400px]:w-[168px]
+        min-[391px]:max-[400px]:px-3.5
+        min-[391px]:max-[400px]:py-4
+
+        /* 385–390 */
+        min-[385px]:max-[390px]:w-[166px]
+        min-[385px]:max-[390px]:px-3.25
+        min-[385px]:max-[390px]:py-3.75
+
+        /* 377–384 */
+        min-[377px]:max-[384px]:w-[164px]
+        min-[377px]:max-[384px]:px-3.25
+        min-[377px]:max-[384px]:py-3.75
+
+        /* 361–376 */
+        min-[361px]:max-[376px]:w-[162px]
+        min-[361px]:max-[376px]:px-3.25
+        min-[361px]:max-[376px]:py-3.75
 
         /* 347–360 (match Hourly rhythm) */
         min-[347px]:max-[360px]:w-[160px]
@@ -61,7 +78,25 @@ export default function ForecastItem({ day, unit, theme, label, isTiny, dragRef 
             <div
                 className={`
           grid items-center justify-items-center text-center
-          [grid-template-rows:58px_58px_84px_28px]
+          [grid-template-rows:68px_68px_95px_30px]
+
+          /* 413–432 */
+          min-[413px]:max-[432px]:[grid-template-rows:82px_76px_110px_50px]
+
+          /* 401–412 */
+          min-[401px]:max-[412px]:[grid-template-rows:82px_76px_110px_50px]
+
+          /* 391–400 */
+          min-[391px]:max-[400px]:[grid-template-rows:80px_74px_108px_50px]
+
+          /* 385–390 */
+          min-[385px]:max-[390px]:[grid-template-rows:80px_74px_106px_50px]
+
+          /* 377–384 */
+          min-[377px]:max-[384px]:[grid-template-rows:79px_73px_106px_50px]
+
+          /* 361–376 */
+          min-[361px]:max-[376px]:[grid-template-rows:79px_73px_104px_50px]
 
           /* 347–360 */
           min-[347px]:max-[360px]:[grid-template-rows:78px_72px_104px_48px]
@@ -80,6 +115,22 @@ export default function ForecastItem({ day, unit, theme, label, isTiny, dragRef 
                 <p
                     className={`
             opacity-80 text-lg font-semibold tracking-tight whitespace-nowrap
+
+            /* 413–432 */
+            min-[413px]:max-[432px]:text-[20px]
+
+            /* 401–412 */
+            min-[401px]:max-[412px]:text-[20px]
+
+            /* 391–400 */
+            min-[391px]:max-[400px]:text-[19px]
+
+            /* 385–390 */
+            min-[385px]:max-[390px]:text-[19px]
+
+            /* 361–384 */
+            min-[361px]:max-[384px]:text-[18px]
+
             min-[347px]:max-[360px]:text-[18px]
             min-[321px]:max-[346px]:text-[17px]
             min-[281px]:max-[320px]:text-[16px]
@@ -100,8 +151,25 @@ export default function ForecastItem({ day, unit, theme, label, isTiny, dragRef 
                         className={`
               w-full text-center leading-snug opacity-80
               break-words whitespace-normal hyphens-auto
-              overflow-hidden
-              line-clamp-3
+              
+              
+              
+              
+
+              /* 413–432 */
+              min-[413px]:max-[432px]:text-[18px]
+
+              /* 401–412 */
+              min-[401px]:max-[412px]:text-[17px]
+
+              /* 391–400 */
+              min-[391px]:max-[400px]:text-[17px]
+
+              /* 385–390 */
+              min-[385px]:max-[390px]:text-[17px]
+
+              /* 361–384 */
+              min-[361px]:max-[384px]:text-[17px]
 
               min-[347px]:max-[360px]:text-[17px]
               min-[321px]:max-[346px]:text-[16px]
@@ -124,7 +192,24 @@ export default function ForecastItem({ day, unit, theme, label, isTiny, dragRef 
                         <span className={`fade-text ${unit === "F" ? "visible" : ""}`}>
               {/* HIGH */}
                             <span
-                                className={`inline-flex items-baseline text-[20px] opacity-95 max-[280px]:text-[17px] ${theme.text}`}
+                                className={`
+                  inline-flex items-baseline text-[20px] opacity-95 max-[280px]:text-[17px] ${theme.text}
+
+                  /* 413–432 */
+                  min-[413px]:max-[432px]:text-[21px]
+
+                  /* 401–412 */
+                  min-[401px]:max-[412px]:text-[21px]
+
+                  /* 391–400 */
+                  min-[391px]:max-[400px]:text-[20px]
+
+                  /* 385–390 */
+                  min-[385px]:max-[390px]:text-[20px]
+
+                  /* 361–384 */
+                  min-[361px]:max-[384px]:text-[19px]
+                `}
                             >
                 {Math.round(day.day.maxtemp_f)}
                                 <span className="text-[14px] ml-1 max-[280px]:text-[13px]">°F</span>
@@ -134,7 +219,24 @@ export default function ForecastItem({ day, unit, theme, label, isTiny, dragRef 
 
                             {/* LOW */}
                             <span
-                                className={`inline-flex items-baseline text-[20px] opacity-70 max-[280px]:text-[17px] ${theme.text}`}
+                                className={`
+                  inline-flex items-baseline text-[20px] opacity-70 max-[280px]:text-[17px] ${theme.text}
+
+                  /* 413–432 */
+                  min-[413px]:max-[432px]:text-[21px]
+
+                  /* 401–412 */
+                  min-[401px]:max-[412px]:text-[21px]
+
+                  /* 391–400 */
+                  min-[391px]:max-[400px]:text-[20px]
+
+                  /* 385–390 */
+                  min-[385px]:max-[390px]:text-[20px]
+
+                  /* 361–384 */
+                  min-[361px]:max-[384px]:text-[19px]
+                `}
                             >
                 {Math.round(day.day.mintemp_f)}
                                 <span className="text-[14px] ml-1 max-[280px]:text-[13px]">°F</span>
@@ -145,7 +247,24 @@ export default function ForecastItem({ day, unit, theme, label, isTiny, dragRef 
                         <span className={`fade-text ${unit === "C" ? "visible" : ""}`}>
               {/* HIGH */}
                             <span
-                                className={`inline-flex items-baseline text-[20px] opacity-95 max-[280px]:text-[17px] ${theme.text}`}
+                                className={`
+                  inline-flex items-baseline text-[20px] opacity-95 max-[280px]:text-[17px] ${theme.text}
+
+                  /* 413–432 */
+                  min-[413px]:max-[432px]:text-[21px]
+
+                  /* 401–412 */
+                  min-[401px]:max-[412px]:text-[21px]
+
+                  /* 391–400 */
+                  min-[391px]:max-[400px]:text-[20px]
+
+                  /* 385–390 */
+                  min-[385px]:max-[390px]:text-[20px]
+
+                  /* 361–384 */
+                  min-[361px]:max-[384px]:text-[19px]
+                `}
                             >
                 {Math.round(day.day.maxtemp_c)}
                                 <span className="text-[14px] ml-1 max-[280px]:text-[13px]">°C</span>
@@ -155,7 +274,24 @@ export default function ForecastItem({ day, unit, theme, label, isTiny, dragRef 
 
                             {/* LOW */}
                             <span
-                                className={`inline-flex items-baseline text-[20px] opacity-70 max-[280px]:text-[17px] ${theme.text}`}
+                                className={`
+                  inline-flex items-baseline text-[20px] opacity-70 max-[280px]:text-[17px] ${theme.text}
+
+                  /* 413–432 */
+                  min-[413px]:max-[432px]:text-[21px]
+
+                  /* 401–412 */
+                  min-[401px]:max-[412px]:text-[21px]
+
+                  /* 391–400 */
+                  min-[391px]:max-[400px]:text-[20px]
+
+                  /* 385–390 */
+                  min-[385px]:max-[390px]:text-[20px]
+
+                  /* 361–384 */
+                  min-[361px]:max-[384px]:text-[19px]
+                `}
                             >
                 {Math.round(day.day.mintemp_c)}
                                 <span className="text-[14px] ml-1 max-[280px]:text-[13px]">°C</span>
