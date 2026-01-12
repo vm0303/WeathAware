@@ -14,6 +14,24 @@ export default function SunriseSunsetCard({ astro, theme }) {
                 className="
           p-6
 
+          /* 413–432 */
+          min-[413px]:max-[432px]:p-6
+
+          /* 401–412 */
+          min-[401px]:max-[412px]:p-6
+
+          /* 391–400 */
+          min-[391px]:max-[400px]:p-6
+
+          /* 385–390 */
+          min-[385px]:max-[390px]:p-6
+
+          /* 377–384 */
+          min-[377px]:max-[384px]:p-6
+
+          /* 361–376 */
+          min-[361px]:max-[376px]:p-6
+
           /* 347–360 */
           min-[347px]:max-[360px]:p-5
 
@@ -33,6 +51,30 @@ export default function SunriseSunsetCard({ astro, theme }) {
 
             /* base (desktop+) */
             text-xl mb-6
+
+            /* 413–432 (down one) */
+            min-[413px]:max-[432px]:text-[22px]
+            min-[413px]:max-[432px]:mb-6
+
+            /* 401–412 (down one) */
+            min-[401px]:max-[412px]:text-[22px]
+            min-[401px]:max-[412px]:mb-6
+
+            /* 391–400 (down one) */
+            min-[391px]:max-[400px]:text-[21px]
+            min-[391px]:max-[400px]:mb-6
+
+            /* 385–390 (down one) */
+            min-[385px]:max-[390px]:text-[21px]
+            min-[385px]:max-[390px]:mb-6
+
+            /* 377–384 (down one) */
+            min-[377px]:max-[384px]:text-[20px]
+            min-[377px]:max-[384px]:mb-6
+
+            /* 361–376 (down one) */
+            min-[361px]:max-[376px]:text-[20px]
+            min-[361px]:max-[376px]:mb-6
 
             /* 347–360 */
             min-[347px]:max-[360px]:text-xl
@@ -57,8 +99,25 @@ export default function SunriseSunsetCard({ astro, theme }) {
                 <div
                     className="
             grid grid-cols-2 text-center
-
             gap-8
+
+            /* 413–432 (down one) */
+            min-[413px]:max-[432px]:gap-9
+
+            /* 401–412 (down one) */
+            min-[401px]:max-[412px]:gap-9
+
+            /* 391–400 (down one) */
+            min-[391px]:max-[400px]:gap-8
+
+            /* 385–390 (down one) */
+            min-[385px]:max-[390px]:gap-8
+
+            /* 377–384 (down one) */
+            min-[377px]:max-[384px]:gap-8
+
+            /* 361–376 (down one) */
+            min-[361px]:max-[376px]:gap-8
 
             /* 347–360 */
             min-[347px]:max-[360px]:gap-7
@@ -83,6 +142,30 @@ export default function SunriseSunsetCard({ astro, theme }) {
 
                 /* base (desktop+) */
                 w-20 h-20
+
+                /* 413–432 (down one) */
+                min-[413px]:max-[432px]:w-[92px]
+                min-[413px]:max-[432px]:h-[92px]
+
+                /* 401–412 (down one) */
+                min-[401px]:max-[412px]:w-[90px]
+                min-[401px]:max-[412px]:h-[90px]
+
+                /* 391–400 (down one) */
+                min-[391px]:max-[400px]:w-[88px]
+                min-[391px]:max-[400px]:h-[88px]
+
+                /* 385–390 (down one) */
+                min-[385px]:max-[390px]:w-[86px]
+                min-[385px]:max-[390px]:h-[86px]
+
+                /* 377–384 (down one) */
+                min-[377px]:max-[384px]:w-[86px]
+                min-[377px]:max-[384px]:h-[86px]
+
+                /* 361–376 (down one) */
+                min-[361px]:max-[376px]:w-[84px]
+                min-[361px]:max-[376px]:h-[84px]
 
                 /* 347–360 (slightly bigger) */
                 min-[347px]:max-[360px]:w-[88px]
@@ -112,6 +195,21 @@ export default function SunriseSunsetCard({ astro, theme }) {
                 /* base */
                 text-lg
 
+                /* 413–432 (down one) */
+                min-[413px]:max-[432px]:text-[17px]
+
+                /* 401–412 (down one) */
+                min-[401px]:max-[412px]:text-[17px]
+
+                /* 391–400 (down one) */
+                min-[391px]:max-[400px]:text-[16px]
+
+                /* 385–390 (down one) */
+                min-[385px]:max-[390px]:text-[16px]
+
+                /* 361–384 (down one) */
+                min-[361px]:max-[384px]:text-[15px]
+
                 /* 347–360 */
                 min-[347px]:max-[360px]:text-[16px]
 
@@ -133,6 +231,21 @@ export default function SunriseSunsetCard({ astro, theme }) {
 
                 /* base */
                 text-xl
+
+                /* 413–432 (down one) */
+                min-[413px]:max-[432px]:text-[22px]
+
+                /* 401–412 (down one) */
+                min-[401px]:max-[412px]:text-[22px]
+
+                /* 391–400 (down one) */
+                min-[391px]:max-[400px]:text-[21px]
+
+                /* 385–390 (down one) */
+                min-[385px]:max-[390px]:text-[20px]
+
+                /* 361–384 (down one) */
+                min-[361px]:max-[384px]:text-[19px]
 
                 /* 347–360 */
                 min-[347px]:max-[360px]:text-[18px]
@@ -162,6 +275,30 @@ export default function SunriseSunsetCard({ astro, theme }) {
                 /* base (desktop+) */
                 w-20 h-20
 
+                /* 413–432 (down one) */
+                min-[413px]:max-[432px]:w-[92px]
+                min-[413px]:max-[432px]:h-[92px]
+
+                /* 401–412 (down one) */
+                min-[401px]:max-[412px]:w-[90px]
+                min-[401px]:max-[412px]:h-[90px]
+
+                /* 391–400 (down one) */
+                min-[391px]:max-[400px]:w-[88px]
+                min-[391px]:max-[400px]:h-[88px]
+
+                /* 385–390 (down one) */
+                min-[385px]:max-[390px]:w-[86px]
+                min-[385px]:max-[390px]:h-[86px]
+
+                /* 377–384 (down one) */
+                min-[377px]:max-[384px]:w-[86px]
+                min-[377px]:max-[384px]:h-[86px]
+
+                /* 361–376 (down one) */
+                min-[361px]:max-[376px]:w-[84px]
+                min-[361px]:max-[376px]:h-[84px]
+
                 /* 347–360 (slightly bigger) */
                 min-[347px]:max-[360px]:w-[88px]
                 min-[347px]:max-[360px]:h-[88px]
@@ -190,6 +327,21 @@ export default function SunriseSunsetCard({ astro, theme }) {
                 /* base */
                 text-lg
 
+                /* 413–432 (down one) */
+                min-[413px]:max-[432px]:text-[17px]
+
+                /* 401–412 (down one) */
+                min-[401px]:max-[412px]:text-[17px]
+
+                /* 391–400 (down one) */
+                min-[391px]:max-[400px]:text-[16px]
+
+                /* 385–390 (down one) */
+                min-[385px]:max-[390px]:text-[16px]
+
+                /* 361–384 (down one) */
+                min-[361px]:max-[384px]:text-[15px]
+
                 /* 347–360 */
                 min-[347px]:max-[360px]:text-[16px]
 
@@ -211,6 +363,21 @@ export default function SunriseSunsetCard({ astro, theme }) {
 
                 /* base */
                 text-xl
+
+                /* 413–432 (down one) */
+                min-[413px]:max-[432px]:text-[22px]
+
+                /* 401–412 (down one) */
+                min-[401px]:max-[412px]:text-[22px]
+
+                /* 391–400 (down one) */
+                min-[391px]:max-[400px]:text-[21px]
+
+                /* 385–390 (down one) */
+                min-[385px]:max-[390px]:text-[20px]
+
+                /* 361–384 (down one) */
+                min-[361px]:max-[384px]:text-[19px]
 
                 /* 347–360 */
                 min-[347px]:max-[360px]:text-[18px]

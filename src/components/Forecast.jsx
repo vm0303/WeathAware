@@ -47,6 +47,24 @@ export default function Forecast({ weather, unit, theme }) {
 
           p-6
 
+          /* 413–432 */
+          min-[413px]:max-[432px]:p-5
+
+          /* 401–412 */
+          min-[401px]:max-[412px]:p-5
+
+          /* 391–400 */
+          min-[391px]:max-[400px]:p-5
+
+          /* 385–390 */
+          min-[385px]:max-[390px]:p-5
+
+          /* 377–384 */
+          min-[377px]:max-[384px]:p-5
+
+          /* 361–376 */
+          min-[361px]:max-[376px]:p-5
+
           /* 347–360 */
           min-[347px]:max-[360px]:p-5
 
@@ -64,6 +82,21 @@ export default function Forecast({ weather, unit, theme }) {
                     className={`
             text-xl font-semibold text-center ${theme.text}
 
+            /* 413–432 */
+            min-[413px]:max-[432px]:text-[22px]
+
+            /* 401–412 */
+            min-[401px]:max-[412px]:text-[22px]
+
+            /* 391–400 */
+            min-[391px]:max-[400px]:text-[21px]
+
+            /* 385–390 */
+            min-[385px]:max-[390px]:text-[21px]
+
+            /* 361–384 */
+            min-[361px]:max-[384px]:text-[20px]
+
             /* match Hourly Forecast rhythm */
             min-[347px]:max-[360px]:text-xl
             min-[321px]:max-[346px]:text-xl
@@ -78,33 +111,59 @@ export default function Forecast({ weather, unit, theme }) {
                     <div
                         ref={scrollerRef}
                         className={`
-              flex overflow-x-auto mt-4 pb-2 scrollbar-none
+    flex overflow-x-auto mt-4 pb-2 scrollbar-none
 
-              /* 347–360 */
-              min-[347px]:max-[360px]:gap-5
-              min-[347px]:max-[360px]:px-4
-              min-[347px]:max-[360px]:scroll-px-4
+    /* ✅ 240–520: carousel */
+    min-[240px]:max-[520px]:justify-start
 
-              /* 321–346 */
-              min-[321px]:max-[346px]:gap-4.5
-              min-[321px]:max-[346px]:px-4
-              min-[321px]:max-[346px]:scroll-px-4
+    /* ✅ 521+: centered row */
+    min-[521px]:justify-center
 
-              /* 281–320 */
-              min-[281px]:max-[320px]:gap-4
-              min-[281px]:max-[320px]:px-3
-              min-[281px]:max-[320px]:scroll-px-3
+    /* keep your existing rules */
+    min-[413px]:max-[432px]:gap-6
+    min-[413px]:max-[432px]:px-5
+    min-[413px]:max-[432px]:scroll-px-5
 
-              /* 240–280 tiny carousel behavior */
-              min-[240px]:max-[280px]:gap-3
-              min-[240px]:max-[280px]:snap-x
-              min-[240px]:max-[280px]:snap-mandatory
-              min-[240px]:max-[280px]:select-none
+    min-[401px]:max-[412px]:gap-6
+    min-[401px]:max-[412px]:px-5
+    min-[401px]:max-[412px]:scroll-px-5
 
-              /* larger screens: keep centered like before */
-              md:justify-center md:gap-12 md:px-0 md:snap-none
-            `}
-                        onPointerDown={(e) => {
+    min-[391px]:max-[400px]:gap-5.5
+    min-[391px]:max-[400px]:px-5
+    min-[391px]:max-[400px]:scroll-px-5
+
+    min-[385px]:max-[390px]:gap-5.5
+    min-[385px]:max-[390px]:px-5
+    min-[385px]:max-[390px]:scroll-px-5
+
+    min-[377px]:max-[384px]:gap-5
+    min-[377px]:max-[384px]:px-4.5
+    min-[377px]:max-[384px]:scroll-px-4.5
+
+    min-[361px]:max-[376px]:gap-5
+    min-[361px]:max-[376px]:px-4.5
+    min-[361px]:max-[376px]:scroll-px-4.5
+
+    min-[347px]:max-[360px]:gap-5
+    min-[347px]:max-[360px]:px-4
+    min-[347px]:max-[360px]:scroll-px-4
+
+    min-[321px]:max-[346px]:gap-4.5
+    min-[321px]:max-[346px]:px-4
+    min-[321px]:max-[346px]:scroll-px-4
+
+    min-[281px]:max-[320px]:gap-4
+    min-[281px]:max-[320px]:px-3
+    min-[281px]:max-[320px]:scroll-px-3
+
+    min-[240px]:max-[280px]:gap-3
+    min-[240px]:max-[280px]:snap-x
+    min-[240px]:max-[280px]:snap-mandatory
+    min-[240px]:max-[280px]:select-none
+
+    md:gap-12 md:px-0 md:snap-none
+  `}
+                    onPointerDown={(e) => {
                             if (!isTiny) return;
                             const el = scrollerRef.current;
                             if (!el) return;

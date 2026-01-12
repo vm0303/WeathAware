@@ -16,6 +16,36 @@ export default function Suggestion({ item, onSelect }) {
         hover:bg-slate-100 dark:hover:bg-slate-700
         transition
 
+        /* 413–432 (mimic 360) */
+        min-[413px]:max-[432px]:px-4
+        min-[413px]:max-[432px]:py-2.5
+        min-[413px]:max-[432px]:text-sm
+
+        /* 401–412 (mimic 360) */
+        min-[401px]:max-[412px]:px-4
+        min-[401px]:max-[412px]:py-2.5
+        min-[401px]:max-[412px]:text-sm
+
+        /* 391–400 (mimic 360) */
+        min-[391px]:max-[400px]:px-4
+        min-[391px]:max-[400px]:py-2.5
+        min-[391px]:max-[400px]:text-sm
+
+        /* 385–390 (mimic 360) */
+        min-[385px]:max-[390px]:px-4
+        min-[385px]:max-[390px]:py-2.5
+        min-[385px]:max-[390px]:text-sm
+
+        /* 377–384 (mimic 360) */
+        min-[377px]:max-[384px]:px-4
+        min-[377px]:max-[384px]:py-2.5
+        min-[377px]:max-[384px]:text-sm
+
+        /* 361–376 (mimic 360) */
+        min-[361px]:max-[376px]:px-4
+        min-[361px]:max-[376px]:py-2.5
+        min-[361px]:max-[376px]:text-sm
+
         /* 347–360 */
         min-[347px]:max-[360px]:px-4
         min-[347px]:max-[360px]:py-2.5
@@ -39,5 +69,6 @@ export default function Suggestion({ item, onSelect }) {
         >
             {item.name}, {item.region}, {item.country}
         </button>
+
     );
 }

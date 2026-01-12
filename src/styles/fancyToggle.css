@@ -7,25 +7,62 @@
     }
 }
 
-@media (max-width: 900px) {
-    :root {
-        --scale: 1;
-    }
+/* 433–440 */
+@media (min-width: 433px) and (max-width: 440px) {
+    :root { --scale: 1; }
 }
 
-/* Small phones */
-@media (max-width: 500px) {
-    :root {
-        --scale: 0.8;
-    }
+/* 413–432 */
+@media (min-width: 413px) and (max-width: 432px) {
+    :root { --scale: 0.95; }
 }
 
-/* Tiny screens */
-@media (max-width: 360px) {
-    :root {
-        --scale: 0.7;
-    }
+/* 401–412 */
+@media (min-width: 401px) and (max-width: 412px) {
+    :root { --scale: 0.90; }
 }
+
+/* 391–400 */
+@media (min-width: 391px) and (max-width: 400px) {
+    :root { --scale: 0.87; }
+}
+
+/* 377–390 */
+@media (min-width: 377px) and (max-width: 390px) {
+    :root { --scale: 0.82; }
+}
+
+/* 361–376 */
+@media (min-width: 361px) and (max-width: 376px) {
+    :root { --scale: 0.78; }
+}
+
+/* 347–360 */
+@media (min-width: 347px) and (max-width: 360px) {
+    :root { --scale: 0.75; }
+}
+
+/* 321–346 */
+@media (min-width: 321px) and (max-width: 346px) {
+    :root { --scale: 0.70; }
+}
+
+/* 281–320 */
+@media (min-width: 281px) and (max-width: 320px) {
+    :root { --scale: 0.65;}
+}
+
+/* 240–280 */
+@media (min-width: 240px) and (max-width: 280px) {
+    :root { --scale: 0.63; }
+}
+
+/* (optional) extra tiny screens */
+@media (max-width: 239px) {
+    :root { --scale: 0.66; }
+}
+
+
 
 
 body {
@@ -318,9 +355,4 @@ body,
     background 0.5s ease;
 }
 
-@media (max-width: 320px) {
-    .switch {
-        transform: scale(0.88);
-        transform-origin: right center;
-    }
-}
+

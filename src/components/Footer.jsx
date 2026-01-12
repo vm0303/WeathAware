@@ -11,6 +11,24 @@ export default function Footer({ theme }) {
         z-0
         animate-fadeIn-opacity
 
+        /* 413–432 */
+        min-[413px]:max-[432px]:py-7
+
+        /* 401–412 */
+        min-[401px]:max-[412px]:py-7
+
+        /* 391–400 */
+        min-[391px]:max-[400px]:py-6.5
+
+        /* 385–390 */
+        min-[385px]:max-[390px]:py-6.5
+
+        /* 377–384 */
+        min-[377px]:max-[384px]:py-6
+
+        /* 361–376 */
+        min-[361px]:max-[376px]:py-6
+
         /* 347–360 */
         min-[347px]:max-[360px]:py-6
 
@@ -30,6 +48,21 @@ export default function Footer({ theme }) {
 
           /* base */
           text-lg
+
+          /* 413–432 */
+          min-[413px]:max-[432px]:text-[18px]
+
+          /* 401–412 */
+          min-[401px]:max-[412px]:text-[18px]
+
+          /* 391–400 */
+          min-[391px]:max-[400px]:text-[17px]
+
+          /* 385–390 */
+          min-[385px]:max-[390px]:text-[17px]
+
+          /* 361–384 */
+          min-[361px]:max-[384px]:text-[16px]
 
           /* 347–360 */
           min-[347px]:max-[360px]:text-[16px]

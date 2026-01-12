@@ -383,7 +383,7 @@ export const weatherThemes = {
             card: "bg-white/50 backdrop-blur-sm border border-white/20",
         },
         dark: {
-            bg: "bg-gradient-to-b from-[#161e2a] via-[#24303d] to-[#3e4854]",
+            bg: "bg-gradient-to-b from-[#161e2a] via-[#24323d] to-[#3e4854]",
             text: "text-slate-100",
             card: "bg-slate-900/55 backdrop-blur-sm border border-white/5",
         },

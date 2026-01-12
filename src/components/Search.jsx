@@ -318,6 +318,36 @@ export default function Search({
         rounded-full
         h-14 flex items-center px-4 mb-8
 
+        /* 413–432 (mimic 360) */
+        min-[413px]:max-[432px]:h-12
+        min-[413px]:max-[432px]:px-4
+        min-[413px]:max-[432px]:mb-7
+
+        /* 401–412 (mimic 360) */
+        min-[401px]:max-[412px]:h-12
+        min-[401px]:max-[412px]:px-4
+        min-[401px]:max-[412px]:mb-7
+
+        /* 391–400 (mimic 360) */
+        min-[391px]:max-[400px]:h-12
+        min-[391px]:max-[400px]:px-4
+        min-[391px]:max-[400px]:mb-7
+
+        /* 385–390 (mimic 360) */
+        min-[385px]:max-[390px]:h-12
+        min-[385px]:max-[390px]:px-4
+        min-[385px]:max-[390px]:mb-7
+
+        /* 377–384 (mimic 360) */
+        min-[377px]:max-[384px]:h-12
+        min-[377px]:max-[384px]:px-4
+        min-[377px]:max-[384px]:mb-7
+
+        /* 361–376 (mimic 360) */
+        min-[361px]:max-[376px]:h-12
+        min-[361px]:max-[376px]:px-4
+        min-[361px]:max-[376px]:mb-7
+
         /* 347–360 */
         min-[347px]:max-[360px]:h-12
         min-[347px]:max-[360px]:px-4
@@ -350,6 +380,30 @@ export default function Search({
                     className="
             w-7 h-7 object-contain opacity-70 dark:opacity-90 dark:invert dark:brightness-200
 
+            /* 413–432 (mimic 360) */
+            min-[413px]:max-[432px]:w-6
+            min-[413px]:max-[432px]:h-6
+
+            /* 401–412 (mimic 360) */
+            min-[401px]:max-[412px]:w-6
+            min-[401px]:max-[412px]:h-6
+
+            /* 391–400 (mimic 360) */
+            min-[391px]:max-[400px]:w-6
+            min-[391px]:max-[400px]:h-6
+
+            /* 385–390 (mimic 360) */
+            min-[385px]:max-[390px]:w-6
+            min-[385px]:max-[390px]:h-6
+
+            /* 377–384 (mimic 360) */
+            min-[377px]:max-[384px]:w-6
+            min-[377px]:max-[384px]:h-6
+
+            /* 361–376 (mimic 360) */
+            min-[361px]:max-[376px]:w-6
+            min-[361px]:max-[376px]:h-6
+
             /* 347–360 */
             min-[347px]:max-[360px]:w-6
             min-[347px]:max-[360px]:h-6
@@ -378,6 +432,30 @@ export default function Search({
           text-slate-800 dark:text-slate-200
           placeholder-slate-700 dark:placeholder-slate-200
           min-w-0
+
+          /* 413–432 (mimic 360) */
+          min-[413px]:max-[432px]:ml-3
+          min-[413px]:max-[432px]:text-base
+
+          /* 401–412 (mimic 360) */
+          min-[401px]:max-[412px]:ml-3
+          min-[401px]:max-[412px]:text-base
+
+          /* 391–400 (mimic 360) */
+          min-[391px]:max-[400px]:ml-3
+          min-[391px]:max-[400px]:text-base
+
+          /* 385–390 (mimic 360) */
+          min-[385px]:max-[390px]:ml-3
+          min-[385px]:max-[390px]:text-base
+
+          /* 377–384 (mimic 360) */
+          min-[377px]:max-[384px]:ml-3
+          min-[377px]:max-[384px]:text-base
+
+          /* 361–376 (mimic 360) */
+          min-[361px]:max-[376px]:ml-3
+          min-[361px]:max-[376px]:text-base
 
           /* 347–360 */
           min-[347px]:max-[360px]:ml-3
@@ -412,6 +490,36 @@ export default function Search({
           disabled:opacity-50 disabled:cursor-not-allowed
           shrink-0
 
+          /* 413–432 (mimic 360) */
+          min-[413px]:max-[432px]:w-8
+          min-[413px]:max-[432px]:h-8
+          min-[413px]:max-[432px]:ml-3
+
+          /* 401–412 (mimic 360) */
+          min-[401px]:max-[412px]:w-8
+          min-[401px]:max-[412px]:h-8
+          min-[401px]:max-[412px]:ml-3
+
+          /* 391–400 (mimic 360) */
+          min-[391px]:max-[400px]:w-8
+          min-[391px]:max-[400px]:h-8
+          min-[391px]:max-[400px]:ml-3
+
+          /* 385–390 (mimic 360) */
+          min-[385px]:max-[390px]:w-8
+          min-[385px]:max-[390px]:h-8
+          min-[385px]:max-[390px]:ml-3
+
+          /* 377–384 (mimic 360) */
+          min-[377px]:max-[384px]:w-8
+          min-[377px]:max-[384px]:h-8
+          min-[377px]:max-[384px]:ml-3
+
+          /* 361–376 (mimic 360) */
+          min-[361px]:max-[376px]:w-8
+          min-[361px]:max-[376px]:h-8
+          min-[361px]:max-[376px]:ml-3
+
           /* 347–360 */
           min-[347px]:max-[360px]:w-8
           min-[347px]:max-[360px]:h-8
@@ -442,6 +550,24 @@ export default function Search({
             w-7 h-7 object-contain dark:invert dark:brightness-200
             ${geoLoading ? "opacity-60" : ""}
 
+            /* 413–432 (mimic 360) */
+            min-[413px]:max-[432px]:w-6 min-[413px]:max-[432px]:h-6
+
+            /* 401–412 (mimic 360) */
+            min-[401px]:max-[412px]:w-6 min-[401px]:max-[412px]:h-6
+
+            /* 391–400 (mimic 360) */
+            min-[391px]:max-[400px]:w-6 min-[391px]:max-[400px]:h-6
+
+            /* 385–390 (mimic 360) */
+            min-[385px]:max-[390px]:w-6 min-[385px]:max-[390px]:h-6
+
+            /* 377–384 (mimic 360) */
+            min-[377px]:max-[384px]:w-6 min-[377px]:max-[384px]:h-6
+
+            /* 361–376 (mimic 360) */
+            min-[361px]:max-[376px]:w-6 min-[361px]:max-[376px]:h-6
+
             /* 347–360 */
             min-[347px]:max-[360px]:w-6 min-[347px]:max-[360px]:h-6
 
@@ -466,8 +592,27 @@ export default function Search({
             max-h-[40vh] overflow-y-auto
             suggestions-box
             ${isClosing ? "hide" : "show"}
+            
 
             top-16 rounded-lg
+
+            /* 413–432 (mimic 360) */
+            min-[413px]:max-[432px]:top-14
+
+            /* 401–412 (mimic 360) */
+            min-[401px]:max-[412px]:top-14
+
+            /* 391–400 (mimic 360) */
+            min-[391px]:max-[400px]:top-14
+
+            /* 385–390 (mimic 360) */
+            min-[385px]:max-[390px]:top-14
+
+            /* 377–384 (mimic 360) */
+            min-[377px]:max-[384px]:top-14
+
+            /* 361–376 (mimic 360) */
+            min-[361px]:max-[376px]:top-14
 
             /* 347–360 */
             min-[347px]:max-[360px]:top-14
@@ -485,9 +630,9 @@ export default function Search({
                     {mode === "recents" && (
                         <>
                             <div className="flex items-center justify-between px-4 py-2 border-b border-slate-200 dark:border-slate-700">
-                <span className="text-xs font-semibold uppercase tracking-wide text-slate-500 dark:text-slate-400 min-[240px]:max-[280px]:text-[11px]">
-                  Recent searches
-                </span>
+              <span className="text-xs font-semibold uppercase tracking-wide text-slate-500 dark:text-slate-400 min-[240px]:max-[280px]:text-[11px]">
+                Recent searches
+              </span>
 
                                 <button
                                     type="button"
@@ -548,4 +693,5 @@ export default function Search({
             )}
         </div>
     );
+
 }

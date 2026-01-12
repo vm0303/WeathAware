@@ -1,5 +1,5 @@
 import {motion, useReducedMotion} from "framer-motion";
-
+import React from "react";
 // Import Meteocons SVGs
 import sun from "../assets/meteocons/sun.svg";
 import moon from "../assets/meteocons/moon.svg";
@@ -105,6 +105,29 @@ export const weatherMap = {
     1282: {day: heavySnowThunderDay, night: heavySnowThunderNight, type: "thunder"},
 };
 
+
+export function useWeatherIconSize() {
+    const [vw, setVw] = React.useState(
+        typeof window !== "undefined" ? window.innerWidth : 9999
+    );
+
+    React.useEffect(() => {
+        const onResize = () => setVw(window.innerWidth);
+        window.addEventListener("resize", onResize, { passive: true });
+        return () => window.removeEventListener("resize", onResize);
+    }, []);
+
+    // Unified steps for 240–440
+    return React.useMemo(() => {
+        if (vw <= 280) return 60;  // tiny phones
+        if (vw <= 320) return 70;
+        if (vw <= 360) return 74;
+        if (vw <= 440) return 78;  // big phones (matches your CurrentWeather vibe)
+        return 82;                 // desktop default (or change if you want)
+    }, [vw]);
+}
+
+
 export default function WeatherIcon({ code, isDay, size = 56, className = "" }) {
     const entry = weatherMap[code] || weatherMap[1003];
     const icon = isDay ? entry.day : entry.night;
@@ -114,6 +137,8 @@ export default function WeatherIcon({ code, isDay, size = 56, className = "" }) 
 
     const variants = { /* ...keep your current variants... */ };
     const animate = prefersReducedMotion ? undefined : (variants[type] || { scale: [1, 1.02, 1] });
+
+
 
     return (
         <motion.img
