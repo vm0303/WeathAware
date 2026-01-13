@@ -1,7 +1,7 @@
 // src/utils/weatherAPI.js (CRA / webpack version)
 import axios from "axios";
 
-const API_KEY = "***REMOVED***";
+const API_KEY = process.env.REACT_APP_WEATHERAPI_KEY;
 const BASE = "https://api.weatherapi.com/v1";
 
 // ✅ DEV TEST STRING
