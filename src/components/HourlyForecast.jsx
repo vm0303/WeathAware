@@ -321,11 +321,11 @@ export default function HourlyForecast({ hours, unit, theme, localTime }) {
                                     </div>
 
                                     {/* ✅ Condition: fixed slot + centered vertically */}
-                                    <div className="w-full flex items-center justify-center px-2 max-[280px]:px-0 ">
+                                    <div className="w-full flex items-center justify-center px-1 max-[280px]:px-0 ">
                                         <p
                                             className={`
                         w-full text-center leading-snug opacity-80
-                        break-words whitespace-normal
+                        break-words whitespace-normal text-base
                         
                         
                         /* 433-440 */
@@ -341,12 +341,12 @@ export default function HourlyForecast({ hours, unit, theme, localTime }) {
                         min-[391px]:max-[400px]:text-[16px]
 
                         /* 385–390 */
-                        min-[385px]:max-[390px]:text-[17px]
+                        min-[385px]:max-[390px]:text-[16px]
 
                         /* 361–384 */
-                        min-[361px]:max-[384px]:text-[17px]
+                        min-[361px]:max-[384px]:text-[16px]
 
-                        min-[347px]:max-[360px]:text-[17px]
+                        min-[347px]:max-[360px]:text-[16px]
                         min-[321px]:max-[346px]:text-[16px]
                         min-[281px]:max-[320px]:text-[15px]
                         min-[240px]:max-[280px]:text-[14px]

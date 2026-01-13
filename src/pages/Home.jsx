@@ -26,7 +26,7 @@ export default function Home() {
     const [prevTheme, setPrevTheme] = useState(initialTheme);
     const [fading, setFading] = useState(false);
 
-    // ✅ NEW: track whether search is active (focused/open)
+    // ✅ track whether search is active (focused/open)
     const [searchActive, setSearchActive] = useState(false);
 
     useEffect(() => {
@@ -36,7 +36,6 @@ export default function Home() {
         });
 
         observer.observe(document.documentElement, { attributes: true });
-
         return () => observer.disconnect();
     }, []);
 
@@ -227,7 +226,7 @@ export default function Home() {
                             !weather ? "animate-fadeIn" : "pt-6",
                             !weather
                                 ? searchActive
-                                    ? "max-[599px]:pt-3 max-[280px]:pt-1 min-[600px]:pt-[30vh]"
+                                    ? "max-[1200px]:pt-3 max-[280px]:pt-1"
                                     : "pt-[30vh]"
                                 : "",
                         ].join(" ")}
@@ -236,7 +235,7 @@ export default function Home() {
                             onSelectCity={handleSelectCity}
                             recentSearches={recentSearches}
                             onClearRecentSearches={clearRecentSearches}
-                            onActiveChange={setSearchActive} // ✅ NEW
+                            onActiveChange={setSearchActive}
                         />
                     </div>
 
@@ -253,10 +252,7 @@ export default function Home() {
                             </div>
 
                             <div className={cardsShouldFade ? "animate-fadeIn" : ""}>
-                                <SunriseSunsetCard
-                                    astro={weather.forecast?.forecastday?.[0]?.astro}
-                                    theme={theme}
-                                />
+                                <SunriseSunsetCard astro={weather.forecast?.forecastday?.[0]?.astro} theme={theme} />
                             </div>
 
                             <div className={cardsShouldFade ? "animate-fadeIn" : ""}>

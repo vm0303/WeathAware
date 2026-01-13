@@ -146,7 +146,7 @@ export default function ForecastItem({ day, unit, theme, label, isTiny, dragRef 
                 </div>
 
                 {/* ✅ Condition: fixed slot + centered vertically */}
-                <div className="w-full flex items-center justify-center px-2 min-[240px]:max-[280px]:px-0">
+                <div className="w-full flex items-center justify-center px-1 min-[240px]:max-[280px]:px-0">
                     <p
                         className={`
               w-full text-center leading-snug opacity-80
