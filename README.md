@@ -4,7 +4,7 @@ WeathAware is a beautifully crafted, interactive weather dashboard built with Re
 
 This project was built with a strong focus on design, usability, and performance, blending clean visuals, smooth animations, and thoughtful interactions into a polished, real-world application.
 
-> **Demo:** TBD (Vercel link coming soon)
+> **Demo:** [WeathAware](weathaware-alpha.vercel.app)
 
 ---
 
