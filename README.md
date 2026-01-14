@@ -66,6 +66,7 @@ Building WeathAware was a great opportunity to strengthen both my technical skil
 
 Most importantly, this project taught me how small details, such as smooth animations, meaningful error messages, 
 and adaptive design, can significantly elevate the quality and professionalism of an application. It reinforced my belief that great front-end development lives at the intersection of engineering and thoughtful user experience.
+
 ---
 
 ## Getting Started with Your React App (CRA)
