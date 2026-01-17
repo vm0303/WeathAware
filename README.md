@@ -4,7 +4,12 @@ WeathAware is a beautifully crafted, interactive weather dashboard built with Re
 
 This project was built with a strong focus on design, usability, and performance, blending clean visuals, smooth animations, and thoughtful interactions into a polished, real-world application.
 
-> **Demo:** [WeathAware](weathaware-alpha.vercel.app)
+> **Demo:** [WeathAware](https://weathaware-alpha.vercel.app)
+
+## ⚠️ **Academic Integrity Notice**  
+This project is open-source under the MIT License for learning and reference purposes.  
+- Do **not** copy, submit, or reuse this project for academic assignments, coursework, or college projects.  
+- Plagiarism or misrepresentation of this work violates academic integrity policies.
 
 ---
 
@@ -21,33 +26,32 @@ This project highlights:
 
 It reflects how modern front-end development is about more than just functionality. It’s about clarity, responsiveness, and visual storytelling.
 
-
 ---
 
 ## Features
 
-- **City search with autocomplete** powered by WeatherAPI
-- **Recent searches** stored locally for faster access
-- **Use my location** for instant, location-based weather lookup
-- **Current conditions overview** (temperature, condition, last updated time)
-- **Hourly forecast** to visualize changes throughout the day
-- **Multi-day forecast** for better planning
-- **Sunrise and sunset display** for environmental awareness
-- **Dynamic weather-based themes** that visually mirror conditions
-- **Automatic dark mode** based on time of day with manual override and persistence
-- **Friendly toast notifications** for errors, invalid input, or API issues
-- **Smooth UI animations** using Framer Motion for a modern, fluid feel
+- **City search with autocomplete** powered by WeatherAPI  
+- **Recent searches** stored locally for faster access  
+- **Use my location** for instant, location-based weather lookup  
+- **Current conditions overview** (temperature, condition, last updated time)  
+- **Hourly forecast** to visualize changes throughout the day  
+- **Multi-day forecast** for better planning  
+- **Sunrise and sunset display** for environmental awareness  
+- **Dynamic weather-based themes** that visually mirror conditions  
+- **Automatic dark mode** based on time of day with manual override and persistence  
+- **Friendly toast notifications** for errors, invalid input, or API issues  
+- **Smooth UI animations** using Framer Motion for a modern, fluid feel  
 
 ---
 
 ## Tech Stack
 
-- **React (CRA)** + React 19
-- **Tailwind CSS** – fast, responsive, and clean styling
-- **Axios** – efficient API communication
-- **Framer Motion** – modern UI animations
-- **React Toastify** – intuitive notifications
-- **WeatherAPI.com** – reliable real-time weather data
+- **React (CRA)** + React 19  
+- **Tailwind CSS** – fast, responsive, and clean styling  
+- **Axios** – efficient API communication  
+- **Framer Motion** – modern UI animations  
+- **React Toastify** – intuitive notifications  
+- **WeatherAPI.com** – reliable real-time weather data  
 
 ---
 
@@ -55,22 +59,21 @@ It reflects how modern front-end development is about more than just functionali
 
 Building WeathAware was a great opportunity to strengthen both my technical skills and my understanding of user-focused design. Through this project, I gained hands-on experience with:
 
-- Designing a **scalable React component architecture** that keeps UI logic clean and reusable
-- Working with **real-world APIs**, including handling loading states, errors, and edge cases gracefully
-- Managing **application state** in a way that keeps the UI responsive and predictable
-- Creating **dynamic theming systems** that react to external data (weather conditions + time of day)
-- Implementing **geolocation features** in a user-friendly and privacy-conscious way
-- Improving **UX through feedback**, animations, and transitions that make interactions feel natural
-- Using **environment variables** to protect sensitive data like API keys
-- Writing **production-ready UI code** with maintainability and clarity in mind
+- Designing a **scalable React component architecture** that keeps UI logic clean and reusable  
+- Working with **real-world APIs**, including handling loading states, errors, and edge cases gracefully  
+- Managing **application state** in a way that keeps the UI responsive and predictable  
+- Creating **dynamic theming systems** that react to external data (weather conditions + time of day)  
+- Implementing **geolocation features** in a user-friendly and privacy-conscious way  
+- Improving **UX through feedback**, animations, and transitions that make interactions feel natural  
+- Using **environment variables** to protect sensitive data like API keys  
+- Writing **production-ready UI code** with maintainability and clarity in mind  
 
-Most importantly, this project taught me how small details, such as smooth animations, meaningful error messages, 
+Most importantly, this project taught me how small details, such as smooth animations, meaningful error messages,  
 and adaptive design, can significantly elevate the quality and professionalism of an application. It reinforced my belief that great front-end development lives at the intersection of engineering and thoughtful user experience.
 
 ---
 
 ## Getting Started with Your React App (CRA)
-
 
 This project was bootstrapped using **Create React App**, which provides a solid foundation for building modern React applications with zero configuration.
 
@@ -119,14 +122,6 @@ You don’t have to ever use `eject`. The curated feature set is suitable for sm
 
 ---
 
-## Learn More
-
-You can learn more in the [Create React App documentation](https://create-react-app.dev/).
-
-To learn React, check out the [React documentation](https://react.dev/).
-
----
-
 ## Deployment
 
 You can deploy your app to platforms such as **Vercel**, **Netlify**, or **GitHub Pages**.
@@ -137,10 +132,13 @@ When deploying:
 
 ---
 
-## Troubleshooting
+## License
 
-### `npm run build` fails to minify
+This project is licensed under the **MIT License**.
 
-This usually happens when one of your dependencies uses modern JavaScript features that your environment does not support.  
-You can find more details in the CRA documentation about advanced configuration and compatibility.
+> Open-source for learning and reference.  
+> Not for academic submission, coursework, or plagiarism.
 
+---
+
+Built from scratch by **Vishal Madhav** as a personal portfolio project.
